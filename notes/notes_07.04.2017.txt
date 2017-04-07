@@ -1,0 +1,43 @@
+Notes - 7.04.2017
+Anwesend: Helmar, Kai, Inga, Constantin, Chris.
+Protokollant: Chris
+
+Organisatiorisches
+-Mˆglichst schnell in Stud.IP, daf¸r muss die StuKo da mˆglichst schnell zustimmen
+-Zweiten Supervisor (von CL?) Helmar fragt Nico Potyka, Chris CL-Leute
+-Wir brauchen noch mehr Leute
+-Abschlussbereicht & hochschulˆffentliche Pr‰si sind Bewertungskriteria
+-In 2 Teile teilen. 1. H‰lfte: technische Arbeit, system konzipieren, 2.h‰lfte das rund machen, doku machen, etc. (nicht untersch‰tzen)
+-Management-Struktur. Jobs kl‰ren, arbeit aufteilen, ¸berpr¸fen ob Leute ihren Job machen. Protokolle f¸hren wichtig. Verantwortliche f¸r Arbeitspakete kl‰ren (-> Ticket-system -> Github's issues-funktion sinnvoll)
+-Vorschlag: interner Projekt-Leiter, der alle 2 Monate rotiert. Hat "einhol-pflicht", sorgt daf¸r das Leute machen was sie sollen
+-Doodle f¸r's n‰chstes meeting
+-Protokolle kommen ins git-wiki
+
+Zum Projekt
+-Materialsichtung, State-of-the-art eintragen (1. businessverarbeitung & recht, 2. text & ontologien)
+-Constantin fragt Ulf Krummak und Niko Mˆller, da die text-mining/ontologies gemacht haben
+-Ontologies from text createn hat 2 subcomponenten: 1.) technisch (pdf->in-unserem-quellcode) 2.) inhaltlich (what is what)
+-Helmar will sein toy-example auf dem MVC-rechner ans laufen kriegen zum zeigen
+-Erst einfach, dann mehr. Funktionierendes Beispiel erzeugen, dann guckene was mehr kommt.
+-Thema: Navigation in Gesetzen (->Querverweise, die Struktur davon auslesen kˆnnen, sind f¸r Laien kryptisch). Daf¸r nen "Gesetzesbrowser" erzeugen, Schritt 1 davon w‰re aus dem Text nen hypertext zu machen. Schˆner w‰re nat¸rlich eine Zusammenfassung DER RELEVANTEN TEILE bei Mouse-over
+-Wir besch‰ftigen uns ja nur mit einer Hand voll Gesetzen. Idee: Mˆglicherweise erstmal da rekursiv durchgehen und gucken worauf die so verweisen und gucken ob das irgendwo endet, damit man weiﬂ wie viel das so ist.
+-Problem: Einige nationale Gesetze verweisen auf bspw EU-Richtlinien. Wie findet man da die Struktur, da ja einige Gesetze andere ‹berschreiben
+-Inga hat ein Poster zu "4 reference arten bei gesetzen", und will das ins repo setzen (https://wwwmatthes.in.tum.de/file/1hw3eoyi038h/Sebis-Public-Website/-/Differentiation-and-Empirical-Analysis-of-Reference-Types-in-Legal-Documents/Wa16c.pdf)
+-Gesetze bestehen typischerweise aus allgemienem teil und spezifisichem teil. Im allgemeinen teil wird eine ontologie (->t-box: Eine Sache ist ein Ding das kein mensch ist etc) definiert, im spezifisichem teil wird gesagt was der fall ist wenn der allgemeine teil zutrifft. 
+ Der spezielle fall ist eine a-box: Es geht hier um ein Handy, welches eine Sache ist
+-Helmar hat ein Beispiel gezeigt wie man eine Deskriptionslogik-Prolog-Maschine (manuell) bauen kann, die einen gegebenen Fall analysiert und anzeigt was warum wie ist.
+-Eine Fragestellung ist, wie man das automatisch erstellt.
+-Wir m¸ssen bspw f¸r https://www.gesetze-im-internet.de/gsgv_9/BJNR070410993.html die Beschreibung von Produktionsanlagen in unserem code modellieren und im optimalfall automatisch erzeugen kˆnnen
+-Helmar hat in seinem Toy-Model ja bereits ein Skript, dass das HTML von https://www.gesetze-im-internet.de/prodsg2011v_1/index.html in nen besser-maschinenlesbaren-text umwandelt. (Frage: ist gesetze-im-internet eine reliable enough source?)
+-Der parser erkennt in dem text dann: "+": Anwendungsbereich; "-": Ausnahmen; "B": Begriffsbestimmungen. (also jeweils welcher was ist)
+-Daraus wird dann Prolog-code erzeugt, der s‰mtliche pluses, minuses und B's in listen packt.
+-DAS kommt dann in eine reasoning machine, automatisch erzeugt, die dann nen fuzzy-logic-wasgehtwie-erzeugt
+-uuund es wird ein php-webinterface erzeugt.
+-ANWENDUNG: wir geben dem system eine beschreibung der produktionsstraﬂe, und das system sagt "du brauchst die-und-die dokumentationen, WEIL das-und-das der fall ist"
+-Gerne gesehen: Entscheidungsb‰ume "haste das? ja? dann.. haste das? nein? dann..."... Und wir wollen die ontology der dom‰ne nutzen: Wenn der User den Oberbegriff schon verneint, dann fragen wir erst gar nicht die Unterbegriffe. --> ERSTMAL aus entities ne struktur aufzubauen. Dazu brauchen wir die Begriffsdefinitionen, wie sie in den dingsis stehen
+-Wiiie liest man lange texte semantisch aus? Wie kommt man von <Langertext> auf "Flaschenzug"? Keyword-system?
+
+Step 1: Making Ontologies from text.
+Step 2: Von der Beschreibung eines Produktes/einer Produktionseinheit auf die Anwendbarkeit eines Gesetzes zu schlieﬂen. (Decision tree ODER text-reader)
+
+In 3 Wochen wird eine Sitzung mit den Ergebnissen der Sichtung der Sachen stattfinden. Bis dahin werden wir selbst treffen organisieren um das zu kl‰ren.
