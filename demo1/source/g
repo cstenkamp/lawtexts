@@ -1,3 +1,10 @@
+# shell script
+#     g [install]
+#
+# reads all the laws
+# generates for every file a .pl version containing the knowledge base
+# generates docs.pl containing the documentation rules
+# generates docs.php containing the GUI
 
 wget -O html/MaschRL.html "https://www.gesetze-im-internet.de/gsgv_9/BJNR070410993.html"
 g_rule +s +V=MaschRL gb_n.rul html/MaschRL.html pl/%f.pl
