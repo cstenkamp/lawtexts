@@ -1,0 +1,883 @@
+
+. compile .csv to Prolog
+.
+. input: csv
+. Nr, Unr, Dokument, Quelle Lieferant, Quelle Betreiber, MaschRL,unfertige Masch.,NSR,EMV,ATEX,Druck,VAwS,BetrSichV,Betreiber intern,
+
+. generates docs.pl
+. writes docs.php
+
+. writes ....tmp (relation nr document)
+
+
+#0d = #0a.
+z1.
+ll = p l.
+
+'ß' = 'ﬂ'.
+'ä' = '‰'.
+'ü' = '¸'.
+'ˆ' = 'ˆ'.
+'Ü' = '‹'.
+
+'"' X0 '"' = '"' (X0<#0a,'##nl##'<',','##k##'<"'",'##q##') '"'.
+
+.e.
+
+. 1. Zeile lˆschen, zweite Zeile markieren: headers
+l.
+1
+l $0 l $1 l =
+l '&$&$' $1 p l.
+
+bl.
+
+. ouput document relation doc(Nr.Unr, Dokument)
+(o '%P%f.tmp').
+
+l.
+l - '&$&'
+# Nr. ,  Unr., Dokument, Rest
+  $0 ',' $1 ',' $2 ',' $3 l =
+# Grammatikregel: 
+# doc(Nr.Unr) --> &,rhs.
+l "doc('" $0 '.' $1 "') --> &," $3 '.' p l
+# Ausgabe: doc(Nr.Unr, Dokument).
+! "doc('" $0 '.' $1 "','" $2 "')." l .
+
+o.
+
+.e.
+
+. skip Beschreibung
+1
+l '&$&$' $0 ',' $1 ',' ?10 ',' $2 l =
+l '&$&$' $0 ',' $1 ',' $2 p l .
+
+.e.
+
+. f¸r alle Richtlinien (Spalten)
+1
+l '&$&$' $0 ',' $1 ',' ?10 ',' $2 l =
+l "% :- ['" *10 ".pl']."                # .pl einbinden
+l '&$&$' $0 ',' $1 ',' $2 p l
+
+r
+
+:
+
+l (- '&$&') $0 '&,' $1 ',' $2 l =        # f¸r alle Zeilen: Subgoal in rhs generieren
+l $0 ",p('" *10 "'," $1 ')' '&,' $2 p l.
+
+'&,.' l = '.' l.
+
+",p('" ($0~")") ",)" =        # kein x: Gewicht  0 
+",p('" $0 ",0)" .
+",p('" ($0~")") ",x)" =       # x:      Gewicht 10
+",p('" $0 ",10)" .
+",p('" ($0~")") ",(x))" =     # (x):    Gewicht  5
+",p('" $0 ",5)" .
+
+. Spalten Lieferant und Betreiber verweisen nicht auf Richtlinien
+l $0 '(' $1 ") --> ,p('Lieferant'," $2 ")" =
+l $0 '(' $1 ',' $2 ") --> ".
+
+l $0 '(' $1 ") --> ,p('Betreiber'," $2 ")" =
+l $0 '(' $1 ',' $2 ") --> ".
+
+. Subgoals mit Gewicht 0 kˆnnen gelˆscht werden
+",p('" ($0~")") ',0)' = .
+
+'--> ,' = '--> '.
+
+.e.
+. read tmp file: relation doc(nr, document)
+bl '% Dokumente' l.
+b (F '%P%f.tmp').
+
+l '&$&$' $0 l = p l.
+
+.e.
+
+. repair:
+
+l "% :- ['Lieferant.pl']." =.
+l "% :- ['Betreiber.pl']." =.
+
+'unfertige Masch.'  = 'MaschRLu' .
+'Betreiber intern'  = 'BetreiberIntern' .
+
+. read all ....pl files
+l "% :- ['" $0 "']." =
+! $0 l
+!
+(f 'pl/' $0).
+
+.e.
+
+. generate web page
+
+o '%Pdocs.php'.
+
+!
+"""<?php
+
+date_default_timezone_set('Europe/Berlin');
+
+$TIME_FORMAT='Y-m-d H:i:s'; //v
+$DATE_FORMAT='Y-m-d'; //v
+
+$DOCUMENT_ROOT = getat($_SERVER,'DOCUMENT_ROOT');
+$domain        = getat($_SERVER,'SERVER_NAME');
+
+$_GET = array_merge_recursive($_GET, $_POST);
+
+$cc=substr(basename($_SERVER['PHP_SELF']),0,-4);
+list($cc1,$lang1)=explode_n('_',$cc,2);
+$SERVICE = basename(dirname($_SERVER['PHP_SELF']));
+
+$DATA = "/var/data/$SERVICE";
+$datadir = "$DATA/docs";
+
+$debug = $adm = 5;
+
+function explode_n($s,$p,$n) {
+ return array_pad(explode($s,$p,$n),$n,'');
+}
+
+function color($s, $c) {
+ return "<span style=\"color:$c;white-space:nowrap\">".$s.'</span>';
+}
+
+function mred($s) {return color($s, 'red');}
+
+//s safe exec (???)
+function sexec($c, &$r, &$s) {
+ global $DATA;
+ dm($c,10,'sexec');
+ if (0 && preg_replace(
+   array('/[- 0-9]|date|python|iban\.py/'),
+   array(''),
+   $c) !== '') {
+  $s = 100; $r = array($c);
+  return;
+ }
+ return exec("cd $DATA/bin && $c", $r, $s);
+}
+
+$errflag = 0;
+
+//s err(MESSAGE, TYPE, [PAGE_TAIL])   // fatal error
+function err($m, $s='', $tail="</body></html>") {
+ global $errflag, $database;
+ print("*** error *** $s: ");
+ print_r($m);
+ print("<br>\n");
+ $errflag+=1;
+ print($tail);
+ exit();
+ // return 0;
+}
+
+// soft error
+
+$errxflag = 0;
+
+function errx($m, $s='') {
+ global $errxflag;
+ $errxflag += 1;
+ msg($m,$s);
+}
+
+// message handling
+$msg_out = array();
+$msg_head='Messages';
+
+//s msg(MESSAGE, TYPE, [HEAD])
+function msg($m, $s='msg', $h='') {
+ global $msg_out, $msg_head;
+ if ($h) $msg_head = $h;
+ $msg_out[] = mred("<pre>$s: ".html_esc(print_r($m,TRUE)).'</pre>');
+}
+
+//s [d]dm(MESSAGE, DEBUGLEVEL, HEAD): debug messages
+function dm($s, $m = 1, $t='') {
+ global $debug, $USR;
+ if ($debug >= $m /* && $USR=='hgust' */) {
+  msg($s,$t);
+ }
+ return $s;
+}
+
+function ddm($s,$m=1,$t='') {return dm($s,-$m,$t);}
+
+""".
+!
+"""
+//--------------------------------------
+//S Functios for encode, decode escaping
+
+//s encrypt(STRING, CODE)
+function encrypt($s, $c) {
+ for ($i=0, $j=0, $l=strlen($s), $cl=strlen($c); $i<$l; $i++, $j++) {
+  if ($j >= $cl) $j=0;
+  $s[$i]=chr(ord($s[$i]) ^ ord($c[$j]));
+ }
+ return $s;
+}
+
+function html_esc($x) {
+ return str_replace(array('&','<','>'),array('&amp;','&lt;','&gt;'),$x);
+}
+
+function get_key() { //f get key
+ global $gkey;
+ $gkey = md5('preevent sicherheit');
+ dm($gkey,20,'get_key');
+ return $gkey;
+}
+
+function enc0(&$x, $key='') { //f encode $x in place
+ global $gkey;
+ if (!$key) $key = $gkey;
+ $mi = strlen($x); $mj = strlen($key);
+ if ($mj>0) for ($i = 0, $j = $mi; $i < $mi; $i++, $j++) {
+  while ($j >= $mj) $j -= $mj;
+  $x[$i] = chr(ord($x[$i]) + ord($key[$j]));
+}}
+
+function dec0(&$x, $key='') { //f decode $x in place
+ global $gkey;
+ if (!$key) $key = $gkey;
+ $mi = strlen($x); $mj = strlen($key);
+ if ($mj>0) for ($i = 0, $j = $mi; $i < $mi; $i++, $j++) {
+  while ($j >= $mj) $j -= $mj;
+  $x[$i] = chr(ord($x[$i]) - ord($key[$j]));
+}}
+
+function fencx($x) {
+ return $x;
+}
+
+function fenc($x) {
+ if (1) {
+  enc0($x);
+  return '@'.$x;
+ }
+ return $x;
+}
+
+function fdec($x) {
+ if (substr($x,0,1) == '@') {
+  $x = substr($x,1);
+  dec0($x);
+ }
+ return $x;
+}
+
+function encv($x) {return $x;}
+
+//s  enc(STRING [,FLAG [,KEY]) // encode STRING
+// $f ==  1 : encode for data base (e.g. utf8->iso)
+// $f ==  0 : urlencode
+// $f == -1 : encode for data base (e.g. utf8->iso) without key
+function enc($x, $f=0, $key='') {
+ global $gkey, $encrypt, $CHARSET;
+ if (!$x) return $x;
+ if (!$key) $key = $gkey;
+ if (!is_string($x)) {dm("'$x'",1,'(enc) not a string'); return $x;}
+ if (0 && $CHARSET == 'utf-8') $x = myutf8($x);
+ if (0 && $f && $CHARSET == 'utf-8') $x = utf8_decode($x); // utf8 -> iso
+ if ($encrypt == 1 && $f > 0 && $key) {enc0($x, $key); $x = '@'.$x;}
+ $x = rawurlencode($x);
+ return $x;
+}
+
+function decn($x, $f=0, $key='') {
+ return $x;
+}
+function encn($x, $f=0, $key='') {
+ return $x;
+}
+
+//s  dec(STRING [,FLAG [,KEY]]) // decode STRING if encoded
+function dec($x, $f=0, $key='') {
+ global $gkey, $CHARSET;
+ if (!$x) return $x;
+ if (!$key) $key = $gkey;
+ if (!is_string($x)) {errx("'$x' $f",'dec not a string'); return $x;}
+ $x = rawurldecode($x);
+ if ($f && $key && $x[0]=='@') {$x = substr($x,1); dec0($x,$key);}
+ $x = handle_esc($x);
+ if (1 && $f && $CHARSET == 'utf-8' &&
+     strpbrk($x,'ƒ÷‹‰ˆ¸ﬂ') && !strstr($x,'√')) $x = utf8_encode($x); // iso -> utf8
+ return $x;
+}
+
+function dec_fn($filename) { //f decode filename
+ return str_replace(
+   array('+','$b','$p','$a',    '$o',    '$u',    '$A',    '$O',    '$U',    '$s',    '$k','$K','$$',
+             '@_','@p','@a',    '@o',    '@u',    '@A',    '@O',    '@U',    '@s',    '@k','@K','@b','@B','@d','@S','@D',
+                 '@q', '@Q', '@P', '@T'),
+   array(' ',' ', '+', '&auml;','&ouml;','&uuml;','&Auml;','&Ouml;','&Uuml;','&szlig;','(',')', '$',
+             ' ', '+', '&auml;','&ouml;','&uuml;','&Auml;','&Ouml;','&Uuml;','&szlig;','(',')', '[', ']', '$',  ';',  ',',
+                 "'",  '"',  '..', '@'),
+   $filename);
+}
+
+function enc_fn($filename) { //f encode filename
+ if (strstr($filename,'@')) return $filename;
+ return str_replace(
+   array('@', '\\\'', '\\"', '&quot;',
+            '+',     ' ',     '‰',     '&auml;','ˆ',     '&ouml;',
+            '¸',     '&uuml;','ƒ',     '&Auml;','÷',     '&Ouml;','‹',     '&Uuml;',
+            '√§',    '√∂',    '√º',    '√ü',    '√Ñ',    '√ñ',    '√ú',
+               'ﬂ',    '&szlig;','(',     ')',     '[',     ']',     '$',     ';',     ',',
+                  "'", '"', '..'),
+   array('@T', '@q', '@Q',   '@Q',
+            '@p',    '@_',    '@a',    '@a',    '@o',    '@o',
+            '@u',    '@u',    '@A',    '@A',    '@O',    '@O',    '@U',    '@U',
+            '@a',    '@o',    '@u',    '@s',    '@A',    '@O',    '@U',
+               '@s',    '@s',     '@k',   '@K',     '@b',   '@B',    '@d',    '@S',    '@D',
+                  '@q', '@Q', '@P'),
+   trim($filename));
+}
+
+function enc_uml($s) { //f encode umlauts as sgml entities
+ $s=str_replace(
+  array("\xe4"    ,"\x84"    ,"\xf6"    ,"\x94"    ,"\xfc"   ,"\x81"     ,"\xdf"
+       ,"\xc4"    ,"\x8e"    ,"\xd6"    ,"\x99"    ,"\xdc"   ,"\x9a"     ,"\xe1"
+ //    ,'√§'       ,'??'      ,'√∂'       ,'?<96>'   ,'√º'      ,'?<9c>'    ,'?<9f>'
+       ,"\xc3\xa4","\xc3\xe4","\xc3\xb6","\xc3\x96","\xc3\xbc","\xc3\x9c","\xc3\x9f","\xc3\xa9"
+  ),
+  array('&auml;'  ,'&auml;'  ,'&ouml;'  ,'&ouml;'  ,'&uuml;'  ,'&uuml;'  ,'&szlig;'
+       ,'&Auml;'  ,'&Auml;'  ,'&Ouml;'  ,'&Ouml;'  ,'&Uuml;'  ,'&Uuml;'  ,'&szlig;'
+ //    ,'&auml;'  ,'&Auml;'  ,'&ouml;'  ,'&Ouml;'  ,'&uuml;'  ,'&Uuml;'  ,'&szlig;'
+       ,'&auml;'  ,'&Auml;'  ,'&ouml;'  ,'&Ouml;'  ,'&uuml;'  ,'&Uuml;'  ,'&szlig;' ,'&eacute;'
+ ),$s);
+ return $s;
+}
+
+function del_uml($s) { //f removes umlauts (not
+ $s=str_replace(
+  array('&auml;'  ,'&Auml;'  ,'&ouml;'  ,'&Ouml;'  ,'&uuml;'  ,'&Uuml;'  ,'&szlig;' ,'&eacute;'
+       ,"\xe4"    ,"\x84"    ,"\xf6"    ,"\x94"    ,"\xfc"   ,"\x81"     ,"\xdf"
+       ,"\xc4"    ,"\x8e"    ,"\xd6"    ,"\x99"    ,"\xdc"   ,"\x9a"     ,"\xe1"
+ //    ,'√§'       ,'??'      ,'√∂'       ,'?<96>'   ,'√º'      ,'?<9c>'    ,'?<9f>'
+       ,"\xc3\xa4","\xc3\xe4","\xc3\xb6","\xc3\x96","\xc3\xbc","\xc3\x9c","\xc3\x9f","\xc3\xa9"
+  ),
+  array('ae'      ,'Ae'      ,'oe'      ,'Oe'      ,'ue'      ,'Ue'      ,'ss'      ,'e'
+       ,'ae'      ,'ae'      ,'oe'      ,'oe'      ,'ue'      ,'ue'      ,'ss'
+       ,'Ae'      ,'Ae'      ,'Oe'      ,'Oe'      ,'Ue'      ,'Ue'      ,'ss'
+ //    ,'ae'      ,'Ae'      ,'oe'      ,'Oe'      ,'ue'      ,'Ue'      ,'ss'
+       ,'ae'      ,'Ae'      ,'oe'      ,'Oe'      ,'ue'      ,'Ue'      ,'ss'      ,'e'
+ ),$s);
+ return $s;
+}
+
+function myutf8($s) { //f encodes umlauts as utf8
+ $s=enc_uml($s);
+ $s=str_replace(
+   array('&auml;'  ,'&Auml;'  ,'&ouml;'  ,'&Ouml;'  ,'&uuml;'  ,'&Uuml;'  ,'&szlig;' ,'&eacute;'),
+   array("\xc3\xa4","\xc3\xe4","\xc3\xb6","\xc3\x96","\xc3\xbc","\xc3\x9c","\xc3\x9f","\xc3\xa9"),$s);
+ return $s;
+}
+
+function handle_esc($s) { //f remove escape chars
+ global $handle_esc;
+ if ($handle_esc) {
+  $s = str_replace(
+     array("\\\\"  ,"\\'","\\\"","#$\\$#",'&amp;'),
+     array("#$\\$#","'"  ,'"'   ,"\\"    ,'&'    ),
+     $s);
+ }
+ return $s;
+}
+
+""".
+!
+"""
+//S parameter handling
+//s get(KEY,DEFAULT[,DECODE_FLAG]): get parameter / array element
+function get($k,$d='',$c=1) {
+ if (array_key_exists($k,$_GET)) {
+  $r = trim($_GET[$k]);
+  // if ($r == '?') return $d;
+  if ($c) $r = dec($r);
+  return $r;
+  }
+ else return $d;
+}
+
+function get0($k,$d='') {return get($k,$d,0);}
+
+// get field of an array
+function geta($a,$k,$d='') {
+ if (is_array($a) && array_key_exists($k,$a)) {
+  $r = $a[$k];
+  return $r;
+  }
+ else return $d;
+}
+
+function getat($a,$k,$d='') {return trim(geta($a,$k,$d));}
+
+function val($V) {
+ if ($V > 9) return 'x';
+ if ($V > 0) return '(x)';
+ else return '';
+}
+
+$out = array();
+
+// ----------------------------------------
+
+""".
+
+l "doc('" ($0~"'") "','" ($1~"'") "')." l =
+l "doc('" $0       "','"  $1      "')." p l
+! "$DocA['" $0 "'] = '" $1 "';" l .
+
+!
+"""
+$USR = getat($_SERVER,"PHP_AUTH_USER", 'unknown');
+
+dm($_GET,20,'eval');
+
+if (!get('wpos')) $_GET['wpos'] = 0;
+
+if (get('op') === 'eval') {
+ $kb = array();
+ foreach ($_GET as $x => $y) {
+  if (substr($x,0,2) === 'i_') {
+   list($R,$C) = explode_n('_',substr($x,2),2);
+   if (substr($C,0,1) === 'p') $f = '+'; else $f = '-';
+   $kb[] = "kb('$f','$R','$C','j').";
+  }
+ }
+ $kb = join("\n", $kb);
+ dm($kb,20,'kb');
+ $kb = file_get_contents("$datadir/docs.pl")."\n".$kb;
+ file_put_contents("$datadir/$USR.pl", $kb);
+ exec("cd $datadir && /usr/bin/swipl -s $datadir/$USR.pl -g run 2>&1",$x,$y);
+ if ($y > 0) {
+  msg("cd $datadir && /usr/bin/swipl -s $datadir/$USR.pl -g run 2>&1",'exec');
+  errx($x,'exec');
+ } else if (1) {
+  dm($x,20,'exec result');
+  $out[] = '<table>';
+  $out[] = '<tr><td>Nr</td>';
+  // $out[] = '<td>V</td>';
+  $out[] = '<td>Lief</td><td>Betr</td><td>Dokument</td></tr>';
+  foreach ($x as $l) {
+   list($N, $L, $B, $V, $T) = explode_n(':', $l, 5);
+   if ($V) {
+    $L = round($L * $V / 10);
+    $B = round($B * $V / 10);
+    $T = enc_uml(str_replace(
+        array('##nl##', '##k##', '##q##', '–'),
+        array("<br>\n", ','    , "'"    , '-'),
+        $DocA[trim($N)]));
+    if (substr($T,0,1) == '"') $T = substr($T,1,-1);
+    $V = val($V);
+    $L = val($L);
+    $B = val($B);
+    $out[] = '<tr>';
+    $out[] = "<td>$N</td>";
+    // $out[] = "<td>$V</td>";
+    $out[] = "<td>$L</td>";
+    $out[] = "<td>$B</td>";
+    $out[] = "<td>$T</td>";
+    $out[] = '</tr>';
+  }}
+  $out[] = '</table>';
+ } else {
+   dm($x,20,'exec');
+ }
+}
+
+// ----------------------------------------
+
+print(<<<EOF
+<html><head><title>doc list</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<meta name=viewport content="width=device-width, initial-scale=1">
+<style type="text/css">
+/* table {border: 1pt black solid;} */
+/* td {padding:3pt; border: 1pt black solid;} */
+td {padding:4pt; vertical-align:top;}
+.no-wrap {white-space:nowrap;}
+</style>
+<script src="sc/jquery-1.12.0.min.js" type="text/javascript"></script>
+<!--
+<script src="sc/kc.js" type="text/javascript"></script>
+<link rel="stylesheet" href="sc/skc.css" type="text/css">
+-->
+</head>
+<body onLoad="window.scrollTo(0,{$_GET['wpos']});">
+<script type="text/javascript">
+function DoOp(op) {
+ var x = document.getElementById('m_form');
+ x.elements['op'].value = op;
+ x.elements['wpos'].value = document.body.scrollTop;
+ x.submit();
+ return false;
+}
+</script>
+<table width="100%"><tr><td>
+<img src="im/preevent-logo.png">
+<!-- <h2>Study Project "Legal expert systems for technical domains" <br>
+DEMO Version 1</h2> -->
+</td><td align="right">
+user: $USR
+</td></tr></table>
+<h2>Dokumentationsanforderungen f&uuml;r Anlagen</h2>
+EOF
+);
+
+function popup_box($id, $x='',
+   $op_close='', $head='', $control='', $vis='none') {
+ // leaves two div open
+ $c =
+  "\n<div id=\"$id\" style=\"display:$vis;\" class=\"popup\">\n"
+
+ ."\n<div style=\"min-height:1.4em;background-color:#b0b0b0;padding:2px;\" class=\"drag_handle\">"
+ ."<table><tr><td nowrap>"
+ ."\n<button onclick=\"return $op_close;\">close</button>"
+ ."\n$control"
+ ."\n</td><td>&emsp;</td><td nowrap align=right>"
+ .$head
+ ."\n&emsp;</td></tr></table></div>"
+
+ ."\n<div style=\"overflow:auto;max-height:30em;padding:4px;min-width:10em;max-width:50em\">\n"
+ .$x
+ ."\n</div></div>\n";
+ return $c;
+}
+
+// jquery
+print(<<<'EOF'
+<script type="text/javascript">
+
+// there are $ in the code!!!
+
+// Minimalistic JQuery Draggable Plugin
+// Usage: $(selector).drags();
+// Options:
+// handle: the dragging handle.
+//    If not defined, then the whole body of the
+//    selected element will be draggable
+// cursor: the draggable element cursor type
+
+(function($) {
+ $.fn.drags = function(options) {
+  options = $.extend({
+   handle: '.drag_handle',
+   cursor: 'move'
+  }, options);
+  var $drag = null;
+  var $handles = (options.handle === '') ? this : this.find(options.handle);
+  $handles
+  .css('cursor', options.cursor)
+  .mousedown(function(e) {
+   $drag = (options.handle === '') ? $(this) : $(this).parent();
+   var dragH = $drag.outerHeight(),
+       dragW = $drag.outerWidth(),
+       posY  = $drag.offset().top  - e.screenY,
+       posX  = $drag.offset().left - e.screenX;
+   $(document)
+   .mousemove(function(e) {
+    var t  = e.screenY + posY,
+        l  = e.screenX + posX;
+    var h  = window.innerHeight - 30 /* dragH */,
+        w  = window.innerWidth  - 30 /* dragW */;
+    var lx = 0 + window.pageXOffset,
+        ux = w + window.pageXOffset,
+        ly = 0 + window.pageYOffset,
+        uy = h + window.pageYOffset;
+    if (t < ly) t = ly;
+    if (l < lx) l = lx;
+    if (t > uy) t = uy;
+    if (l > ux) l = ux;
+    $drag.offset({top: t, left: l});
+   }).mouseup(function() {
+    $(this).off('mousemove'); // release mouse
+    $drag = null;
+   });
+   e.preventDefault(); // disable selection
+  }).mouseup(function() { // all drag handles
+   $drag = null;
+  });
+  return this;
+ };
+})(jQuery);
+
+
+$('document').ready(function() {
+
+ $('.popup').drags();
+
+});
+
+</script>
+EOF
+);
+
+print(<<<EOF
+<form class="menu" id="m_form" method="post" action="$cc.php" enctype="multipart/form-data" xenctype="application/x-www-form-urlencoded" accept-charset="$CHARSET">
+<table>
+EOF
+);
+if (1) {1;
+""".
+
+.e.
+
+. ‹berschriften
+l "gb('T','" $1 "','" $2 "','" $3 "')."
+l =
+l
+'##b##' l
+'}' l
+'$'$1'p = 0;' l
+'$'$1'n = 0;' l
+'<tr>' l
+'<td><a href="link(' $1 ')" target="_blank"><h3>' $1 '</h3></a></td>' l
+'<td colspan="4"><h3>'($3<'##nl##','<br>')'</h3></td>' l
+'</tr>' l
+'##e##' l
+p l .
+
+l "gb('A','" $1 "','" $2 "','" $3 "')."
+l =
+l
+'##b##' l
+'if ($'$1'p > 0) {' l
+'<tr>' l
+'<td>&nbsp;</td>' l
+'<td colspan="4"><h3>'($3<'##nl##','<br>')'</h3></td>' l
+'</tr>' l
+'##e##'
+p l .
+
+l "gb(" $9 "'t','" $1 "','" $2 "','" $3 "')."
+l =
+l
+'##b##' l
+'<tr>' l
+'<td>' ($9<' ','&emsp;') '</td>' l
+'<td class="no-wrap">' $2 '</td>' l
+'<td colspan="3">'($3<'##nl##','<br>')'</td>' l
+'</tr>' l
+'##e##'
+p l .
+
+l "gb('" $0 "','" $1 "','" $2 "','" $3 "')."
+l =
+l "gbx('" $0 "','" $1 "','" $2 "','" $3 "')."
+l
+'##b##' l
+'<tr>' l
+'<td>&nbsp</td>' l
+'<td class="no-wrap">' $2 '</td>' l
+'##c##'$1'_'$2 l
+'<td><input type="checkbox"$checked name="i_'$1'_'$2'" value="1" onChange="return DoOp('"""'eval'"""');"></td>' l
+'<td colspan="2">'($3<'##nl##','<br>')'</td>' l
+'</tr>' l
+'##e##'
+p l .
+
+. indentation for subpoints
+. l "gb(  '" = p l "gb( '".
+l "gb(" $9 "'" $0 "','" $1 "','" $2 "','" $3 "')."
+l =
+l "gb('" $0 "','" $1 "','" $2 "','" $3 "')."
+l
+'##b##' l
+'<tr>' l
+'<td>&nbsp</td>' l
+'<td class="no-wrap">' $2 '</td>' l
+'<td>' ($9<' ','&emsp;') '</td>' l
+'##c##'$1'_'$2 l
+'<td><input type="checkbox"$checked name="i_'$1'_'$2'" value="1" onChange="return DoOp('"""'eval'"""');"></td>' l
+'<td>'($3<'##nl##','<br>')'</td>' l
+'</tr>' l
+'##e##'
+p l .
+
+"gbx("  = "gb(" .
+
+l '##c##'$1'_'$2 l =
+l
+'EOF' l
+');'  l
+"$checked = '';" l
+'dm("i_'$1'_'$2'",20,"checked");' l
+'if (get("i_'$1'_'$2'")) {' l
+' $'$1($2c1)' += 1;' l
+""" $checked = ' checked="checked"';""" l
+'}' l
+'print(<<<EOF' l.
+
+l '<tr>' l
+X1
+l '</tr>' l
+=
+l 'print(<<<EOF'
+l '<tr>' l
+X1
+l '</tr>' l
+'EOF'
+l ');' l.
+
+. links
+'link(MaschRL)'  = 'https://www.gesetze-im-internet.de/gsgv_9/index.html'.
+'link(NSR)'      = 'https://www.gesetze-im-internet.de/prodsg2011v_1/index.html'.
+'link(EMV)'      = 'https://www.gesetze-im-internet.de/emvg_2016/index.html'.
+'link(ATEX)'     = 'https://www.gesetze-im-internet.de/gsgv_11_2016/index.html'.
+'link(Druck)'    = 'https://www.gesetze-im-internet.de/gsgv_14_2016/index.html'.
+'link(VAwS)'     = 'https://www.gesetze-im-internet.de/wasgefstanlv/index.html'.
+'link(BetrSichV)'= 'https://www.gesetze-im-internet.de/betrsichv_2015/index.html'.
+
+. output html/php
+l '##b##' l
+X1
+l '##e##' l =
+p l
+! X1 l.
+
+!
+"""
+}
+print(<<<EOF
+</table>
+EOF
+);
+if ($msg_out) {
+ print(popup_box('msg_area'
+     ,join('',$msg_out)
+     ,"DoOp('eval')"
+     ,$msg_head
+     ,''
+     ,'block;position:fixed;top:60pt;left:40%;'
+     .'background-color:white;border:solid;'));
+}
+
+if ($out) {
+ print(popup_box('doc_area'
+     ,join('',$out)
+     ,"DoOp('eval')"
+     ,'Dokumente'
+     ,''
+     ,'block;position:fixed;top:40pt;left:60%;'
+     .'background-color:white;border:solid;'));
+}
+
+print(<<<EOF
+<input type="hidden" id="op" name="op" value="">
+<input type="hidden" name="wpos" value="0">
+</form>
+</body></html>
+EOF
+);
+?>
+""".
+
+o.
+
+b
+"""
+
+:- dynamic kb/2.
+:- dynamic kb/4.
+
+kb(x,x).
+
+% implements soft or
+p(_R,X,Y,Y) :- X =< Y, !.    % cannot contribute to result
+
+p(R,X,Y,Z) :-                % we know true or false
+   kb(R,A), !,
+   (A = j -> Z = X ; Z = Y).
+
+p(R,X,Y,Z) :-                % we conclude true  or false or we ask
+   (gb(R,A) -> true;
+    dialog(ask:R,A)
+   ),
+   assert(kb(R,A)), !,
+   (A = j -> Z = X ; Z = Y).
+
+p(_R,_X,Y,Y).                % we do not know anything, assume false
+
+gb(R,n) :- kb(-,R,_C,j), ! . % we have an argument for no
+
+gb(R,j) :-                   % we have an argument for yes or ask
+   (kb(+,R,_C,j) -> true ;
+    gb(+,R,C,D),
+    not(kb(+,R,C,_)),
+    dialog(ask:R:C:D,A),
+    assert(kb(+,R,C,A)),
+    A = j
+   ), !,
+   not(gb(R,n)).             % and no argument for no
+
+gb(R,n) :-
+   kb(+,R,_C,j),           % Geltungsbereich trifft im Prinzip zu
+   (kb(-,R,_C1,n) -> true; % aber es gibt eine bekannte Ausnahmen
+    gb(-,R,C,D),           % es gibt Ausnahmen
+    (kb(-,R,C,A) -> true;  % schon bekannt
+     not(kb(_,R,C,_)),     % nicht bekannt
+     dialog(ask:R:C:D,A),  % fragen
+     assert(kb(-,R,C,A))
+    ),
+    A = j, !
+   ) .
+
+
+% gb(_R,n).
+
+dialog(Ask,A) :- false,
+  write(Ask),
+  read(A).
+
+run :-
+  doc(D,L,B,0,X), X > 0,
+  writeln(D:L:B:X),
+  fail.
+
+run.
+
+kb(x,x,x,x).
+
+""".
+
+e.
+
+
+
+
+s1.
+
+1 l .
+
+l ".p" $1 l = l #0c p l . form feed
+
+l "." $1 l = p l .
+
+"Ñ" = "‰" .
+"î" = "ˆ" .
+"Å" = "¸" .
+"é" = "ƒ" .
+"ô" = "÷" .
+"ö" = "‹" .
+"·" = "ﬂ" .
+
+#09 = " " .
+
+#0d = .
+
+#0a = #0d #0a .
+
+s0.
+e.

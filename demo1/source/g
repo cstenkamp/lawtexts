@@ -1,0 +1,35 @@
+
+wget -O html/MaschRL.html "https://www.gesetze-im-internet.de/gsgv_9/BJNR070410993.html"
+g_rule +s +V=MaschRL gb_n.rul html/MaschRL.html pl/%f.pl
+
+wget -O html/Druck.html "http://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32014L0068"
+# wget -O html/Druck.html "https://www.gesetze-im-internet.de/gsgv_14_2016/BJNR069200015.html"
+g_rule +s +V=Druck gb_n.rul html/Druck.html pl/%f.pl
+
+# wget -O html/ATEX.html "https://www.buzer.de/s1.htm?g=11.+ProdSV&f=1"
+wget -O html/ATEX.html "https://www.gesetze-im-internet.de/gsgv_11_2016/BJNR003900016.html"
+g_rule +s +V=ATEX gb_n.rul html/ATEX.html pl/%f.pl
+
+# wget -O html/NSR.html "https://www.buzer.de/s1.htm?g=1.+ProdSV&f=1"
+wget -O html/NSR.html "https://www.gesetze-im-internet.de/prodsg2011v_1/BJNR050200016.html"
+g_rule +s +V=NSR gb_n.rul html/NSR.html pl/%f.pl
+
+wget -O html/EMV.html "https://www.gesetze-im-internet.de/emvg_2016/BJNR287910016.html"
+g_rule +s +V=EMV gb_n.rul html/EMV.html pl/%f.pl
+
+wget -O html/VAwS.html "https://www.gesetze-im-internet.de/wasgefstanlv/BJNR037700010.html"
+g_rule +s +V=VAwS gb_n.rul html/VAwS.html pl/%f.pl
+
+wget -O html/BetrSichV.html "https://www.gesetze-im-internet.de/betrsichv_2015/BJNR004910015.html"
+g_rule +s +V=BetrSichV gb_n.rul html/BetrSichV.html pl/%f.pl
+
+g_rule +s r.rul Dokumentationsanforderung.csv docs.pl
+
+t="preevent1"
+
+if test x$1 = xinstall ; then
+ cp docs.php ~/Sites/$t/
+ cp docs.pl /var/data/$t/docs/
+ echo install $t
+fi
+ 

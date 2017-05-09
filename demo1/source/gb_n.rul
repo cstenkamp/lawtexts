@@ -1,0 +1,533 @@
+
+. juris, buzer, eur-lex  analyse
+
+#0d =.
+z1.
+
+. Sonderzeichen
+'&#167;' = '&sect;'. Paragraphenzeichen
+'Âß'     = '&sect;' .
+
+'Ãü'  = '&szlig;' .
+'ÃŸ'  = '&szlig;' .
+'Ã¤'  = '&auml;'.
+'Ã¶'  = '&ouml;' .
+'Ã¼'  = '&uuml;' .
+
+'ä'      = '&auml;'. 
+'Š'   = '&auml;'. 
+'&#228;' = '&auml;'.
+
+'Ä' = '&Auml;'.
+'&#196;' = '&Auml;'.
+
+'ö'      = '&ouml;'. 
+'&#246;' = '&ouml;' .
+
+'ü'      = '&uuml;'. 
+'Ÿ'   = '&uuml;'. 
+'&#252;' = '&uuml;' .
+
+'Ü'   = '&Uuml;'.
+'†'   = '&Uuml;'.
+'&#220;' = '&Uuml;'.
+
+'ß'      = '&szlig;' .
+'§'      = '&szlig;'.
+'&#223;' = '&szlig;'.
+
+
+'â€”' = ' - '.
+'â€ž' = '"'.
+'â€œ' = '"'.
+
+'&#160;' = '&nbsp;'.
+'Â ' = '&nbsp;'.
+
+l ' ' = p l.
+l=.
+
+'#####'.
+1
+'#####' X0 '<body' = '<body'.
+
+'</div>' = l '</div>' l.
+'<div' $0 '>' = l '<div' $0 '>' l.
+
+'</dl>' = '</dl>' l.
+
+b ' </div>' = '</div>'.
+
+ll = p l.
+
+.e.
+
+. buzer
+1
+'####' X6 '<h3 class="art0">&sect;' $0 ' ' $1 '</h3>'
+=
+l '&#&#&sect;' $0 ' ' $1 l :
+#              Nr     Titel
+'<h3 class="art0">&sect;' $0 ' ' $1 '</h3>' =
+l '<h3 class="art0">&sect;' $0 ' ' $1 '</h3>' p l.
+
+# '<h3 class="art0">&sect;' $0 ' ' $1 '</h3>' =
+# l '&#&#&sect;' $0 ' ' $1 l .
+
+.e.
+
+. eur-lex
+
+'<p ' ($10~'>') 'class="ti-art"' ($3~'>') '>Artikel ' $0 '</p>' ($11~'<') '<p class="sti-art">'$1'</p>'
+=
+l '&#&#&sect; ' $0 ' ' $1 l .
+.             Nr     Titel
+
+.e.
+
+'<br' $0 '>' = .
+
+. table --> dl
+'<table' $0 '>'  = '<dl>'.
+'</table>'   = '</dl>'.
+'<tr' $0 '><td' $1 '>' = '<dt>'.
+'</td><td' $0 '>' = '</dt><dd>'.
+'</td></tr>' = '</dd>'.
+'<table ' $0 '>' = l '{' l .
+'<col' $0 '>' = .
+'</col>' = .
+'<tbody' $0 '>' = .
+'</tbody>' = .
+'<td' $0 '>' = '<td>'.
+'</table>' = l '}' l .
+
+'<dl' $0 '>'  = l '<dl' $0 '>' l.
+'</dl>' = l '</dl>' l.
+'<dd' $0 '>'  = l '<dd' $0 '>' l.
+'</dd>' = l '</dd>' l.
+'<dt' $0 '>'  = l '<dt' $0 '>' l.
+'</dt>' = l '</dt>' l.
+
+'<p' $0 '>' = l .
+'</p>' = l .
+
+'{' = '##ca##' .
+'}' = '##cz##' .
+'[' = '##sa##' .
+']' = '##sz##' .
+'(' = '##pa##' .
+')' = '##pz##' .
+
+b '<div' $0 '>' X1 '</div>' = '[' $0 '#' X1 l ']' .
+
+ll = p l.
+
+.e.
+
+l '[' $0 '#' l ']' l = p l .
+
+b l '[#' %1 ']' l = p l %1 .
+
+l '[' $0 '#' l ']' l = p l .
+
+'</div>' = l .
+'<div' $0 '>' = l .
+
+.e.
+
+. juris
+
+l '[ class="jnheader"#' l %10 '<span class="jnenbez">' $0 '</span>&nbsp;<span class="jnentitel">'$1 '</span>' %11
+']' l
+=
+l '&#&#' $0 ' ' $1 l.
+.        Nr     Titel
+
+l '[ class="jnnorm"' $10 '#' l '&#&#' %1
+']' l
+=
+p l '&#&#' %1 .
+
+l '[ class="jnhtml"' $10 '#' %1
+']' l
+=
+p l %1 .
+
+.e.
+
+'####'.
+
+1
+'####' X6  l '&#&#' $0 ' ' $1 l =
+l '&#&#' $0 ' ' $1 l.
+
+b
+'######'.
+
+. juris
+
+b1
+'[ id="fusszeile"#' X0 '######' = l.
+
+. buzer
+b1
+'[ class="top"#' X0 '######' = l.
+
+.e.
+
+. eur-lex (Druck)
+b1
+l 'KAPITEL 2' l X0 '######' = l.
+
+.e.
+
+ll = pl.
+
+. dl for indentation
+l '<dl' $0 '>' l = l '{' l .
+l '</dl>' l = l '}' l .
+
+l '<dt' $0 '>' l $1 l '</dt>' l '<dd' $2 '>' l %3 l '</dd>' l = p l '~#~' $1 ':' (%3<'"','##dq##'<':','##co##') l .
+
+l '##pa##' $0 '##pz##&nbsp;&nbsp;&nbsp;' $1 l = l '~#~' $0 ':' ($1<'"','##dq##'<':','##co##') p l.
+l '##pa##' $0 '##pz## ' $1 l  = l '~#~' $0 ':' ($1<'"','##dq##'<':','##co##') p l.
+
+.e.
+
+. juris 
+
+l '[ class="jurAbsatz"#' l %1 l ']' = l %1 p l .
+
+. butzer
+
+'[ class="abs"###pa##' $0 '##pz## ' %1 ']' =
+
+# '}' l      ##pa##' $0 '##pz##
+
+p '"##pa##' $0 '##pz##":' %1  l
+# '{' l
+:
+# b '}' l :
+# 1 '}' l = :
+'{' (X0<l) '}' l = l.
+
+.e.
+
+ll = pl.
+
+. ----------------
+
+. remove garbage
+
+'[' $8 '#' %1 ']' = p %1 .
+
+l $0 '<h' $1 'Abschnitt' $2 '</h' $3 l = p l.
+
+']' l = .
+
+.e.
+
+l '}' l '{' l = l.
+
+.e.
+
+ll = p l.
+
+b l '&#&#'.
+
+l '&#&#' $0 ' ' $1 l
+X2
+l '&#&#'
+=
+l '&#&#' $0 ' ' $1 l
+'{' l
+X2 l
+'}'
+p
+l '&#&#'.
+
+1 b l '&#&#' =.
+
+.e.
+
+'{' (X0<l) '}' l = l .
+
+.e.
+
+'<' $0 '>' =.
+
+ll = p l.
+
+b ' ' l = l p .
+
+ll = p l .
+
+':' -'"' $0 l = ':"' ($0<'"','##dq##'<':','##co##') '"' l.
+
+b ' "' = '"'.
+'" ' = p '"'.
+
+',"' = '"'.
+
+' und"' = '"'.
+
+.e.
+
+l '{' -l = l '{' p l .
+
+. skip initial part
+
+'####'.
+1
+'####' X1 '&#&#&sect; 1 ' =
+l '&#&#&sect; 1 ' .
+
+. quotes on rhs
+l '~#~' $0 ':' - '"' $1 l = l '~#~' $0 ':"' $1 '"' p l .
+
+.e.
+
+. format:
+. &#&#&sect; NUMBER TITLE {
+. ...                          one line per paragrph / bullet point
+. {                            sub-point
+. ...
+. }
+. ...
+. }
+
+. build hierarchical index
+
+'~#~ - :' = . bullet points, but we need numbers
+
+l '{' l = '{' l .
+
+'{' l - '~#~' = '{' l '#+#1' p l .
+
+.e.
+
+l '#+#' $0 l %1 l =
+l '~#~' $0 p ':' %1 l '#+#' [I "%d", $0 + 1] l .
+
+l '#+#' $0 l = p l .
+
+.e.
+
+. clean index values
+
+l '~#~' $0 ':' = 
+l '~#~' ($0<'.',''<'##pa##',''<'##pz##','') ':' . 
+
+.e.
+
+. text continuation after sub-points
+
+l '~#~' $10 ':' $11 '{' %12
+'}' l -'~#~' -'&#&#' -'}' $0 l
+=
+l '~#~' $10 ':' $11 '{' p %12
+'}' l  '~#~' $10 '_:' ($0<'"','##dq##'<':','##co##') '"' p l
+! $10 ':' $11 l .
+
+. text continuation (multible paragraphs)
+
+l '~#~' $0 ':"' $1 '"' l -'~#~' -'&#&#' -'}' $2 l
+=
+p l '~#~' $0 ':"' $1 '##lf##' ($2<'"','##dq##') '"' l.
+
+.  hierarchical index
+
+b
+l '~#~' $0 ':' %1 l = p
+l $0 ':' (%1<l, l $0 '_') l. 
+
+'~#~' = .
+
+. section index
+
+b
+l '&#&#&sect; ' $0 ' ' $1 '{' %2
+l '}'
+=
+l '&#&# &sect; ' $0 ' ' $1 p '{'
+l $0 ':"' $1 '"{' (%2<l,l $0 '_')
+l '}'
+l '}' .
+
+l '&#&# &sect; ' = l '&#&#&sect; '.
+
+'{' l = l '{' l .
+
+l $0 '}' = l '}'.
+
+. once again quotes
+
+':' -'"' $0 l = ':"' ($0<'"','##dq##'<':','##co##') '"' l.
+
+l '&#&#' - '&sect;' $0
+l '{' %1 '}'
+=.
+
+.e.
+
+. -------------------------
+. now we have nearly json
+. -------------------------
+
+. lex BetrSichV
+1
+l '1_1:"Diese Verordnung gilt f&uuml;r die Verwendung von Arbeitsmitteln. ' $0
+l '{' %1 '}'
+l $2 
+l %3 '}'
+ =
+l '1_1:"Diese Verordnung gilt f&uuml;r die Verwendung von Arbeitsmitteln. ' $0
+l '{' %1 '}'
+l $2
+l '1x:"Ausnahmen:"'
+l '{'
+l (%3<'1_','1x_') '}'
+l '}'.
+
+
+. lex VAwS
+1
+l '1_1:"Der Betreiber' $0 'des Wasserhaushaltsgesetzes' $1 l
+=
+l '1_x:"Geltungsbereich"'
+l '{'
+l '1_x_1:"Betrieb' $0 'des Wasserhaushaltsgesetzes"'
+l '}'
+
+l '1_1:"Der Betreiber' $0 'des Wasserhaushaltsgesetzes' $1 l .
+
+.e.
+
+. find index for + - B
+
+1
+l ?10 ':"' $0 'Anwendungsbereich' $2 l =
+l *10 ':"' $0 'Geltungsbereich' $2 l ;
+1
+l ?10 ':"' $0 'Geltungsbereich' $2 l =
+l *10 ':"' $0 'Geltungsbereich' $2 l ;
+1
+l ?10 ':"' $0 'Dies' $1 'gilt f&uuml;r' $2 l =
+l *10 ':"' $0 $2 l ;
+1
+l ?10 ':"' $0 'Dies' $1 'ist auf' $2 'anzuwenden' $3 l =
+l *10 ':"' $0 $2 $3 l .
+
+1
+l ?11 ':"' $0 'Einschr&auml;nkungen des' $1 'bereichs' $2 l =
+l *11 ':"' $0 'Ausnahmen' $2 l ;
+1
+l ?11 ':"Ausnahme' $2 l =
+l *11 ':"Ausnahme' $2 l ;
+1
+l ?11 ':"' $0 'Dies' $1 'gilt nicht f&uuml;r' $2 l =
+l *11 ':"' $0 'Dies' $1 'gilt nicht f&uuml;r' $2 l ;
+1
+l ?11 ':"' $0 'Dies' $1 'ist nicht anzuwenden auf' $2 l =
+l *11 ':"' $0 'Dies' $1 'ist nicht anzuwenden auf' $2 l ;
+1
+l ?11 ':"' $0 'Die' $1 'finde' $2 'keine Anwendung' $3 l =
+l *11 ':"' $0 'Die' $1 'finde' $2 'keine Anwendung' $3 l .
+1
+l ?12 ':"' $0 'Begriffsbestimmung' $3 l =
+l *12 ':"' $0 'Begriffsbestimmung' $3 l .
+
+! '+:' *10 l.
+! '-:' *11 l.
+! 'B:' *12 l. Begriffsbestimmungen
+
+.e.
+
+'##pa##' = '('.
+'##pz##' = ')'.
+'##ca##' = '{'.
+'##cz##' = '}'.
+'##sa##' = '['.
+'##sz##' = ']'.
+'##co##' = ':'.
+
+l
+'+: ' *10 l
+'-: ' *11 l
+'B: ' *12 l.
+
+w 'tmp/' *0 '.x'.
+
+.e.
+
+. compile Geltungsbereich to Prolog
+
+. *11 Ausnahmen (must be first!!!!)
+
+. top-level without sub-points: check condition
+l *11 ':"' $2 '"' l - '{' =
+l "gb('-','" *0 "','n" *10 "','" ($2<"'",'##sq##') "')." p l.
+
+. top-level with sub-points: only headline
+l *11 ':"' $1 '"' l =
+l "gb('A','" *0 "','n" *11 "','Ausnahmen')." p l .
+
+. sub-level without sub-points: check condition
+l *11 '_' $1 ':"' $2 '"' l - '{' =
+l "gb('-','" *0 "','n" *11 '_' $1 "','" ($2<"'",'##sq##') "')." p l.
+
+. sub-level with sub-points: only headline
+b
+l *11 '_'  $1 ':"' $2 '"'
+l '{' %3 l '}' l =
+l "gb('t','" *0 $1 "','n" *11 '_' $1 "','" ($2<"'",'##sq##') "')." p
+l '{' (%3<l'gb(',l'gb( ') l '}' l .
+. Einrückung durch Blanks nach 'gb('
+
+.e.
+
+. *10 Geltunsgbereich
+
+. top-level without sub-points: check condition
+l *10 ':"' $2 '"' l - '{' =
+l "gb('+','" *0 "','p" *10 "','" ($2<"'",'##sq##') "')." p l.
+
+. top-level with sub-points: only headline
+l *10 ':"' $1 '"' l =
+l "gb('T','" *0 "','p"*10"','Geltungsbereich')." p l .
+
+. sub-level without sub-points: check condition
+l *10 '_' $1 ':"' $2 '"' l - '{' =
+l "gb('+','" *0 "','p" *10 '_' $1 "','" ($2<"'",'##sq##') "')." p l.
+
+. sub-level with sub-points: only headline
+b
+l *10 '_' $1 ':"' $2 '"'
+l '{' %3 l '}' l =
+l "gb('t','" *0 $1 "','p" *10 '_' $1 "','" ($2<"'",'##sq##') "')." p
+l '{' (%3<l'gb(',l'gb( ') l '}' l .
+. Einrückung durch Blanks nach  'gb(
+
+.e.
+
+. continuation of sub-points: only headline
+
+l "gb(" $0 "," $1 ",'" $2 "_'," $3 ")."
+=
+l "gb('t'," $1 ",'" $2 "_'," $3 ").".
+
+bl.
+. alles sonstige löschen
+l -'gb(' $0 l = p l.
+bl.
+
+"' " = p "'".
+"'##nl##" = p "'".
+"'-##nl##" = p "'-".
+";')." = "').".
+",')." = "').".
+" und')." = "').".
+"'&nbsp;" = p "'".
+'"&nbsp;' = p '"'.
+e.
+
