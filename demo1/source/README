@@ -1,0 +1,9 @@
+Here is some source code of the first demo system.
+
+It uses g_rule, a pattern matcher based substitution rule system
+
+- to extract and normalize application specifications and exceptions from law texts
+- generate a prolog knowledge base containing
+   - the documentation rules
+   - the questionaire
+- generate a .php script realising the GUI
