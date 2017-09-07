@@ -1,0 +1,5 @@
+Handelt es sich um Sicherheits-, Kontroll- und Regelvorrichtungen für den Einsatz außerhalb von explosionsgefährdeten Bereichen, die jedoch im Hinblick auf Explosionsrisiken für den sicheren Betrieb von Geräten und Schutzsystemen erforderlich sind oder dazu beitragen
+$
+ja
+%
+nein

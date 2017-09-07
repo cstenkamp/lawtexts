@@ -1,0 +1,21 @@
+Um welche art von Erzeugnis handelt es sich?
+$
+Betriebsmittel, die von der Richtlinie 1999/5/EG erfasst werden;
+%
+luftfahrttechnische Erzeugnisse, Teile und Ausrüstungen im Sinne der Verordnung (EG) Nr. 216/2008 des Europäischen Parlaments und des Rates vom 20. Februar 2008 zur Festlegung gemeinsamer Vorschriften für die Zivilluftfahrt und zur Errichtung einer Europäischen Agentur für Flugsicherheit, zur Aufhebung der Richtlinie 91/670/EWG des Rates, der Verordnung (EG) Nr. 1592/2002 und der Richtlinie 2004/36/EG (9);
+%
+Funkgeräte, die von Funkamateuren im Sinne der im Rahmen der Konstitution der Internationalen Fernmeldeunion und der Konvention der Internationalen Fernmeldeunion (10) erlassenen Vollzugsordnung genutzt werden, es sei denn, diese Betriebsmittel werden auf dem Markt bereitgestellt;
+%
+Betriebsmittel, die aufgrund ihrer physikalischen Eigenschaften
+
+    i) einen so niedrigen elektromagnetischen Emissionspegel haben oder in 
+    so geringem Umfang zu elektromagnetischen Emissionen beitragen, dass ein 
+    bestimmungsgemäßer Betrieb von Funk- und Telekommunikationsgeräten und 
+    sonstigen Betriebsmitteln möglich ist, 
+
+    und
+
+    ii) unter Einfluss der bei ihrem Einsatz üblichen elektromagnetischen 
+    Störungen ohne unzumutbare Beeinträchtigung betrieben werden können.
+%
+kunden- und anwendungsspezifisch angefertigte Erprobungsmodule, die von Fachleuten ausschließlich in Forschungs- und Entwicklungseinrichtungen für ebensolche Zwecke verwendet werden.

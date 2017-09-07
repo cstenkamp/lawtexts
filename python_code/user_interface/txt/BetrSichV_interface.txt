@@ -1,0 +1,5 @@
+Welche Aussagen treffen entweder über den Betrieb, in dem die Anlage/das Erzeugnis verwendet wird, oder über die Anlage/das Erzeugnis selbst, zu?
+$
+Betrieb unterliegt dem Bundesberggesetz
+%
+Anlage ist überwachungsbedürftige Anlage in Tagesanlagen, jedoch 
