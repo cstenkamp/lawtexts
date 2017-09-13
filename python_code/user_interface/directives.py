@@ -147,8 +147,8 @@ class MachineryDirective(Directive):
 
 
 	def checkApplicabiliyOnComponent(self, componentFrame):
-		for component in componentFrames:
-			# check if something is interesting for pressure directive
+		for component in componentFrame:
+			# check if something is interesting for machine directive
 			for property in component.properties:
 				if hasattr(property,'checkVar3'):
 							if property.checkVar3.get() == 1:

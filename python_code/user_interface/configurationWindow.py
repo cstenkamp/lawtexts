@@ -151,6 +151,30 @@ class ConfigurationWindow(Toplevel):
         row.propertyValueLabel = Label(row, text=row.propertyValueUnit.get())
         row.propertyValueLabel.grid(row=0, column=4, sticky=W)
 
+    def addMaxPressurePanel(self, row):
+        # row.part = Pressure()
+        row.title = 'Maximal zulässiger Druck'
+        # add entry to fill in volatge:
+        row.propertyValue = Entry(row, text='', width=5)
+        row.propertyValue.grid(row=0, column=3)
+        # add label
+        row.propertyValueUnit = StringVar()
+        row.propertyValueUnit.set('bar')
+        row.propertyValueLabel = Label(row, text=row.propertyValueUnit.get())
+        row.propertyValueLabel.grid(row=0, column=4, sticky=W)
+
+    def addPressureAtMaxTemperaturePanel(self, row):
+        # row.part = Pressure()
+        row.title = 'Dampfdruck bei maximal zulässiger Temperatur'
+        # add entry to fill in volatge:
+        row.propertyValue = Entry(row, text='', width=5)
+        row.propertyValue.grid(row=0, column=3)
+        # add label
+        row.propertyValueUnit = StringVar()
+        row.propertyValueUnit.set('bar')
+        row.propertyValueLabel = Label(row, text=row.propertyValueUnit.get())
+        row.propertyValueLabel.grid(row=0, column=4, sticky=W)
+
     def addPowerPanel(self, row):
         #row.part = Wattage()
         row.title = 'Leistung'
@@ -250,11 +274,34 @@ class ConfigurationWindow(Toplevel):
         row.propertyValueLabel.grid(row=0, column=4, sticky=W)
 
 
+    def addConditionalVoltagePanel(self, row):
+        if row.checkVar1.get() == 1 and row.checkVar2.get() == 1 and row.checkVar3.get() == 1:
+            # row.part = Voltage()
+            Label(row, text='Betriebsspannung').grid(row = 4,column=2)
+            row.title = 'Betriebsspannung'
+            # add entry to fill in volatge:
+            row.propertyValue = Entry(row, text='', width=5)
+            row.propertyValue.grid(row=4, column=3)
+            # add label
+            row.propertyValueUnit = StringVar()
+            row.propertyValueUnit.set('')
+            row.options = ['Volt a/c', 'Volt d/c']
+            row.propertyValueMenu = OptionMenu(row, row.propertyValueUnit, *row.options)
+            row.propertyValueMenu.grid(row=4, column=4, sticky=W, columnspan=2)
+            # add checkbox for elektromagnetic interference
+            row.checkVar = IntVar()
+            row.checkVar.set(0)
+            row.checkButton = Checkbutton(row, var=row.checkVar,
+                                          text='Kann prinzipiell elektromagnetische Störungen Verursachen.',
+                                          justify=LEFT)
+            row.checkButton.grid(row=8, column=2, columnspan=7, sticky=W)
+
     def addMachinePanel(self, row):
         #row.part = Temperature()
         row.title = 'MRL'        
         row.checkVar1 = IntVar()
         row.checkVar1.set(0)
+        row.checkVar1.trace('w',lambda *args: self.addConditionalVoltagePanel(row))
         row.checkButton1 = Checkbutton(row, var=row.checkVar1, 
                                 text='Betseht aus miteinander verbundenen Teilen mit mindestens einem beweglichen Teil',
                                 justify=LEFT)
@@ -269,11 +316,12 @@ class ConfigurationWindow(Toplevel):
 
         row.checkVar3 = IntVar()
         row.checkVar3.set(0)
-        row.checkVar3.trace('w', lambda *args:print('hola'))
-        row.checkButton2 = Checkbutton(row, var=row.checkVar3, 
+        row.checkVar3.trace('w',lambda *args: self.addConditionalVoltagePanel(row))
+        row.checkButton3 = Checkbutton(row, var=row.checkVar3,
+
                                 text='Ist eine mit einem anderen Antriebssystem als der unimttelbar eingestetzen menschlichen oder tierischen Kraft ausgestattet',
                                 justify=LEFT)
-        row.checkButton2.grid(row=2,column=2, columnspan=7, sticky=W)
+        row.checkButton3.grid(row=2,column=2, columnspan=7, sticky=W)
 
 
 
@@ -300,6 +348,10 @@ class ConfigurationWindow(Toplevel):
         if row.propertyName.get() == 'Betriebsspannung':
             self.addVoltagePanel(row)
         if row.propertyName.get() == 'Druck':
+            self.addPressurePanel(row)
+        if row.propertyName.get() == 'Maximal zulässiger Druck':
+            self.addMaxPressurePanel(row)
+        if row.propertyName.get() == 'Dampfdruck bei maximal zulässiger Temperatur':
             self.addPressurePanel(row)
         if row.propertyName.get() == 'Temperatur':
             self.addTemperaturePanel(row)
@@ -373,8 +425,8 @@ class ConfigurationWindow(Toplevel):
             initRows = ['Inhalt','Volumen']
 
         elif self.componentType == 'Dampferzeuger (Kessel)':
-            initRows = ['Inhalt','Volumen','Druck','Temperatur',
-                        'Betriebsspannung','Leistung','Maschine']
+            initRows = ['Maschine','Inhalt','Maximal zulässiger Druck','Dampfdruck bei maximal zulässiger Temperatur']
+
 
         elif self.componentType == 'Rührwerk':
             initRows = ['Inhalt','Volumen','Betriebsspannung','Leistung']
