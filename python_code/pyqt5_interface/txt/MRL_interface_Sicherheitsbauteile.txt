@@ -1,0 +1,5 @@
+Um welche Art von Sicherheitsbauteil handelt es sich?
+$
+Sicherheitsbauteile, die als Ersatzteile zur Ersetzung identischer Bauteile bestimmt sind und die vom Hersteller der Ursprungsmaschine geliefert werden.
+%
+Andere Sicherheitsbauteile

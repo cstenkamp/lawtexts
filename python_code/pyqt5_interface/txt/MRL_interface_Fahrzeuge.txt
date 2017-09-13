@@ -1,0 +1,14 @@
+Um welche Art von Fahrzeug handelt es sich?
+(Zutreffendes bitte auswählen.)
+$
+land- und forstwirtschaftliche Zugmaschinen in Bezug auf die Risiken, die von der Richtlinie 2003/37/EG erfasst werden, mit Ausnahme der auf diesen Fahrzeugen angebrachten Maschinen,
+%
+Kraftfahrzeuge und Kraftfahrzeuganhänger im Sinne der Richtlinie 70/156/EWG des Rates vom 6. Februar 1970 zur Angleichung der Rechtsvorschriften der Mitgliedstaaten über die Betriebserlaubnis für Kraftfahrzeuge und Kraftfahrzeuganhänger (13) mit Ausnahme der auf diesen Fahrzeugen angebrachten Maschinen,
+%
+Fahrzeuge im Sinne der Richtlinie 2002/24/EG des Europäischen Parlaments und des Rates vom 18. März 2002 über die Typgenehmigung für zweirädrige oder dreirädrige Kraftfahrzeuge (14) mit Ausnahme der auf diesen Fahrzeugen angebrachten Maschinen,
+%
+ausschließlich für sportliche Wettbewerbe bestimmte Kraftfahrzeuge
+%
+Beförderungsmittel für die Beförderung in der Luft, auf dem Wasser und auf Schienennetzen mit Ausnahme der auf diesen Beförderungsmitteln angebrachten Maschinen;
+%
+Keins der genannten
