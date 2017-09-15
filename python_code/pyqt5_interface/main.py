@@ -321,6 +321,7 @@ class MachineGui(QWidget):
     def startMDI(self):
         if self.MDI is None:
             self.MDI = MachineryDirectiveInterface(self.machine)
+            self.MDI.applicabilityPilot()
         else:
             self.MDI.show()
 
@@ -373,4 +374,4 @@ if __name__ == '__main__':
     M = Machine()
     MG = MachineGui(M)
 
-    sys.exit(app.exec_())
+    #sys.exit(app.exec_())

@@ -3,18 +3,81 @@ from PyQt5.QtWidgets import *
 
 from interfaceHelper import *
 
+class Message(QFrame):
+    def __init__(self, directive_name, directive_id, message):
+        super(Message,self).__init__()
+        self.setFrameShape(QFrame.Box)
+        self.setFrameShadow(QFrame.Sunken)
+        self.directive_name = directive_name
+        self.directive_id = directive_id
+        self.message = message
+
+        self.mainLayout = QVBoxLayout(self)
+        self.mainLayout.setAlignment(Qt.AlignTop|Qt.AlignLeft)
+        self.setLayout(self.mainLayout)
+        
+        self.titleLayout = QVBoxLayout()
+        self.titleLayout.setAlignment(Qt.AlignTop|Qt.AlignLeft)
+        self.mainLayout.addLayout(self.titleLayout)
+
+        self.titleTopLayout = QHBoxLayout()
+        self.titleLayout.addLayout(self.titleTopLayout)
+
+        self.titleBottomLayout = QHBoxLayout()
+        self.titleLayout.addLayout(self.titleBottomLayout)
+
+        self.bottomLayout = QVBoxLayout()
+        self.mainLayout.addLayout(self.bottomLayout)
+
+        self.titleLabel = QLabel('Auswertung nach: {0} ({1})'.format(self.directive_id,directive_name))
+        self.titleTopLayout.addWidget(self.titleLabel)
+
+        self.messageLabel = QLabel(message)
+        self.titleBottomLayout.addWidget(self.messageLabel)
+
+    def delete(self):
+        self.deleteLater()
+
+class ResultWindow(QFrame):
+    def __init__(self):
+        super(ResultWindow,self).__init__()
+        self.setGeometry(300,300,400,100)
+        self.setWindowTitle('Ergebnisse')
+        self.show()
+        #
+        self.mainLayout = QVBoxLayout(self)
+        self.mainLayout.setAlignment(Qt.AlignTop|Qt.AlignLeft)
+        self.setLayout(self.mainLayout)
+        #
+        self.topLayout = QHBoxLayout()
+        self.topLayout.setAlignment(Qt.AlignRight|Qt.AlignTop)
+        self.mainLayout.addLayout(self.topLayout)
+        #
+        self.bottomLayout = QVBoxLayout()
+        self.bottomLayout.setAlignment(Qt.AlignRight|Qt.AlignTop)
+        self.mainLayout.addLayout(self.bottomLayout)
+        #
+        self.closeButton = QPushButton('schließen')
+        self.closeButton.clicked.connect(self.hide)
+        self.topLayout.addWidget(self.closeButton)
+
+
 class Interface(QWidget):
-    def __init__(self, title=None):
+    def __init__(self, title=None, id_string=None):
         super(Interface,self).__init__()
         self.setGeometry(300,300,400,100)
         self.setWindowTitle(title)
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.setAlignment(Qt.AlignTop)
+        self.title = title
+        self.id_string = id_string
         self.setLayout(self.mainLayout)
         self.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
         self.show()
         #
         self.questions = []
+        self.resultWindow = None
+        self.message_frames = []
         self.spacer = QSpacerItem(10, 0, QSizePolicy.Maximum, QSizePolicy.Minimum)
         self.mainLayout.addItem(self.spacer)
 
@@ -32,12 +95,39 @@ class Interface(QWidget):
         self.questions.append(question)
         return question
 
+    def addMessageToResultWindow(self, message_frame):
+        self.resultWindow.bottomLayout.addWidget(message_frame)
+        self.message_frames.append(message_frame)
+
+    def removeMessageToResultWindow(self, message_frame):
+        self.message_frames.remove(message_frame)
+        message_frame.delete()
+
+    def openResultWindow(self):
+        if self.resultWindow is None:
+            self.resultWindow = self.initResultWindow()
+        else:
+            self.resultWindow.show()
+
+    def delete(self):
+        self.deleteLater()
+
+
+    def initResultWindow(self):
+        self.resultWindow = ResultWindow()
+
+
+
 
 
 class MachineryDirectiveInterface(Interface):
     def __init__(self,machine):
         super(MachineryDirectiveInterface,self).__init__('Maschinen Richtlinie')
         self.machine = machine
+
+
+
+    def applicabilityPilot(self):
         # top layout
         self.topLayout = QHBoxLayout()
         self.mainLayout.addLayout(self.topLayout)
@@ -169,7 +259,7 @@ class MachineryDirectiveInterface(Interface):
 
 class ATEXInterface(Interface):
     def __init__(self,machine):
-        super(ATEXInterface,self).__init__('ATEX')
+        super(ATEXInterface,self).__init__(title='ATEX',id_string='2014/34/EU')
         self.category = None
         self.group = None
         self.machine = machine
@@ -180,6 +270,30 @@ class ATEXInterface(Interface):
         self.buttonLayout.addWidget(self.button)
         self.mainLayout.addLayout(self.buttonLayout)
         self.button.clicked.connect(self.printVerdict)
+
+    def categoryGroupPanel(self):
+        self.cgpLayout = QVBoxLayout()
+
+        self.lT = QHBoxLayout()
+        self.cgpLayout.addLayout(self.lT)
+        self.lB = QHBoxLayout()
+        self.cgpLayout.addLayout(self.lB)
+
+        self.L1 = QLabel('Gerätegruppe: {0}'.format(self.group))
+        self.lT.addWidget(self.L1)
+        self.L2 = QLabel('Gerätekategorie: {0}'.format(self.group))
+        self.lB.addWidget(self.L2)
+
+
+    def writeMessages(self):
+        self.initResultWindow()
+
+        message = Message(self.title, self.id_string, self.verdict)
+        panel = self.categoryGroupPanel()
+        message.titleTopLayout.addLayout(panel)
+
+        self.addMessageToResultWindow(message)
+
 
     def printVerdict(self):
         self.verdict = ''
@@ -201,6 +315,7 @@ class ATEXInterface(Interface):
 
         if not self.verdict == '        Gerät nicht zulassig nach ATEX':
             self.hide()
+            self.writeMessages()
 
         print(self.verdict)
 
