@@ -67,7 +67,7 @@ class LowVoltageDirective(Directive):
             print('')
             print('+---------------------------------------------------------+')
             print('Niederpsannungsrichtlinie ')
-            print('Überprüfe Komponente: {0}'.format(component.componentType))
+            print('Überprüfe Komponente: {0}'.format(component.name))
             self.checkComponent(component)
             print('+---------------------------------------------------------+')
             print('')
@@ -75,17 +75,17 @@ class LowVoltageDirective(Directive):
 
     def checkComponent(self, component):
         for ix,feature in enumerate(component.features):
-            if feature.featureType == 'Betriebsspannung':
-                current_type = feature.panel.selectionMenu.currentText()
-                voltage = float(feature.panel.lineEdit.text())
+            if feature.name == 'Betriebsspannung':
+                current_type = feature.values['unit']
+                voltage = float(feature.values['value'])
                 if current_type == 'Volt AC':
                     if self.acRange[0] < voltage < self.acRange[1]:
                         self.active = True
-                        print('     NSR aktiviert durch Eigenschaft {0}'.format(feature.featureType))
+                        print('     NSR aktiviert durch Eigenschaft {0}'.format(feature.name))
                 elif current_type == 'Volt DC':
                     if self.dcRange[0] < voltage < self.dcRange[1]:
                         self.active = True
-                        print('     NSR aktiviert durch Eigenschaft {0}'.format(feature.featureType))
+                        print('     NSR aktiviert durch Eigenschaft {0}'.format(feature.name))
 
 
 
@@ -101,7 +101,7 @@ class PressureEquipmentDirective(Directive):
         print('+---------------------------------------------------------+')
         print('Druckgeräte-Norm ')
         for ix,component in enumerate(self.machine.components):
-            print('Überprüfe Komponente: {0}'.format(component.componentType))
+            print('Überprüfe Komponente: {0}'.format(component.name))
             pressure_device_type, group, result, message = self.decideComponentCategory(component)
             if group is None:
                 print(result)
@@ -136,7 +136,7 @@ class PressureEquipmentDirective(Directive):
     def decideComponentCategory(self,machineComponent):
         skip = True
         for feature in machineComponent.features:
-            if feature.featureType == 'Druck':
+            if feature.name == 'Druck':
                 skip = False
         if skip:
             print('Druckgeräte-Norm trifft nicht zu')
@@ -147,7 +147,7 @@ class PressureEquipmentDirective(Directive):
         badFeatures = ['entzündbar','instabil/explosiv','selbstzersetzlich','pyropher',
         'oxidierend','akut_toxisch','organisches_Peroxid','ätzend']
 
-        componentType = machineComponent.componentType
+        componentName = machineComponent.name
 
         pressure = None
         volume = None
@@ -163,27 +163,23 @@ class PressureEquipmentDirective(Directive):
         group = None
 
         for feature in machineComponent.features:
-            if feature.featureType == 'Druck':
-                pressure = float(feature.panel.lineEdit.text())
-                unit = feature.panel.selectionMenu.currentText()
+            if feature.name == 'Druck':
+                pressure = float(feature.values['value'])
+                unit = feature.values['unit']
                 pressure = self.convertToBar(unit, pressure)
             #
-            if feature.featureType == 'Volumen':
-                volume = float(feature.panel.lineEdit.text())
+            if feature.name == 'Volumen':
+                volume = float(feature.values['value'])
             #
-            if feature.featureType == 'Durchmesser':
-                diameter = float(feature.panel.lineEdit.text())
+            if feature.name == 'Durchmesser':
+                diameter = float(feature.values['value'])
             #
-            if feature.featureType == 'Temperatur':
-                temperature = float(feature.panel.lineEdit.text())
+            if feature.name == 'Temperatur':
+                temperature = float(feature.values['value'])
             #
-            if feature.featureType == 'Inhalt':
-                content = feature.panel.selectionMenu.currentText()
-                contentFeatures = []
-                actions = feature.panel.specificationMenu.actions()
-                for a in actions:
-                    if a.isChecked():
-                        contentFeatures.append(a.text())
+            if feature.name == 'Inhalt':
+                content = feature.values['content']
+                contentFeatures = feature.values['specifications']
                 for button in feature.panel.buttons:
                     if button.isChecked():
                         stateOfMatter = button.text()
@@ -228,9 +224,9 @@ class PressureEquipmentDirective(Directive):
 
 
         if diameter is None and not volume is None:
-            result = pressureMainTree(componentType,stateOfMatter,group,pressure,volume)
+            result = pressureMainTree(componentName,stateOfMatter,group,pressure,volume)
         if volume is None and not diameter is None:
-            result = pressureMainTree(componentType,stateOfMatter,group,pressure,diameter)
+            result = pressureMainTree(componentName,stateOfMatter,group,pressure,diameter)
 
         return pressure_device_type,group,result,message
 

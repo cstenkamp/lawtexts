@@ -15,12 +15,6 @@ class Interface(QWidget):
         self.show()
         #
         self.questions = []
-        # finalize button
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.addStretch()
-        self.button = QPushButton('abschicken')
-        self.buttonLayout.addWidget(self.button)
-        self.mainLayout.addLayout(self.buttonLayout)
         self.spacer = QSpacerItem(10, 0, QSizePolicy.Maximum, QSizePolicy.Minimum)
         self.mainLayout.addItem(self.spacer)
 
@@ -31,6 +25,146 @@ class Interface(QWidget):
         self.questions.append(question)
         return question
 
+    def addAnswer(self,text=None, question=None, parent=None, antagonists=[]):
+        if question is None:
+            question = Answer(text, parent=parent,antagonists=antagonists)
+        self.mainLayout.addWidget(question)
+        self.questions.append(question)
+        return question
+
+
+
+class MachineryDirectiveInterface(Interface):
+    def __init__(self,machine):
+        super(MachineryDirectiveInterface,self).__init__('Maschinen Richtlinie')
+        self.machine = machine
+        # top layout
+        self.topLayout = QHBoxLayout()
+        self.mainLayout.addLayout(self.topLayout)
+        # label explaining what to do
+        self.label = QLabel('In diesem Interface können Sie die Anwendbarkeit der 2006/42/EG auf Ihr Produkt prüfen.')
+        self.label.setFrameShadow(QFrame.Sunken)
+        self.label.setFrameStyle(QFrame.Box)
+        self.topLayout.addWidget(self.label)
+        # finalize button
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.addStretch()
+        self.button = QPushButton('abschicken')
+        self.buttonLayout.addWidget(self.button)
+        self.topLayout.addLayout(self.buttonLayout)
+        self.button.clicked.connect(self.close)
+        self.show()
+
+
+
+
+        '''
+        Part II
+        '''
+        text = 'Besteht das Produkt aus miteinander verbundenen Teilen (evtl. zwecks Transport getrennt), von denen mindestens eins beweglich ist?'
+        self.Q = self.addRadioQuestion(text)
+
+        text = 'Kann für sich genommen die bestimmte Anwendung/Funktion erfüllen?'
+        self.QY = self.addRadioQuestion(text,parent=self.Q)
+        self.QY.hide()
+
+        text = 'Produkt ist mit einem Antriebssystem ausgestattet?'
+        self.QYY = self.addRadioQuestion(text,parent=self.QY)
+        self.QYY.hide()
+
+        text = 'Antriebssystem ist unmittelbar eingesetzte menschliche Kraft?'
+        self.QYYY = self.addRadioQuestion(text,parent=self.QYY)
+        self.QYYY.hide()
+
+        text = 'Antriebssystem ist unmittelbar eingesetzte menschliche Kraft?'
+        self.QYYYY = self.addRadioQuestion(text,parent=self.QYYY)
+        self.QYYYY.hide()
+
+        text = 'Produkt ist für Hebevorgänge?'
+        self.QYYYYY = self.addRadioQuestion(text,parent=self.QYYYY)
+        self.QYYYYY.hide()
+        '''
+        text = 'Maschine nach Artikel 1(1)a'
+        self.QYYYYYY = self.addAnswer(text,parent=self.QYYYYY)
+        self.QYYYYYY.hide()
+
+        text = 'Kein Produkt nach Artikel 1(1)a-g'
+        self.QYYYYYN = self.addAnswer(text,parent=self.QYYYYY)
+        self.QYYYYYN.hide()
+        '''
+
+        self.Q.yes.clicked.connect(lambda:[
+                                self.QY.showw(),
+                                self.updateLabels(),
+                                ])
+        self.Q.no.clicked.connect(lambda:[
+                                self.QY.hidee(),
+                                self.updateLabels(),
+                                ])
+
+
+        self.QY.yes.clicked.connect(lambda:[
+                                self.QYY.showw(),
+                                self.updateLabels(),
+                                ])
+        self.QY.no.clicked.connect(lambda:[
+                                self.QYY.hidee(),
+                                self.updateLabels(),
+                                ])
+
+        self.QYY.yes.clicked.connect(lambda:[
+                                self.QYYY.showw(),
+                                self.updateLabels(),
+                                ])
+        self.QYY.no.clicked.connect(lambda:[
+                                self.QYYY.hidee(),
+                                self.updateLabels(),
+                                ])
+
+        self.QYYY.yes.clicked.connect(lambda:[
+                                self.QYYYY.showw(),
+                                self.updateLabels(),
+                                ])
+        self.QYYY.no.clicked.connect(lambda:[
+                                self.QYYYY.hidee(),
+                                self.updateLabels(),
+                                ])
+
+        self.QYYYY.yes.clicked.connect(lambda:[
+                                self.QYYYYY.showw(),
+                                self.updateLabels(),
+                                ])
+        self.QYYYY.no.clicked.connect(lambda:[
+                                self.QYYYYY.hidee(),
+                                self.updateLabels(),
+                                ])
+        '''
+        self.QYYYYY.yes.clicked.connect(lambda:[
+                                self.QYYYYYY.showw(),
+                                self.QYYYYYN.hidee(),
+                                self.updateLabels(),
+                                ])
+        self.QYYYYY.no.clicked.connect(lambda:[
+                                self.QYYYYYY.hidee(),
+                                self.QYYYYYN.showw(),
+                                self.updateLabels(),
+                                ])
+        '''
+
+
+
+    def close(self):
+        self.hide()
+
+
+
+    def updateLabels(self):
+        self.category = None
+        print(self.category)
+
+
+
+
 
 
 class ATEXInterface(Interface):
@@ -39,6 +173,12 @@ class ATEXInterface(Interface):
         self.category = None
         self.group = None
         self.machine = machine
+        # finalize button
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.addStretch()
+        self.button = QPushButton('abschicken')
+        self.buttonLayout.addWidget(self.button)
+        self.mainLayout.addLayout(self.buttonLayout)
         self.button.clicked.connect(self.printVerdict)
 
     def printVerdict(self):
@@ -58,6 +198,10 @@ class ATEXInterface(Interface):
             self.verdict = '        Die Geräte dieser Kategorie müssen die weitergehenden Anforderungen des Anhangs II Nummer 2.3 erfüllen.'
         else:
             self.verdict = '        Gerät nicht zulassig nach ATEX'
+
+        if not self.verdict == '        Gerät nicht zulassig nach ATEX':
+            self.hide()
+
         print(self.verdict)
 
     def setGroup(self, group):

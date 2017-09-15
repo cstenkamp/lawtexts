@@ -25,6 +25,7 @@ class Question(QFrame):
         self.label.setMinimumWidth(400)
         self.label.setContentsMargins(2,10,2,10)
         self.label.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Fixed)
+        self.mainLayout.addWidget(self.label)
         #
         self.children = []
 
@@ -59,7 +60,12 @@ class Question(QFrame):
             child.iterHide()
             if isinstance(child, RadioQuestion):
                 child.no.setChecked(True)
-            child.hide()
+                self.no.setAutoExclusive(False)
+                child.no.setChecked(False)
+                self.no.setAutoExclusive(True)
+                child.hidee()
+            else:
+                child.hide()
 
     def hideChildren(self):
         for child in self.children:
@@ -68,6 +74,19 @@ class Question(QFrame):
     def showChildren(self):
         for child in self.children:
             child.show()
+            if isinstance(child, RadioQuestion):
+                child.no.setChecked(True)
+                self.no.setAutoExclusive(False)
+                child.no.setChecked(False)
+                self.no.setAutoExclusive(True)
+                child.showw()
+            else:
+                child.hidee()
+
+
+class Answer(Question):
+    def __init__(self):
+        super(Answer,self).__init__(text,parent=parent,antagonists=[])
 
 
 
@@ -76,10 +95,27 @@ class RadioQuestion(Question):
     def __init__(self,text, parent=None,antagonists=[]):
         super(RadioQuestion,self).__init__(text,parent=parent,antagonists=antagonists)
         #
-        self.mainLayout.addWidget(self.label)
-        #
         self.yes = QRadioButton('ja')
         self.no = QRadioButton('nein')
-        self.no.setChecked(True)
+        self.no.setChecked(False)
+        self.yes.setChecked(False)
         self.mainLayout.addWidget(self.yes)
         self.mainLayout.addWidget(self.no)
+
+
+    def showw(self):
+        self.show()
+        self.no.setChecked(True)
+        self.no.setAutoExclusive(False)
+        self.no.setChecked(False)
+        self.no.setAutoExclusive(True)
+
+    def hidee(self):
+        self.hide()
+        self.no.setChecked(True)
+        self.no.setAutoExclusive(False)
+        self.no.setChecked(False)
+        self.no.setAutoExclusive(True)
+
+
+
