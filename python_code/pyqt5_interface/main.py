@@ -372,3 +372,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     M = Machine()
     MG = MachineGui(M)
+
+    sys.exit(app.exec_())
