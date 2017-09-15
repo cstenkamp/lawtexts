@@ -180,9 +180,7 @@ class PressureEquipmentDirective(Directive):
             if feature.name == 'Inhalt':
                 content = feature.values['content']
                 contentFeatures = feature.values['specifications']
-                for button in feature.panel.buttons:
-                    if button.isChecked():
-                        stateOfMatter = button.text()
+                stateOfMatter = feature.values['stateOfMatter']
 
 
 

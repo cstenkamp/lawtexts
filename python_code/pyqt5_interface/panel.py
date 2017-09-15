@@ -36,21 +36,25 @@ class Panel(QWidget):
         self.specifyContent()
         # state to select from (gas/liquid/solid)
         self.gasButton = QRadioButton('Gas förmig')
-        self.gasButton.clicked.connect(lambda: self.setVal('StateOfMatter','gas'))
+        self.gasButton.clicked.connect(lambda: self.setVal('stateOfMatter','gas'))
         self.row2.addWidget(self.gasButton)
         #
         self.liquidGasButton = QRadioButton('verflüssigtes Gas')
-        self.liquidGasButton.clicked.connect(lambda: self.setVal('StateOfMatter','liquified_gas'))
+        self.liquidGasButton.clicked.connect(lambda: self.setVal('stateOfMatter','liquified_gas'))
         self.row2.addWidget(self.liquidGasButton)
         #
         self.fluidButton = QRadioButton('flüssig')
-        self.fluidButton.clicked.connect(lambda: self.setVal('StateOfMatter','liquid'))
+        self.fluidButton.clicked.connect(lambda: self.setVal('stateOfMatter','liquid'))
         self.row2.addWidget(self.fluidButton)
-        self.fluidButton.setChecked(True)
         #
         self.solidButton = QRadioButton('fest')
-        self.solidButton.clicked.connect(lambda: self.setVal('StateOfMatter','solid'))
+        self.solidButton.clicked.connect(lambda: self.setVal('stateOfMatter','solid'))
         self.row2.addWidget(self.solidButton)
+
+        self.solidButton.setAutoExclusive(False)
+        self.solidButton.setChecked(False)
+        self.solidButton.setAutoExclusive(True)
+
         self.buttons = [self.gasButton,self.liquidGasButton,self.fluidButton,self.solidButton]
         #
     def specifyContent(self):

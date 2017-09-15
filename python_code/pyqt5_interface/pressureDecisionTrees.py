@@ -318,25 +318,25 @@ def Graph9_descision_tree(dn,druck):
 def pressureMainTree(objekt,stateOfMatter,group,pressure,volume):
     print(objekt,stateOfMatter,group,pressure,volume)
     message = ""
-    if objekt in ["Behälter"] and stateOfMatter == "verfüssigtes Gas":
+    if objekt in ["Behälter"] and stateOfMatter == "liquified_gas":
         if group == 1: 
             result = Graph1_descision_tree(volume,pressure)
         if group == 2: 
             result = Graph2_descision_tree(volume,pressure)
             print("el resultado que llega es:::::")
-    if objekt in ["Behälter"] and stateOfMatter == "flüssig":
+    if objekt in ["Behälter"] and stateOfMatter == "liquid":
         if group == 1: 
             result = Graph3_descision_tree(volume,pressure)
         if group == 2: 
             result = Graph4_descision_tree(volume,pressure)
     if objekt == "Dampferzeuger (Kessel)":
             result = Graph5_descision_tree(volume,pressure)        
-    if objekt in ["Rohrleitung",'Druckrohr'] and stateOfMatter == "verflüssigtes Gas":
+    if objekt in ["Rohrleitung",'Druckrohr'] and stateOfMatter == "liquified_gas":
         if group == 1: 
             result = Graph6_descision_tree(volume,pressure)
         if group == 2: 
             result = Graph7_descision_tree(volume,pressure)
-    if objekt in ["Rohrleitung",'Druckrohr'] and stateOfMatter == "flüssig":
+    if objekt in ["Rohrleitung",'Druckrohr'] and stateOfMatter == "liquid":
         if group == 1: 
             result = Graph8_descision_tree(volume,pressure)
         if group == 2: 
