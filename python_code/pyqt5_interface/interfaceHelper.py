@@ -9,6 +9,7 @@ class Question(QFrame):
         else:
             self.indent = parent.indent + 100
             parent.addChild(self)
+        self.parent = parent
         self.antagonists = antagonists
         self.setFrameShape(QFrame.Box)
         self.setFrameShadow(QFrame.Sunken)
@@ -24,7 +25,7 @@ class Question(QFrame):
         self.label.setWordWrap(True)
         self.label.setMinimumWidth(400)
         self.label.setContentsMargins(2,10,2,10)
-        self.label.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Fixed)
+        self.label.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Fixed)
         self.mainLayout.addWidget(self.label)
         #
         self.children = []
@@ -81,7 +82,13 @@ class Question(QFrame):
                 self.no.setAutoExclusive(True)
                 child.showw()
             else:
-                child.hidee()
+                child.show()
+
+    def toggleChildren(self):
+        if self.yes.isChecked():
+            self.showChildren()
+        else:
+            self.hideChildren()
 
 
 class Answer(Question):
@@ -116,6 +123,26 @@ class RadioQuestion(Question):
         self.no.setAutoExclusive(False)
         self.no.setChecked(False)
         self.no.setAutoExclusive(True)
+
+
+class SingleCheckQuestion(Question):
+    def __init__(self,text, parent=None,antagonists=[]):
+        super(SingleCheckQuestion,self).__init__(text,parent=parent,antagonists=antagonists)
+        
+        self.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Fixed)
+        #
+        self.yes = QCheckBox()
+        self.yes.setChecked(False)
+        self.mainLayout.addWidget(self.yes)
+
+
+    def showw(self):
+        self.show()
+        #self.yes.setChecked(False)
+
+    def hidee(self):
+        self.hide()
+        #self.yes.setChecked(False)
 
 
 

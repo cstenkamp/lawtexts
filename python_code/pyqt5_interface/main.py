@@ -35,9 +35,10 @@ class FeatureGui(QFrame):
                          'Druck','Temperatur','Durchmesser','Herstellungsdatum',
                          'Leistung','Länge','Volumen','Treibstoff']
         for o in options:
-            self.selectionMenu.addItem(o)
+            self.selectionMenu.addItem(o)            
         self.selectionMenu.setCurrentIndex(-1)
         self.selectionMenu.activated.connect(self.updatePanel)
+        self.selectionMenu.setToolTip("This is a ToolTip")
         self.mainLayout.addWidget(self.selectionMenu)
 
         self.middleLayout = QHBoxLayout()
@@ -235,7 +236,8 @@ class MachineGui(QWidget):
         self.topLayout.setAlignment(Qt.AlignTop)
         self.mainLayout.addLayout(self.topLayout)
 
-        self.MDI = None
+        self.MDAI = None
+        self.MDApIVI = None
         '''
         Top Part Layout (left side)
         '''
@@ -291,7 +293,12 @@ class MachineGui(QWidget):
 
         self.mdeButton = QPushButton('MRL')
         self.mdeButton.setFixedWidth(80)
-        self.mdeButton.clicked.connect(self.startMDI)
+        self.mdeButton.clicked.connect(self.startMDAI)
+        self.topLayoutRight.addWidget(self.mdeButton)
+
+        self.mdeButton = QPushButton('MRL Anhang IV')
+        self.mdeButton.setFixedWidth(80)
+        self.mdeButton.clicked.connect(self.test)
         self.topLayoutRight.addWidget(self.mdeButton)
 
         #
@@ -318,12 +325,19 @@ class MachineGui(QWidget):
         self.bottomLayout.addWidget(self.HLine())
         self.mainLayout.addLayout(self.bottomLayout)
 
-    def startMDI(self):
-        if self.MDI is None:
-            self.MDI = MachineryDirectiveInterface(self.machine)
-            self.MDI.applicabilityPilot()
+    def startMDAI(self):
+        if self.MDAI is None:
+            self.MDAI = MachineryDirectiveApplicabilityInterface(self.machine)
+            self.MDAI.applicabilityPilot()
         else:
-            self.MDI.show()
+            self.MDAI.show()
+
+    def test(self):
+        if self.MDApIVI is None:
+            self.MDApIVI = MachineryDirectiveAppendixIVInterface(self.machine)
+            self.MDApIVI.applicabilityPilot()
+        else:
+            self.MDApIVI.show()
 
 
     def addComponent(self):
@@ -363,7 +377,7 @@ class MachineGui(QWidget):
         self.ATEX.checkApplicabilityOnPurpose(self.machine.purpose)
         #
         if self.ATEX.active:
-            self.ATEXInterface = ATEXInterface(self.machine)
+            self.ATEXInterface = ATEXInterface(self.machine,self)
             self.ATEXInterface.categoryMask()
 
 
