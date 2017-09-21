@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 class Question(QFrame):
     def __init__(self,text,parent=None,antagonists=[]):
         super(Question,self).__init__()
+        self.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Fixed)
         if parent is None:
             self.indent = 0
         else:
@@ -25,7 +26,7 @@ class Question(QFrame):
         self.label.setWordWrap(True)
         self.label.setMinimumWidth(400)
         self.label.setContentsMargins(2,10,2,10)
-        self.label.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Fixed)
+        self.label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         self.mainLayout.addWidget(self.label)
         #
         self.children = []
@@ -129,7 +130,6 @@ class SingleCheckQuestion(Question):
     def __init__(self,text, parent=None,antagonists=[]):
         super(SingleCheckQuestion,self).__init__(text,parent=parent,antagonists=antagonists)
         
-        self.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Fixed)
         #
         self.yes = QCheckBox()
         self.yes.setChecked(False)

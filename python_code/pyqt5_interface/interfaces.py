@@ -42,6 +42,7 @@ class ResultWindow(QFrame):
     def __init__(self, title = 'Ergebnisse'):
         super(ResultWindow,self).__init__()
         self.setGeometry(300,300,400,100)
+        self.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
         self.setWindowTitle(title)
         self.show()
         #
@@ -53,13 +54,32 @@ class ResultWindow(QFrame):
         self.topLayout.setAlignment(Qt.AlignRight|Qt.AlignTop)
         self.mainLayout.addLayout(self.topLayout)
         #
-        self.bottomLayout = QVBoxLayout()
-        self.bottomLayout.setAlignment(Qt.AlignRight|Qt.AlignTop)
-        self.mainLayout.addLayout(self.bottomLayout)
+        self.middleLayout = QHBoxLayout()
+        self.middleLayout.setAlignment(Qt.AlignLeft|Qt.AlignTop)
+        self.mainLayout.addLayout(self.middleLayout)
         #
+        self.outerBottomLayout = QHBoxLayout()
+        self.spacer = QSpacerItem(40,0,QSizePolicy.Minimum,QSizePolicy.Minimum)
+        self.outerBottomLayout.addItem(self.spacer)
+
+        self.mainLayout.addLayout(self.outerBottomLayout)
+
+        self.bottomLayout = QVBoxLayout()
+        self.bottomLayout.setAlignment(Qt.AlignLeft|Qt.AlignTop)
+        self.outerBottomLayout.addLayout(self.bottomLayout)
+        #
+
+        self.footerLayout = QVBoxLayout()
+        self.footerLayout.setAlignment(Qt.AlignLeft|Qt.AlignTop)
+        self.mainLayout.addLayout(self.footerLayout)
+
+        self.spacerTop = QSpacerItem(40,0,QSizePolicy.Expanding,QSizePolicy.Minimum)
+        self.outerBottomLayout.addItem(self.spacerTop)
         self.closeButton = QPushButton('schließen')
         self.closeButton.clicked.connect(self.hide)
+        self.topLayout.addItem(self.spacerTop)
         self.topLayout.addWidget(self.closeButton)
+
 
 
 class Interface(QWidget):
@@ -265,6 +285,7 @@ class MachineryDirectiveAppendixIVInterface(Interface):
     def __init__(self,machine):
         super(MachineryDirectiveAppendixIVInterface,self).__init__('Test auf Anwendbarkeit von Anhang IV')
         self.machine = machine
+        self.setGeometry(300,300,900,400)
 
     def applicabilityPilot(self):
         # top layout
@@ -351,10 +372,12 @@ class MachineryDirectiveAppendixIVInterface(Interface):
         
         text = '(12.1) Lokomotive oder Bremswage;'
         self.k12_1 = self.addSingleCheckQuestion(text,parent=self.k12)
+        self.k12_1.hide()
         
 
         text = '(12.2) hydraulischer Schreitausbau'
         self.k12_2 = self.addSingleCheckQuestion(text,parent=self.k12)
+        self.k12_2.hide()
 
         
         text = '(13) Hausmüllsammelwagen für manuelle Beschickung mit Pressvorrichtung.'
@@ -438,16 +461,68 @@ class MachineryDirectiveAppendixIVInterface(Interface):
     def initConfirmationDialogue(self):
         for question in self.questions:
             if question in [self.k1,self.k4,self.k12]:
-                print('ding')
                 continue 
             else:
                 if question.yes.isChecked():
-                    self.rw = ResultWindow(title='Ergebniss des Tests auf Anwendbarkeit von Anhang IV ')
+                    self.hide()
+                    self.rw = ResultWindow(title='Tests auf Anwendbarkeit von Anhang IV (Teil 2)')
+                    self.choiceLabel = QLabel('Folgende Art von Maschine wurde von Ihnen Ausgewählt:')
+                    self.rw.middleLayout.addWidget(self.choiceLabel)
                     if not question.parent is None:
                         l = QLabel(question.parent.label.text())
                         self.rw.bottomLayout.addWidget(l)
                     l = QLabel(question.label.text())
                     self.rw.bottomLayout.addWidget(l)
+
+                    text = 'Existieren es für die Maschine harmonisierte Normen?'
+                    self.Q1 = RadioQuestion(text)
+                    self.rw.bottomLayout.addWidget(self.Q1)
+
+                    text = 'Wurde die Machine nach der in Artikel 7 Absatz 2 genannten harmonisierten Normen hegrestellt?'
+                    self.Q2 = RadioQuestion(text,parent = self.Q1)
+                    self.rw.bottomLayout.addWidget(self.Q2)
+                    self.Q2.hide()
+
+                    text = 'Diese Normen berücksichtigen alle relevanten Sicherheits- und Gesundheitsschutzanforderungen?'
+                    self.Q3 = RadioQuestion(text,parent = self.Q2)
+                    self.rw.bottomLayout.addWidget(self.Q3)
+                    self.Q3.hide()
+
+                    self.Q1.yes.clicked.connect(lambda: [self.Q1.showChildren(), self.l1.hide(), 
+                                                        self.f1.hide(),self.f2.hide(),self.f3.hide()])
+                    self.Q1.no.clicked.connect(lambda: [self.Q1.hideChildren(), self.l1.show(), 
+                                                        self.f2.show(),self.f3.show()])
+
+                    self.Q2.yes.clicked.connect(lambda: [self.Q2.showChildren(), self.l1.hide(), 
+                                                        self.f1.hide(),self.f2.hide(),self.f3.hide()])
+                    self.Q2.no.clicked.connect(lambda: [self.Q2.hideChildren(), self.l1.show(), 
+                                                        self.f2.show(),self.f3.show()])
+
+                    self.Q3.yes.clicked.connect(lambda: [self.l1.show(), 
+                                                        self.f1.show(), self.f2.show(),self.f3.show()])
+                    self.Q3.no.clicked.connect(lambda: [self.l1.hide(), 
+                                                        self.f1.hide(), self.f2.show(), self.f3.show()])
+
+
+                    spacer = QSpacerItem(20,40,QSizePolicy.Minimum,QSizePolicy.Minimum)
+                    self.rw.footerLayout.addItem(spacer)
+                    self.l1 = QLabel('Wenden die eines der folgenden Verfahren an: ')
+                    self.rw.footerLayout.addWidget(self.l1)
+                    self.l1.hide()
+
+                    self.f1 = QLabel('  das in Anhang VIII vorgesehene Verfahren der Konformitätsbewertung mit interner Fertigungskontrolle bei der Herstellung von Maschinen;')
+                    self.rw.footerLayout.addWidget(self.f1)
+                    self.f1.hide()
+
+                    self.f2 = QLabel('  das in Anhang IX beschriebene EG-Baumusterprüfverfahren sowie die in Anhang VIII Nummer 3 beschriebene interne Fertigungskontrolle bei der Herstellung von Maschinen;')
+                    self.rw.footerLayout.addWidget(self.f2)
+                    self.f2.hide()
+
+                    self.f3 = QLabel('  das in Anhang X beschriebene Verfahren der umfassenden Qualitätssicherung.')
+                    self.rw.footerLayout.addWidget(self.f3)
+                    self.f3.hide()
+
+
 
 
 
