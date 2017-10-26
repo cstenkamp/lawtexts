@@ -66,7 +66,7 @@ class LowVoltageDirective(Directive):
         for ix,component in enumerate(self.machine.components):
             print('')
             print('+---------------------------------------------------------+')
-            print('Niederpsannungsrichtlinie ')
+            print('Niederspannungsrichtlinie ')
             print('Überprüfe Komponente: {0}'.format(component.name))
             self.checkComponent(component)
             print('+---------------------------------------------------------+')
