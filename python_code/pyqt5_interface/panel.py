@@ -117,7 +117,7 @@ class Panel(QWidget):
     def addTemperaturePanel(self):
         self.lineEdit = QLineEdit()
         self.lineEdit.setFixedWidth(100)
-        self.lineEdit.editingFinished.connect(lambda: self.setVal('degree Celsius',self.lineEdit.text()))
+        self.lineEdit.editingFinished.connect(lambda: self.setVal('value',self.lineEdit.text()))
         self.row1.addWidget(self.lineEdit)
         self.label = QLabel('Grad Celsius')
         self.row1.addWidget(self.label)
