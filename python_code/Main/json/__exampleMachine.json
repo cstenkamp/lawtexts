@@ -1,0 +1,29 @@
+{
+	"name":"testMachine",
+	"customer_id":"12345",
+	"location":"Osnabrueck",
+	"Herstellungsdatum":"1989",
+	"Prüfdatum":"2017",
+	"Komponenten":{
+		"Druckbehälter":{
+			"Volumen":{"L":"300"},
+			"Inhalt":{"flüssig":"Gülle"},
+			"Druck":{"bar":"5"},
+			"Temperatur":{"C":"36"},
+			"Seriennummer":"123456",
+			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
+		},
+		"Rührwerk":{
+			"Spannung":{"Volt AC":"150"},
+			"Leistung":{"Watt":"150"},
+			"Seriennummer":"123456",
+			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
+		}
+	},
+	"Verwendungszwecke":[
+		"Heben von Personen oder von Personen und Gütern"
+	],
+	"Verwendungsorte":[
+		"in einer explosionsfähigen Atmosphäre"
+	]
+}

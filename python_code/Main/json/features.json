@@ -1,0 +1,25 @@
+{
+	"features":[
+		{"name":"Spannung", "units":[{"Volt AC"},{"Volt DC"}] 
+		},
+		
+		{"name":"Leistung","units":[{"KW/h"},{"ps"}]
+		},
+
+		{"name":"Volumen","units":[{"m^3"},{"L"}]
+		},
+
+		{"name":"Temperatur","units":[{"C"},{"F"}]
+		},
+
+		{"name":"Druck","units":[{"bar"},{"psi"}]
+		},
+
+		{"name":"Länge","units":[{"m"}]
+		},
+
+		{"name":"Durchmesser","units":[{"m"}]
+		},
+		
+	]
+}

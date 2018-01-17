@@ -1,0 +1,81 @@
+{
+	"Bearbeitung von Holz und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"benötigt Text":{
+				"MRL":{
+					"text":"Anhang_I_2.3"
+				}
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+				"MRL":{"deaktivierend":"Anhang_IV"}
+			}
+		},
+	"Bearbeitung von Metallen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+				"MRL":{"deaktivierend":"Anhang_IV"}
+			}
+		},
+
+	"Bearbeitung von Fleisch und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"benötigt Text":{
+				"MRL":{
+					"text":"Anhang_I_2.1"
+				}
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+				"MRL":{"deaktivierend":"Anhang_IV"}
+			}
+		},
+
+	"Bearbeitung von Kunstoffen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+				"MRL":{"deaktivierend":"Anhang_IV"}
+			}
+		},
+
+	"Bearbeitung von Gummi und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+				"MRL":{"deaktivierend":"Anhang_IV"}
+			}
+		},
+
+
+	"Heben von Personen oder von Personen und Gütern":{
+			"benötigt Text":{
+				"MRL":{
+					"text":"Anhang_I_4",
+					"text":"Anhang_I_6"
+				}
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"NSR":{
+					"text":"NSR_Anhang_II"
+				}
+			},
+			"betrifft vielleicht":{
+				"MRL":{"deaktivierend":"Anhang_IV",
+					   "text":"Anhang_I_6"}
+			}
+		}
+}

@@ -1,0 +1,14 @@
+{
+	"Druckbehälter":[
+		{"Druck"},
+		{"Inhalt"},
+		{"Volumen"},
+		{"Temperatur"}
+		]
+	,
+	"Elektromotor":[
+		{"Leistung"},
+		{"Spannung"}
+		]
+		
+}

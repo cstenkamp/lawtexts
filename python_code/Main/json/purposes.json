@@ -1,0 +1,303 @@
+{
+	"Bearbeitung von Holz und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"MRL":{
+				"+":["Anhang_I_2.3"],
+				"+?":["Anhang_IV"],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+	"Bearbeitung von Metallen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"MRL":{
+				"+":[],
+				"+?":["Anhang_IV"],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+	"Bearbeitung von Fleisch und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"MRL":{
+				"+":["Anhang_I_2.1"],
+				"+?":["Anhang_IV"],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+
+	"Bearbeitung von Kunstoffen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"MRL":{
+				"+":[],
+				"+?":["Anhang_IV"],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+
+	"Bearbeitung von Gummi und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"MRL":{
+				"+":[],
+				"+?":["Anhang_IV"],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+
+	"Heben von Personen oder von Personen und Gütern":{
+			"MRL":{
+				"+":["Anhang_I_4","Anhang_I_6"],
+				"+?":["Anhang_I_6", "Anhang_IV"],
+				"-":["NSR"],
+				"-?":[]
+			},
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Heben von Gütern":{
+			"MRL":{
+				"+":["Anhang_I_4"],
+				"+?":["Anhang_I_6", "Anhang_IV"],
+				"-":[],
+				"-?":[]
+			},
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Nahrungsmittelmaschine":{
+			"MRL":{
+				"+":["Anhang_I_2.1"],
+				"+?":[],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+	"für kosmetische oder pharmazeutische Erzeugnisse":{
+			"MRL":{
+				"+":["Anhang_I_2.1"],
+				"+?":[],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+	"nicht durch menschliche Kraft angetrieben":{
+			"MRL":{
+				"+":[],
+				"+?":["Anhang_I_4","Anhang_I_6"],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+	"handgehalten und/oder handgeführte tragbare Maschine":{
+			"MRL":{
+				"+":["Anhang_I_2.2"],
+				"+?":[],
+				"-":[],
+				"-?":[]
+			}
+		},
+
+	"Elektro-radiologische und elektro-medizinische Betriebsmittel":{
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Elektrizitätszähler":{
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Haushaltssteckvorrichtungen":{
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Vorrichtungen zur Stromversorgung von elektrischen Weidezäunen":{
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Funkentstörung":{
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"Erprobungsmodule für Forschung und Entwicklung":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			},
+			"NSR":{
+				"+":[],
+				"+?":[],
+				"-":["NSR"],
+				"-?":[]
+			}
+		},
+
+	"nukleare Verwendung":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":[""],
+				"-?":["Artikel_1_(2).html"]
+			}
+		},
+
+	"Waffen und Feuerwaffen":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"Beförderungsmittel":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":[],
+				"-?":["Artikel_1_(2).html"]
+			}
+		},
+
+	"militärische Zwecke, oder zur aufrechterhaltung der öffentlichen Ordnung":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"Schachtförderanlagen":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"zur Beförderung von Darstellern während künstlerischer Vorführungen":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"häuslicher Gebrauch":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"Audio- und Videogeräte":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"informationstechnische Geräte":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"gewöhnliche Büromaschinen":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"Niederspannungsschaltgeräte und -steuergeräte":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"Elektromotoren":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"hochspannungs Transformatoren":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		},
+
+	"hochspannungs Schalt- und Steuergeräte":{
+			"MRL":{
+				"+":[],
+				"+?":[],
+				"-":["MRL"],
+				"-?":[]
+			}
+		}
+
+
+}

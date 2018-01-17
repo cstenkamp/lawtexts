@@ -1,0 +1,11 @@
+{
+	"qualities":[
+		{"name":"giftig", "aktiviert":[{"richtlinie_XY"}] 
+		},
+		{"name":"reizend", "aktiviert":[{"richtlinie_XY"}] 
+		},
+		{"name":"radioaktiv", "aktiviert":[{"richtlinie_XY"}] 
+		},
+		
+	]
+}
