@@ -10,7 +10,9 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":{"deaktivierend":["Anhang_IV"]}
+				"MRL":{
+					"deaktivierend":["Anhang_IV"]
+				}
 			}
 		},
 	"Bearbeitung von Metallen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
@@ -19,7 +21,9 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":{"deaktivierend":["Anhang_IV"]}
+				"MRL":{
+					"deaktivierend":["Anhang_IV"]
+				}
 			}
 		},
 
@@ -34,7 +38,9 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":{"deaktivierend":["Anhang_IV"]}
+				"MRL":{
+					"deaktivierend":["Anhang_IV"]
+				}
 			}
 		},
 
@@ -44,7 +50,9 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":{"deaktivierend":["Anhang_IV"]}
+				"MRL":{
+					"deaktivierend":["Anhang_IV"]
+				}
 			}
 		},
 
@@ -54,7 +62,9 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":{"deaktivierend":["Anhang_IV"]}
+				"MRL":{
+					"deaktivierend":["Anhang_IV"]
+				}
 			}
 		},
 
@@ -62,19 +72,20 @@
 	"Heben von Personen oder von Personen und Gütern":{
 			"benötigt Text":{
 				"MRL":{
-					"text":["Anhang_I_4","Anhang_I_6"]
+					"text":["Anhang_I_6","Anhang_I_4"]
 				}
 			},
 			"aktiviert":{
 			},
 			"deaktiviert":{
-				"NSR":[
-					{"NSR_Anhang_II"},
-				]
+				"NSR":{
+					"text":"NSR_Anhang_II"
+				}
 			},
 			"betrifft vielleicht":{
-				"MRL":{"deaktivierend":["Anhang_IV"],
-					   "text":["Anhang_I_6"]}
+				"MRL":{
+						"deaktivierend":["Anhang_IV"]
+					}
 			}
 		}
 }
