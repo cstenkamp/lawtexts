@@ -8,147 +8,127 @@ class PARSER():
 	def __init__(self):
 		pass
 
-	def getHtml(self, p):
+	def getHtml(self,p='html_resources/directives/mrl.html'):
 		with open(p) as f:
 			text = list(map(lambda x: x.strip(), f.readlines()))
 		return text
 
-	def parse(self, textList,reg1,reg2,s_start, s_end, name='none'):
+	def _split(self, textList, splitAlong, extractKeys, stringStart, stringEnd):
 		D = {}
-		idx = [ix for ix in range(len(textList)) if not re.search(reg1,textList[ix]) is None] 
-		keys = [re.search(reg2,textList[ix]) for ix in idx]
-		idx = [i for ix,i in enumerate(idx) if not keys[ix] is None]
-		keys = [k.group(0)[s_start:-s_end] for k in keys if not k is None]
-		keys = [k.lower() for k in keys if not k is None]
-		tmp = list(map(lambda x: re.search('[[\d]+[\.]*]*',x), keys))
-		if all([not t is None for t in tmp]):
-			keys = [t.group(0) for t in tmp]
-		if keys == []:
-			D[name] = textList
-			return D
-		ix=-1
-		for ix in range(len(idx)-1):
-			k = keys[ix]
-			d = textList[idx[ix]:idx[ix+1]]
-			D[k] = d
-		k = keys[ix+1]
-		d = textList[idx[ix+1]:]
-		D[k] = d
+		buffer = []
+		key = '_'
+		# go line by line
+		for line in textList:
+			for p in splitAlong:
+				m = re.search(p,line)
+			if not m is None:
+				D[key] = buffer
+				buffer = []
+				key = re.search(extractKeys,line).group(0)[stringStart:stringEnd].lower()
+			buffer.append(line)
+		D[key] = buffer
+		return D
+
+	def parseArticles(self, textList):
+		primaries = ['class="ti-art">']
+		primaryExtractor = '[\d]+</p>'
+		pStart = 0
+		pEnd = -4
+
+		secondaries = ['<p class="normal">\([\d]+\)']
+		secondaryExtractor = '\([\d]+\)'
+		sStart = 1
+		sEnd = -1
+
+		D = {}
+		primarySplit = self._split(textList,
+								   primaries,
+								   primaryExtractor, 
+								   pStart, 
+								   pEnd)
+
+		for item in primarySplit.items():
+			pKey = item[0]
+			pContent = item[1]
+			D[pKey] = {}
+			if pKey == '_':
+				D[pKey] = pContent
+			else:
+				secondarySplit = self._split(pContent,
+											 secondaries,
+											 secondaryExtractor,
+											 sStart, 
+											 sEnd)
+				D[pKey] = secondarySplit
 		return D
 
 
-	def printDict(self, d):
-		if type(d) is list:
-			return ''.join(d)
-		if all([type(d) is list for d in d.values()]):
-			return '\n'.join([item for sublist in d.values() for item in sublist])
-		else:
-			return '\n'.join([printDict(d) for d in d.values()])
+	def parseAppendices(self, textList):
+		primaries = ['<p class="doc-ti" id="d1e3']
+		primaryExtractor = '>.+</p>'
+		pStart = 1
+		pEnd = -4
 
+		secondaries = ['<p class="ti-grseq-1".+>\d\.[ ]']
+		secondaryExtractor = '>((\d\.){1,1}|[A-Z]\.)[ ]'
+		sStart = 1
+		sEnd = 3
 
-	def MRLtoDicts(self, mrl_path='html_resources/directives/mrl.html'):
-		text = self.getHtml(mrl_path)
+		tertiaries = ['<p class="ti-grseq-1".+>((\d\.){2,2}|[A-Z]\.)[ ]+']
+		tertiaryExtractor = '(>(\d\.){2,2}|">[A-Z]\.)[ ]'
+		tStart = 3
+		tEnd = 5
 
-		'''
-		get articles
-		'''
-		reg1 = reg2 = 'ti-art">Artikel [\d]+</p>'
-		s_start = 8
-		s_end = 4
-		articles = self.parse(text, reg1, reg2,s_start,s_end)
+		quaternaries = ['<p class="ti-grseq-1".+>(\d\.){3,3}[ ]+']
+		quaternaryExtractor = '>(\d\.){3,3}[ ]'
+		qStart = 5
+		qEnd = 7
 
-		reg1 = '<p class="normal">[\w]*\)'
-		reg2 = '>[a-z]*\)'
-		ARTICLES = {}
-		for k in articles.keys():
-			subArticles = self.parse(articles[k], reg1, reg2, s_start=1, s_end=1)
-			if 'none' in subArticles:
-				ARTICLES[k] = list(subArticles.values())
+		D = {}
+		primarySplit = self._split(textList,
+								   primaries,
+								   primaryExtractor, 
+								   pStart, 
+								   pEnd)
+
+		for item in primarySplit.items():
+			pKey = item[0]
+			pContent = item[1]
+			D[pKey] = {}
+			if pKey == '_':
+				D[pKey] = pContent
 			else:
-				ARTICLES[k] = subArticles
+				secondarySplit = self._split(pContent,
+											 secondaries,
+											 secondaryExtractor,
+											 sStart, 
+											 sEnd)
 
-		'''
-		get appendices
-		'''
-		reg1 = reg2 = '>ANHANG [IXV]+</p>'
-		s_start = 1
-		s_end = 4
-		appendices = self.parse(text, reg1, reg2,s_start,s_end)
+				for stem in secondarySplit.items():
+					sKey = stem[0]
+					sContent = stem[1]
+					D[pKey][sKey] = {}
+					if sKey == '_':
+						D[pKey][sKey] = sContent
+					else:
+						tertiarySplit = self._split(sContent,
+													 tertiaries,
+													 tertiaryExtractor,
+													 tStart, 
+													 tEnd)
 
-		reg1 = '<p class="ti-grseq-1" id=".+">[\d]\.'
-		reg2 = '>\d\.[ ]+[<span class="italic">]+[\w -]*'
-		s_start = 1
-		s_end = 1
-		APPENDICES = {}
-		for k in appendices.keys():
-			subArticles = self.parse(appendices[k], reg1, reg2, s_start=s_start, s_end=s_end)
-			if 'none' in subArticles:
-				APPENDICES[k] = list(subArticles.values())
-			else:
-				APPENDICES[k] = subArticles
+						for ttem in tertiarySplit.items():
+							tKey = ttem[0]
+							tContent = ttem[1]
+							D[pKey][sKey][tKey] = {}
+							if tKey == '_':
+								D[pKey][sKey][tKey] = tContent
+							else:
+								quaternarySplit = self._split(tContent,
+															 quaternaries,
+															 quaternaryExtractor,
+															 qStart, 
+															 qEnd)
+								D[pKey][sKey][tKey] = quaternarySplit
+		return D
 
-		return ARTICLES, APPENDICES
-
-
-
-"""
-text = getHtml()
-
-reg1 = 'ti-art">Artikel [\d]+</p>'
-reg2 = 'ti-art">Artikel [\d]+</p>'
-s_start = 8
-s_end = 4
-
-articles = parse(text, reg1, reg2,s_start,s_end)
-
-reg1 = '<p class="normal">[\w]*\)'
-reg2 = '>[a-z]*\)'
-
-ARTICLES = {}
-for k in articles.keys():
-	subArticles = parse(articles[k], reg1, reg2, s_start=1, s_end=1)
-	if 'none' in subArticles:
-		ARTICLES[k] = list(subArticles.values())
-	else:
-		ARTICLES[k] = subArticles
-
-
-
-reg1 = reg2 = '>ANHANG [IXV]+</p>'
-s_start = 1
-s_end = 4
-
-appendices = parse(text, reg1, reg2,s_start,s_end)
-
-
-
-
-reg1 = '<p class="ti-grseq-1" id=".+">[\d]\.'
-reg2 = '>\d\.[ ]+[<span class="italic">]+[\w -]*'
-s_start = 1
-s_end = 1
-
-APPENDICES = {}
-for k in appendices.keys():
-	subArticles = parse(appendices[k], reg1, reg2, s_start=s_start, s_end=s_end)
-	if 'none' in subArticles:
-		APPENDICES[k] = list(subArticles.values())
-	else:
-		APPENDICES[k] = subArticles
-
-
-
-
-
-# open some file and print anhang i . 6 and artikel 2
-art2 = ARTICLES['2']
-app = APPENDICES['anhang i']['6.']
-
-ar = printDict(art2)
-ap = printDict(app)
-
-with open('tmp.html','w') as f:
-	f.write(ar)
-	f.write(ap)
-
-"""

@@ -1,14 +1,36 @@
 {
-	"Druckbehälter":[
-		{"Druck"},
-		{"Inhalt"},
-		{"Volumen"},
-		{"Temperatur"}
-		]
-	,
-	"Elektromotor":[
-		{"Leistung"},
-		{"Spannung"}
-		]
+	"Druckbehälter":{
+		"Eigenschaften":[
+			"Druck",
+			"Inhalt",
+			"Volumen",
+			"Temperatur"
+			],
+		"aktiviert":[
+			],
+		"deaktiviert":[
+			]
+	},
+	"Rührwerk":{
+		"Eigenschaften":[
+			"Leistung",
+			"Spannung"
+			],
+		"aktiviert":[
+			{"MRL":[]}
+			],
+		"deaktiviert":[
+			]
+	},
+	"Elektromotor":{
+		"Eigenschaften":[
+			"Leistung",
+			"Spannung"
+			],
+		"aktiviert":[
+			],
+		"deaktiviert":[
+			]
+	}
 		
 }

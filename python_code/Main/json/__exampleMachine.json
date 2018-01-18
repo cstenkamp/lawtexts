@@ -11,19 +11,20 @@
 			"Druck":{"bar":"5"},
 			"Temperatur":{"C":"36"},
 			"Seriennummer":"123456",
-			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
+			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente",
+			"aktiviert Richtlinie":["MRL"]
 		},
 		"Rührwerk":{
 			"Spannung":{"Volt AC":"150"},
 			"Leistung":{"Watt":"150"},
 			"Seriennummer":"123456",
-			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
+			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente",
+			"aktiviert Richtlinie":["MRL"]
 		}
 	},
 	"Verwendungszwecke":[
-		"Heben von Personen oder von Personen und Gütern"
+		"Bearbeitung von Holz und von Werkstoffen mit ähnlichen physikalischen Eigenschaften"
 	],
 	"Verwendungsorte":[
-		"in einer explosionsfähigen Atmosphäre"
 	]
 }

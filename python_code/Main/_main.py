@@ -10,13 +10,13 @@ from definitions import Definitions
 
 sys.path.insert(0, os.path.join(os.getcwd(),'saveLoad/'))
 from configurator import Configurator
-from jsonParser import PARSER as jParser
+from jsonParser import PARSER as jPARSER
 
 sys.path.insert(0, os.path.join(os.getcwd(),'logic/'))
 from _logicUnit import LOGIC
 
 sys.path.insert(0, os.path.join(os.getcwd(),'html_parser/'))
-from directiveParser import PARSER as dParser
+from directiveParser import PARSER as dPARSER
 
 from _printer import Printer
 
@@ -30,33 +30,52 @@ Create A Machine, called Product for clarity reasons
 		Parts
 		Directives that apply
 """
-Product = Machine()
-Logic = LOGIC(Product)
-
 
 """
 load json
 """
 jsonPath = 'json/__exampleMachine.json'
-jparser = jParser()
-data = jparser.parse(jsonPath)
+jparser = jPARSER()
+machineData = jparser.parse(jsonPath)
+
+jsonPath = 'json/parts.json'
+partsData = jparser.parse(jsonPath)
+
+
 
 """
 load html directives
 """
-dparser = dParser()
-
+dParser = dPARSER()
 # parse MRL into articles and appendices
-mrlArticle, mrlAppendices = dparser.MRLtoDicts()
+text = dParser.getHtml(p='html_resources/directives/mrl.html')
+mrlArticle = dParser.parseArticles(text)
+mrlAppendices = dParser.parseAppendices(text)
+
+text = dParser.getHtml(p='html_resources/directives/nsr.html')
+nsrArticle = dParser.parseArticles(text)
+nsrAppendices = dParser.parseAppendices(text)
+
+ARTICLES = {'MRL':mrlArticle,
+		   	'NSR':nsrArticle
+		   }
+APPENDICES = {'MRL':mrlAppendices,
+			  'NSR':nsrAppendices
+			 }
+
+Product = Machine()
+Logic = LOGIC(Product,ARTICLES, APPENDICES)
+
+
 
 
 
 """
-add data to Product
+add machineData to Product
 """
 
 configurator = Configurator(Product)
-configurator.configure(data)
+configurator.configure(machineData)
 
 Logic.checkMachineFirstLevel()
 Logic.checkMachineComponents()
