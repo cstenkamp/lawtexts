@@ -14,7 +14,7 @@ class centralTable(QWidget):
         self.mainWindow = mainWindow
         self.title = 'Central Table'
         self.machines = [[],[]]
-        self.orderKey = "name"
+        self.orderKey = ["name", False]
 
         self.create_table()
 
@@ -48,7 +48,7 @@ class centralTable(QWidget):
         # table selection change
         self.tableWidget.doubleClicked.connect(self.on_click)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.order_list(self.orderKey, False)
+        self.order_list()
         self.fill_table()
         self.tableWidget.resizeColumnsToContents()
 
@@ -65,7 +65,7 @@ class centralTable(QWidget):
                  for file in machineList:
                     json = jsonHandler.read_json_file(file)
                     self.machines[0].append(json)
-                    self.machines[1].append(path+"/"+file)
+                    self.machines[1].append(machinePath+"/"+file)
         os.chdir(path)
 
     def fill_table(self):
@@ -81,14 +81,14 @@ class centralTable(QWidget):
             self.tableWidget.setItem(i, 4, centerItem(self.machines[0][i]["Prüfdatum"]))
 
 
-    def order_list(self, keyItem, descending):
-        print(self.machines[1])
+    def order_list(self, keyItem="name", descending=False):
+        self.order = [keyItem, descending]
         temp = sorted(zip(self.machines[0], self.machines[1]), key=lambda x: x[0][keyItem].lower(), reverse=descending)
         self.machines[0], self.machines[1] = map(list, zip(*temp))
 
     def reload_list(self):
         self.get_machines()
-        self.order_list()
+        self.order_list(self.order[0], self.order[1])
         self.fill_table()
 
 
@@ -110,12 +110,21 @@ class centralTable(QWidget):
     def btn_remove(self):
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
+        print(index.row(), index.column())
+        item = [self.machines[0][index.row()], self.machines[1][index.row()]]
         reply = QMessageBox.question(self, 'Remove item',
-                                     "Are you you want to delete this machine?", QMessageBox.Yes |
+                                     "Are you you want to delete " +
+                                     item[0]["name"] + "?", QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
-            print("remove hier: ")
+            # remove the file
+            os.remove(item[1])
+            self.tableWidget.removeRow(index.row())
+            self.machines[0].pop(index.row())
+            self.machines[1].pop(index.row())
+            print(self.machines[1])
+            # self.reload_list()
 
         else:
             print("don't delete")

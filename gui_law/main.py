@@ -1,7 +1,7 @@
 import sys
 import os
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget
-from centralTable import centralTable
+from gui_law.centralTable import centralTable
 from screeninfo import get_monitors
 
 class mainWindow(QMainWindow):
