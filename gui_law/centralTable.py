@@ -1,4 +1,4 @@
-import jsonHandler
+import gui_law.jsonHandler
 import os
 import glob
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
@@ -8,13 +8,15 @@ from operator import itemgetter
 
 TABLE_HEADER = ["Name", "customerID", "Herstellungsort", "Herstellungsdatum", "Prüfdatum", "", ""]
 
-class centralTable(QWidget):
+class CentralTable(QWidget):
     def __init__(self, mainWindow):
         super().__init__()
         self.mainWindow = mainWindow
         self.title = 'Central Table'
         self.machines = [[],[]]
         self.orderKey = ["name", False]
+        self.editWindow = None
+        self.showWindow = None
 
         self.create_table()
 
@@ -63,7 +65,7 @@ class centralTable(QWidget):
                 return
             else:
                  for file in machineList:
-                    json = jsonHandler.read_json_file(file)
+                    json = gui_law.jsonHandler.read_json_file(file)
                     self.machines[0].append(json)
                     self.machines[1].append(machinePath+"/"+file)
         os.chdir(path)
@@ -105,12 +107,14 @@ class centralTable(QWidget):
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
         print("edit: ", self.machines[1][index.row()], index.row(), index.column())
+        self.editWindow = gui_law.jsonHandler.ItemView([self.machines[0][index.row()],
+                                                      self.machines[1][index.row()]])
+        self.editWindow.show()
 
 
     def btn_remove(self):
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
-        print(index.row(), index.column())
         item = [self.machines[0][index.row()], self.machines[1][index.row()]]
         reply = QMessageBox.question(self, 'Remove item',
                                      "Are you you want to delete " +
@@ -123,8 +127,3 @@ class centralTable(QWidget):
             self.tableWidget.removeRow(index.row())
             self.machines[0].pop(index.row())
             self.machines[1].pop(index.row())
-            print(self.machines[1])
-            # self.reload_list()
-
-        else:
-            print("don't delete")

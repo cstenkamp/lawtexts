@@ -1,14 +1,14 @@
 import sys
 import os
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget
-from gui_law.centralTable import centralTable
+from gui_law.centralTable import CentralTable
 from screeninfo import get_monitors
 
 class mainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.centralTable = centralTable(self)
-        self.setCentralWidget(self.centralTable)
+        self.CentralTable = CentralTable(self)
+        self.setCentralWidget(self.CentralTable)
 
         self.initUI()
 
