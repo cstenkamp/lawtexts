@@ -1,4 +1,4 @@
-import gui_law.jsonHandler
+import jsonHandler
 import os
 import glob
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
@@ -48,7 +48,7 @@ class CentralTable(QWidget):
             self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-2, editBtn)
             self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-1, rmvBtn)
         # table selection change
-        self.tableWidget.doubleClicked.connect(self.on_click)
+        self.tableWidget.doubleClicked.connect(self.on_double_click)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.order_list()
         self.fill_table()
@@ -65,7 +65,7 @@ class CentralTable(QWidget):
                 return
             else:
                  for file in machineList:
-                    json = gui_law.jsonHandler.read_json_file(file)
+                    json = jsonHandler.read_json_file(file)
                     self.machines[0].append(json)
                     self.machines[1].append(machinePath+"/"+file)
         os.chdir(path)
@@ -96,19 +96,24 @@ class CentralTable(QWidget):
 
     # start of the button functions
     @pyqtSlot()
-    def on_click(self):
+    def on_double_click(self):
+        '''
         print("\n")
         for currentQTableWidgetItem in self.tableWidget.selectedItems():
             print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(
             ), currentQTableWidgetItem.text())
+        '''
+        row = self.tableWidget.selectedItems()[0].row()
+        self.editWindow = jsonHandler.ItemView([self.machines[0][row],
+                                                self.machines[1][row]], self)
+        self.editWindow.show()
 
 
     def btn_edit(self):
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
-        print("edit: ", self.machines[1][index.row()], index.row(), index.column())
-        self.editWindow = gui_law.jsonHandler.ItemView([self.machines[0][index.row()],
-                                                      self.machines[1][index.row()]])
+        self.editWindow = jsonHandler.ItemView([self.machines[0][index.row()],
+                                                      self.machines[1][index.row()]], self, True)
         self.editWindow.show()
 
 
