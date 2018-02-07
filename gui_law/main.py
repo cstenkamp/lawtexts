@@ -1,15 +1,16 @@
 import sys
 import os
-from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget
-from gui_law.centralTable import CentralTable
-from screeninfo import get_monitors
+from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, \
+        QDesktopWidget
+from centralTable import CentralTable
+# from screeninfo import get_monitors
+
 
 class mainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.CentralTable = CentralTable(self)
         self.setCentralWidget(self.CentralTable)
-
         self.initUI()
 
     def initUI(self):
@@ -17,7 +18,8 @@ class mainWindow(QMainWindow):
         # center window
         self.title = 'Prototyp LawText'
         self.setWindowTitle(self.title)
-        self.resize(get_monitors()[0].width / 2, get_monitors()[0].height / 2)
+        sizeObject = QDesktopWidget().screenGeometry(-1)
+        self.resize(sizeObject.width() / 2, sizeObject.height() / 2)
         # set window in center
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
