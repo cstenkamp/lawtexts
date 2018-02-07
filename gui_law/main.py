@@ -14,6 +14,8 @@ class mainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        """ initialises the mainWindow at the center to half the size of the
+            resolution """
         self.statusBar()
         # center window
         self.title = 'Prototyp LawText'
@@ -31,8 +33,8 @@ class mainWindow(QMainWindow):
         self.initMenubar(menubar)
         self.show()
 
-    # todo do the actual menu
     def initMenubar(self, menubar):
+        """ adds a Menubar to the mainWindow """
         # todo add functions later
         fileMenu = menubar.addMenu('File')
         editMenu = menubar.addMenu('Edit')

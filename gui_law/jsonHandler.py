@@ -2,12 +2,14 @@ import sys
 import json
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTextEdit,\
-    QAbstractButton, QDesktopWidget, QGridLayout, QLabel, QAbstractScrollArea, QScrollArea
+    QAbstractButton, QDesktopWidget, QGridLayout, QLabel, QAbstractScrollArea,\
+    QScrollArea, QToolButton, QMenu, QWidgetAction, QPushButton
 
 EINHEITEN = ["flüssig", "fest", "gasförmig", "c", "bar", "watt", "volt ac", "l", "ml", "k", "g", "mg"]
 
 
 def read_json_file(jsonFile):
+    """ reads the jsonFiles and returns it """
     if not jsonFile.lower().endswith('.json'):
         print("Given File is no json")
         return
@@ -17,6 +19,7 @@ def read_json_file(jsonFile):
 
 
 class ItemView(QMainWindow):
+    """ creates a ItemOverview over the given @item, @edit = readOnly? """
     def __init__(self, item, parent=None, edit=False):
         super(ItemView, self).__init__(parent)
         self.setCentralWidget(ItemList(item, edit))
@@ -38,6 +41,7 @@ class ItemView(QMainWindow):
 
 
 class ItemList(QWidget):
+    """ creates a scrollable ItemList in which the item entries will be put """
     def __init__(self, item, edit):
         super(ItemList, self).__init__()
         self.item = item
@@ -50,37 +54,85 @@ class ItemList(QWidget):
         self.scroll = QScrollArea(self)
         self.listBox.addWidget(self.scroll)
         self.scroll.setWidgetResizable(True)
-        #self.scroll.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.scrollContent = QWidget(self.scroll)
         self.grid = QGridLayout()
         self.grid.setSpacing(10)
         self.scrollContent.setLayout(self.grid)
 
         self.counter = 0
-        self.openDict(self.item[0])
+
+        self.openDict(self.grid, self.item[0])
+
         self.scroll.setWidget(self.scrollContent)
 
-    def openDict(self, dict_item, intend=0):
+    def openDict(self, grid, dict_item, intend=0):
+        """ recursively puts all the item entries into the ListBox """
         for key in dict_item:
+            # handles dictionary entries in the way of recursively loading this
+            # function
             self.counter += 1
-            keyLabel = QLabel(key)
-            keyLabel.setFont(QFont("Times", weight=QFont.Bold))
-            self.grid.addWidget(keyLabel, self.counter, intend)
+            font = QFont("Times", 12, weight=QFont.Bold)
             if type(dict_item[key]) is dict:
-                if len(dict_item[key]) == 1 and list(dict_item[key].keys())[0].lower() in EINHEITEN:
+                if len(dict_item[key]) == 1 and \
+                        list(dict_item[key].keys())[0].lower() in EINHEITEN:
                     newKey = list(dict_item[key].keys())[0]
+                    keyLabel = QLabel(key)
                     keyLabel.setText(keyLabel.text() + " (" + newKey + ")")
+                    keyLabel.setFont(font)
+                    grid.addWidget(keyLabel, self.counter, intend)
                     text = QTextEdit(self)
                     text.setText(dict_item[key][newKey])
                     text.setReadOnly(not self.edit)
-                    self.grid.addWidget(text, self.counter, intend + 1)
+                    grid.addWidget(text, self.counter, intend + 1)
                 else:
-                    self.openDict(dict_item[key], intend + 1)
+                    scrollArea = QScrollArea(self)
+                    scrollArea.setWidgetResizable(True)
+                    scrollArea.setVisible(False)
+                    content = QWidget(scrollArea)
+                    nGrid = QGridLayout()
+                    nGrid.setSpacing(10)
+                    content.setLayout(nGrid)
+                    self.openDict(nGrid, dict_item[key], intend)
+                    button = dropdownButton(content, grid, self.counter+1, intend+1)
+                    button.setText(key)
+                    button.setToolTip('click to toggle ' + key)
+                    grid.addWidget(button, self.counter, intend)
             else:
+                keyLabel = QLabel(key)
+                keyLabel.setFont(font)
+                # here the entries gets put into the ListBox
                 text = QTextEdit(self)
+                # in case it's a list put each list entry into the ListBox
                 if type(dict_item[key]) is list:
-                    text.setText(dict_item[key][0])
+                    toSetText = ""
+                    for entry in dict_item[key]:
+                        if toSetText == "":
+                            toSetText += str(entry)
+                        else:
+                            toSetText += ("\n" + str(entry))
+                    text.setText(toSetText)
                 else:
                     text.setText(str(dict_item[key]))
                 text.setReadOnly(not self.edit)
-                self.grid.addWidget(text, self.counter, intend + 1)
+                text.setFont(QFont("Times", 12))
+                grid.addWidget(keyLabel, self.counter, intend)
+                grid.addWidget(text, self.counter, intend + 1)
+
+
+class dropdownButton(QPushButton):
+    def __init__(self, widget, grid, row, column, toggleBoolean=False,):
+        super().__init__()
+        self.toggle = toggleBoolean
+        self.widget = widget
+        self.grid = grid
+        self.clicked.connect(self.toggle_expand)
+        self.row = row
+        self.column = column
+
+    def toggle_expand(self):
+        if not self.toggle:
+            self.grid.addWidget(self.widget, self.row, self.column)
+            self.toggle = True
+        else:
+            self.widget.setParent(None)
+            self.toggle = False

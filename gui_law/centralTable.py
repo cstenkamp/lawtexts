@@ -8,15 +8,17 @@ from operator import itemgetter
 
 TABLE_HEADER = ["Name", "customerID", "Herstellungsort", "Herstellungsdatum", "Prüfdatum", "", ""]
 
+
 class CentralTable(QWidget):
+    """ A class to create a table where all machines will be presented in an
+        easy overview """
     def __init__(self, mainWindow):
+        """ initialises the Window for the Table """
         super().__init__()
         self.mainWindow = mainWindow
         self.title = 'Central Table'
         self.machines = [[],[]]
         self.orderKey = ["name", False]
-        self.editWindow = None
-        self.showWindow = None
 
         self.create_table()
 
@@ -29,6 +31,7 @@ class CentralTable(QWidget):
         self.show()
 
     def create_table(self):
+        """ initialises the QTableWidgets and its cells """
         # Create table
         self.tableWidget = QTableWidget()
         self.get_machines()
@@ -56,6 +59,7 @@ class CentralTable(QWidget):
 
 
     def get_machines(self):
+        """ loads all machines out of the json into the class list """
         path = os.path.dirname(os.path.abspath(__file__))
         machinePath = path+"/machines"
         os.chdir(machinePath)
@@ -71,6 +75,8 @@ class CentralTable(QWidget):
         os.chdir(path)
 
     def fill_table(self):
+        """ adds the machines of the class list into the cells """
+        # todo make the Header changeable by the user
         def centerItem(toCenter):
             item = QTableWidgetItem(toCenter)
             item.setTextAlignment(Qt.AlignHCenter)
@@ -84,6 +90,7 @@ class CentralTable(QWidget):
 
 
     def order_list(self, keyItem="name", descending=False):
+        """ orders list depending on the keyItem and depending on descending """
         self.order = [keyItem, descending]
         temp = sorted(zip(self.machines[0], self.machines[1]), key=lambda x: x[0][keyItem].lower(), reverse=descending)
         self.machines[0], self.machines[1] = map(list, zip(*temp))
@@ -93,10 +100,10 @@ class CentralTable(QWidget):
         self.order_list(self.order[0], self.order[1])
         self.fill_table()
 
-
     # start of the button functions
     @pyqtSlot()
     def on_double_click(self):
+        """ loads a full overview over the respective item read-only """
         '''
         print("\n")
         for currentQTableWidgetItem in self.tableWidget.selectedItems():
@@ -108,16 +115,16 @@ class CentralTable(QWidget):
                                                 self.machines[1][row]], self)
         self.editWindow.show()
 
-
     def btn_edit(self):
+        """ loads a full overview over the respective item - editable """
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
         self.editWindow = jsonHandler.ItemView([self.machines[0][index.row()],
                                                       self.machines[1][index.row()]], self, True)
         self.editWindow.show()
 
-
     def btn_remove(self):
+        """ removes the respective item after a confirmation dialog """
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
         item = [self.machines[0][index.row()], self.machines[1][index.row()]]
