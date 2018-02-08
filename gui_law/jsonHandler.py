@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTextEdit,\
     QAbstractButton, QDesktopWidget, QGridLayout, QLabel, QAbstractScrollArea,\
     QScrollArea, QToolButton, QMenu, QWidgetAction, QPushButton, QTableWidget,\
-    QTextBrowser, QScrollBar
+    QTextBrowser, QScrollBar, QSizePolicy
 
 EINHEITEN = ["flüssig", "fest", "gasförmig", "c", "bar", "watt", "volt ac", \
             "l", "ml", "k", "g", "mg"]
@@ -40,7 +40,7 @@ class ItemView(QMainWindow):
         self.setMinimumSize(self.sizeObject.width() / 2,\
                             self.sizeObject.height() / 2)
         self.scrollContent = QWidget()
-        self.grid = QGridLayout(self.scrollContent)
+        self.grid = QVBoxLayout(self.scrollContent)
         self.scroll.setWidget(self.scrollContent)
         self.setCentralWidget(self.scroll)
 
@@ -72,7 +72,7 @@ class ItemView(QMainWindow):
                     scrollArea.setWidgetResizable(True)
                     scrollArea.setVisible(False)
                     content = QWidget()
-                    nGrid = QGridLayout(content)
+                    nGrid = QVBoxLayout(content)
 
                     self.openDict(content, nGrid, dict_item[key], intend)
                     scrollArea.setWidget(content)
@@ -104,6 +104,7 @@ class ItemView(QMainWindow):
 class DropdownButton(QPushButton):
     def __init__(self, widget, key, grid, toggle = False):
         super(DropdownButton, self).__init__()
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.widget = widget
         self.setText(key)
         self.grid = grid
@@ -130,13 +131,9 @@ class DropdownButton(QPushButton):
                 widgetList.append(item.widget())
             if not self.toggle:
                 widgetList.insert(index + 1, self.widget)
-            counter = 0
             for entry in widgetList:
-                if entry is self.widget:
-                    self.grid.addWidget(entry)
-                else:
-                    self.grid.addWidget(entry)
-                counter += 1
+                self.grid.addWidget(entry)
+            self.grid.setStretch(index, 5)
             self.widget.setVisible(True)
 
         else:
