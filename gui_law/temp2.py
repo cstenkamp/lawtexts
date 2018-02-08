@@ -10,12 +10,15 @@ class ItemList(QMainWindow):
         super(ItemList, self).__init__()
         self.setLayout(QVBoxLayout())
         self.scroll = QScrollArea(self)
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setMinimumSize(500,250)
+        self.scroll.verticalScrollBar()
+        self.scroll.horizontalScrollBar()
+        self.scroll.setWidgetResizable(False)
+        self.scroll.setMinimumSize(200,200)
         self.scrollContent = QTableWidget(self.scroll)
         #self.scrollContent.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setCentralWidget(self.scroll)
         self.grid = QGridLayout()
+        self.grid.setSpacing(10)
         self.scrollContent.setLayout(self.grid)
         self.scroll.setWidget(self.scrollContent)
 
@@ -25,7 +28,7 @@ class ItemList(QMainWindow):
         self.__init__()
 
     def doStuff(self):
-        for i in range(3):
+        for i in range(10):
             test = QTextBrowser()
             test.setText("Test")
             self.addDropDownWidget(test)
@@ -36,41 +39,31 @@ class ItemList(QMainWindow):
         self.counter += 1
 
 class DropdownButton(QPushButton):
-    def __init__(self, widget, itemList, toggle = False):
+    def __init__(self, widget, itemList, show=True):
         super(DropdownButton, self).__init__()
         self.widget = widget
         self.setText("Test")
         self.itemList = itemList
-        self.toggle = toggle
+        self.show = show
         self.itemList.grid.addWidget(self)
         self.clicked.connect(self.toggle_expand)
 
     def toggle_expand(self):
         grid = self.itemList.grid
-        if not self.toggle:
-            index = grid.indexOf(self)
-            widgetList = []
-            while grid.itemAt(0) is not None:
-                item = grid.takeAt(0)
-                widgetList.append(item.widget())
-            widgetList.insert(index+1, self.widget)
-            index = 0
-            for entry in widgetList:
-                index += 1
-                grid.addWidget(entry, index, 0)
-            # self.widget.setParent(self)
-        else:
+        widgetList = []
+        if not self.show:
             self.widget.setParent(None)
-            widgetList = []
-            while self.itemList.grid.itemAt(0) is not None:
-                item = grid.takeAt(0)
-                widgetList.append(item.widget())
-            for entry in widgetList:
-                self.itemList.grid.addWidget(entry)
-            self.resize(self.sizeHint())
-            self.widget.resize(self.widget.sizeHint())
-            self.itemList.resize(self.itemList.sizeHint())
-        self.toggle = not self.toggle
+        else:
+            index = grid.indexOf(self)
+        while self.itemList.grid.itemAt(0) is not None:
+            item = grid.takeAt(0)
+            widgetList.append(item.widget())
+        if self.show:
+            widgetList.insert(index+1, self.widget)
+        index = 0
+        for entry in widgetList:
+            grid.addWidget(entry)
+        self.show = not self.show
 
 
 
