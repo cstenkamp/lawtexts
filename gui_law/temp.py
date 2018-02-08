@@ -1,39 +1,78 @@
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import QComboBox, QMainWindow, QWidget, QVBoxLayout, QApplication, QToolButton, QMenu
-import sys, os
+import sys
+import json
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
-class CheckableComboBox(QComboBox):
+def read_json_file(jsonFile):
+    """ reads the jsonFiles and returns it """
+    if not jsonFile.lower().endswith('.json'):
+        print("Given File is no json")
+        return
+    with open(jsonFile, 'r') as f:
+        datastor = json.load(f)
+        return datastor
+
+
+class Window(QWidget):
     def __init__(self):
-        super(CheckableComboBox, self).__init__()
-        self.view().pressed.connect(self.handleItemPressed)
-        self.setModel(QtGui.QStandardItemModel(self))
+        QWidget.__init__(self)
+        sizeObject = QDesktopWidget().screenGeometry(-1)
+        self.resize(sizeObject.width() / 2, sizeObject.height() / 2)
+        self.treeView = QTreeView()
+        self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeView.customContextMenuRequested.connect(self.openMenu)
 
-    def handleItemPressed(self, index):
-        item = self.model().itemFromIndex(index)
-        if item.checkState() == QtCore.Qt.Checked:
-            item.setCheckState(QtCore.Qt.Unchecked)
-        else:
-            item.setCheckState(QtCore.Qt.Checked)
+        self.model = QStandardItemModel()
+        self.addItems(self.model, data)
+        self.treeView.setModel(self.model)
+
+        self.model.setHorizontalHeaderLabels([self.tr("Object")])
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.treeView)
+        self.setLayout(layout)
+
+    def addItems(self, parent, dict_item):
+
+        for key in dict_item:
+            item = QStandardItem(key)
+            parent.appendRow(item)
+            newParent = item
+            if type(dict_item[key]) is dict:
+                self.addItems(item, dict_item[key])
+            elif type(dict_item[key]) is list:
+                item = QStandardItem(str(dict_item[key]))
+                newParent.appendRow(item)
+            else:
+                item = QStandardItem(dict_item[key])
+                newParent.appendRow(item)
+
+    def openMenu(self, position):
+        indexes = self.treeView.selectedIndexes()
+        if len(indexes) > 0:
+            level = 0
+            index = indexes[0]
+            while index.parent().isValid():
+                index = index.parent()
+                level += 1
+            menu = QMenu()
+            # todo Change
+            if level == 0:
+                menu.addAction(self.tr("Edit person"))
+            elif level == 1:
+                menu.addAction(self.tr("Edit object/container"))
+            elif level == 2:
+                menu.addAction(self.tr("Edit object"))
+            menu.exec_(self.treeView.viewport().mapToGlobal(position))
 
 
-class Dialog_01(QMainWindow):
-    def __init__(self):
-        super(QMainWindow,self).__init__()
-        myQWidget = QWidget()
-        myBoxLayout = QVBoxLayout()
-        myQWidget.setLayout(myBoxLayout)
-        self.setCentralWidget(myQWidget)
-        self.ComboBox = QComboBox()
-        for i in range(3):
-            self.ComboBox.addItem("Combobox Item " + str(i))
-            item = self.ComboBox.model().item(i, 0)
-            item.setCheckState(QtCore.Qt.Unchecked)
-        myBoxLayout.addWidget(self.ComboBox)
+if __name__ == "__main__":
 
-if __name__ == '__main__':
+    data = read_json_file(\
+        "/home/nilus/Projects/lawtexts/gui_law/machines/bMachine.json")
     app = QApplication(sys.argv)
-    dialog_1 = Dialog_01()
-    dialog_1.show()
-    dialog_1.resize(480,320)
+    window = Window()
+    window.show()
     sys.exit(app.exec_())
