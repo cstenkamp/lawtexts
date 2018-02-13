@@ -18,6 +18,14 @@ def read_json_file(jsonFile):
         return datastor
 
 
+def write_json_file(item, path):
+    """ writes the jsonFile to path, overwrites if existing """
+    if not path.lower().endswith('.json'):
+        path += ".json"
+    with open(path, "w") as f:
+        json.dump(item, f)
+    print("wrote file")
+
 class ItemView(QMainWindow):
     """ creates a ItemOverview over the given @item, @edit = readOnly? """
     def __init__(self, item, parent=None, edit=False):
@@ -31,19 +39,37 @@ class ItemView(QMainWindow):
                 if type(child) == self.__class__:
                     child.close()
         self.setWindowTitle(self.item[0]["name"])
+        menubar = self.menuBar()
+        self.initMenubar(menubar)
         sizeObject = QDesktopWidget().screenGeometry(-1)
         self.resize(sizeObject.width() / 2, sizeObject.height() / 2)
 
-        self.ItemWidget = ItemViewWidget(self.item[0], self.edit)
+        self.ItemWidget = ItemViewWidget(self.item[0], self.item[1], self.edit)
         self.setCentralWidget(self.ItemWidget)
 
         self.show()
 
+    def initMenubar(self, menubar):
+        """ adds a Menubar to the mainWindow """
+        # todo add functions later
+        fileMenu = menubar.addMenu('File')
+        searchMenu = menubar.addMenu('Search')
+
+        save = QAction('Speichern', self)
+        save.setShortcut('Ctrl+S')
+        # lamda necessary in order to make it callable
+        save.triggered.connect(lambda: write_json_file(self.item[0], self.item[1]))
+        save.triggered.connect(lambda: self.parent.reload_list())
+        saveAs = QAction('Speichern als', self)
+        fileMenu.addAction(save)
+        fileMenu.addAction(saveAs)
+
 
 class ItemViewWidget(QWidget):
-    def __init__(self, data, edit):
+    def __init__(self, data, path, edit):
         QWidget.__init__(self)
         self.data = data
+        self.path = path
         self.edit = edit
         self.treeView = QTreeView()
         self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -59,14 +85,31 @@ class ItemViewWidget(QWidget):
         layout.addWidget(self.treeView)
         self.setLayout(layout)
         self.treeView.setModel(self.model)
+        self.model.dataChanged.connect(self.item_changed)
         self.model.setHorizontalHeaderLabels(["Feature", "Wert"])
 
         self.addItems(self.model, self.data)
+
+    def item_changed(self, index, index2, roles):
+        if index.isValid():
+            newData = index2.data()
+            key = index.sibling(index.row(), 0).data()
+            parentList = []
+            item = self.data
+            while index2.parent().isValid():
+                index2 = index2.parent()
+                parentList.append(index2.data())
+            if parentList is not []:
+                while len(parentList) > 0:
+                    item = self.item[0][parentList.pop()]
+            item[key] = newData
+
 
     def addItems(self, parent, dict_item):
 
         for key in dict_item:
             item = QStandardItem(key)
+            item.setEditable(False)
             newParent = item
             # self.model.setData(self.model.index(0, 1), "test")
             if type(dict_item[key]) is list:

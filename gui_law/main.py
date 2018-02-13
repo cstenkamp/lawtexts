@@ -1,7 +1,8 @@
 import sys
 import os
-from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, \
-        QDesktopWidget
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from centralTable import CentralTable
 # from screeninfo import get_monitors
 
@@ -43,8 +44,10 @@ class mainWindow(QMainWindow):
         toolsMenu = menubar.addMenu('Tools')
         helpMenu = menubar.addMenu('Help')
 
-
-
+        refresh = QAction('Erneut Laden', self)
+        refresh.setShortcut("F5")
+        refresh.triggered.connect(lambda: self.CentralTable.reload_list())
+        editMenu.addAction(refresh)
 
 
 if __name__ == '__main__':

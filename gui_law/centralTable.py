@@ -53,8 +53,8 @@ class CentralTable(QWidget):
         # table selection change
         self.tableWidget.doubleClicked.connect(self.on_double_click)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.order_list()
         self.fill_table()
+        self.order_list()
         self.tableWidget.resizeColumnsToContents()
 
 
@@ -96,8 +96,6 @@ class CentralTable(QWidget):
         self.machines[0], self.machines[1] = map(list, zip(*temp))
 
     def reload_list(self):
-        self.get_machines()
-        self.order_list(self.order[0], self.order[1])
         self.fill_table()
 
     # start of the button functions
@@ -110,6 +108,7 @@ class CentralTable(QWidget):
             print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(
             ), currentQTableWidgetItem.text())
         '''
+        print(self.tableWidget.selectedItems())
         row = self.tableWidget.selectedItems()[0].row()
         self.editWindow = jsonHandler.ItemView([self.machines[0][row],
                                                 self.machines[1][row]], self)
