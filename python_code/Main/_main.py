@@ -1,5 +1,5 @@
 import sys, os, webbrowser
-#from pprint import pprint as print
+from pprint import pprint as print
 from _machine import Machine
 
 sys.path.insert(0, os.path.join(os.getcwd(),'QATree/'))

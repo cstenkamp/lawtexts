@@ -11,7 +11,7 @@
 			"betrifft vielleicht":{
 				"MRL":[
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_IV"
 					}
 				]
@@ -25,7 +25,7 @@
 			"betrifft vielleicht":{
 				"MRL":[
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_IV"
 					}
 				]
@@ -44,7 +44,7 @@
 			"betrifft vielleicht":{
 				"MRL":[
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_IV"
 					}
 				]
@@ -59,7 +59,7 @@
 			"betrifft vielleicht":{
 				"MRL":[
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_IV"
 					}
 				]
@@ -74,7 +74,7 @@
 			"betrifft vielleicht":{
 				"MRL":[
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_IV"
 					}
 				]
@@ -98,11 +98,11 @@
 			"betrifft vielleicht":{
 				"MRL":[
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_IV"
 					},
 					{
-						"User Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_V"
 					}
 				]

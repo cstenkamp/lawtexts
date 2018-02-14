@@ -54,63 +54,40 @@ class LOGIC():
 		return results, text_output
 
 
-	def checkFirstLevel(self,name='Verwendungszwecke',kBase=None,specific_directive=None):
-		if kBase is None:
+	def checkFirstLevel(self,kind='Verwendungszwecke',directive='MRL'):
+		if kind == 'Verwendungszwecke':
 			kBase = self.purposes
+		elif kind == 'Verwendungsorte':
+			kBase = self.sites 
 		"""
 		checks, if product is affected by directive due to purpose/site
 		"""
-		results = {}
-		text_output = {}
-		user_questions = {}
-		# iterate over purposes
-		for P in self.Product.json[name]:
-			if not P in kBase:
-				continue
-			info = kBase[P]
-			# see if a purpose in/excludes a directive			
-			for dName,texts  in info['deaktiviert'].items():
-				if not specific_directive is None:
-					if not dName == specific_directive:
-						continue
-				results, text_output = self.checkInfo(dName, 
-													  texts, 
-													  results, 
-													  text_output,
-													  False)
+		result = {'activating':{},
+				  'deactivating':{},
+				  'user_questions':{},
+				  'directive_texts':{}}
+		# iterate over purposes/sites
+		for firstLevelFeature in self.Product.json[kind]:
+			# get information about site/purpose 
+			if directive in kBase[firstLevelFeature]['aktiviert']:
+				activating = kBase[firstLevelFeature]['aktiviert'][directive]
+				result['activating'][firstLevelFeature] = activating
 
-			for dName,texts  in info['aktiviert'].items():
-				if not specific_directive is None:
-					if not dName == specific_directive:
-						continue
-				results, text_output = self.checkInfo(dName, 
-													  texts, 
-													  results, 
-													  text_output,
-													  True)
+			if directive in kBase[firstLevelFeature]['deaktiviert']:
+				deactivating = kBase[firstLevelFeature]['deaktiviert'][directive]
+				result['deactivating'][firstLevelFeature] = deactivating
 
-			# get texts regarding the purpose
-			for dName,texts  in info['benötigt Text'].items():
-				if not specific_directive is None:
-					if not dName == specific_directive:
-						continue
-				_ 		, text_output = self.checkInfo(dName, 
-													  texts, 
-													  {}, 
-													  text_output,
-													  None)
+			if directive in kBase[firstLevelFeature]['betrifft vielleicht']:
+				user_question = kBase[firstLevelFeature]['betrifft vielleicht'][directive]
+				tmp = []
+				for U in user_question:
+					tmp.append((U['Frage'],U['Ressource']))
+				result['user_questions'][firstLevelFeature] = tmp
 
-
-
-			# get user questions regarding purpose of product
-			for dName,listOfTexts  in info['betrifft vielleicht'].items():
-				if not specific_directive is None:
-					if not dName == specific_directive:
-						continue
-				if not dName in user_questions:
-					user_questions[dName] = []
-				user_questions[dName].extend(listOfTexts)
-		return results, text_output, user_questions
+			if directive in kBase[firstLevelFeature]['benötigt Text']:
+				directiveTexts = kBase[firstLevelFeature]['benötigt Text'][directive]
+				result['directive_texts'][firstLevelFeature] = directiveTexts
+		return result
 
 
 
@@ -262,7 +239,7 @@ class LOGIC():
 		# we now know if this directive is activated by ANY part
 
 		# next we check if the directive gets deactivated by purpose/site
-		r_purpose, t_purpose, u_purpose = self.checkFirstLevel(specific_directive="MRL")
+		result_purpose = self.checkFirstLevel(kind='Verwendungszwecke',directive="MRL")
 		# if purpose is deactivating, we have no questions
 		if 'MRL' in r_purpose:
 			if r_purpose['MRL']==False:
@@ -320,3 +297,4 @@ class LOGIC():
 
 
 		return article_buffer, procedure_buffer
+
