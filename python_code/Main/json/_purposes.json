@@ -9,12 +9,6 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":[
-					{
-						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
-					 	"Ressource":"Anhang_IV"
-					}
-				]
 			}
 		},
 	"Bearbeitung von Metallen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
@@ -23,12 +17,6 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":[
-					{
-						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
-					 	"Ressource":"Anhang_IV"
-					}
-				]
 			}
 		},
 
@@ -42,12 +30,6 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":[
-					{
-						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
-					 	"Ressource":"Anhang_IV"
-					}
-				]
 			}
 		},
 
@@ -57,12 +39,6 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":[
-					{
-						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
-					 	"Ressource":"Anhang_IV"
-					}
-				]
 			}
 		},
 
@@ -72,12 +48,6 @@
 			"deaktiviert":{
 			},
 			"betrifft vielleicht":{
-				"MRL":[
-					{
-						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
-					 	"Ressource":"Anhang_IV"
-					}
-				]
 			}
 		},
 
@@ -97,10 +67,6 @@
 			},
 			"betrifft vielleicht":{
 				"MRL":[
-					{
-						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
-					 	"Ressource":"Anhang_IV"
-					},
 					{
 						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
 					 	"Ressource":"Anhang_V"

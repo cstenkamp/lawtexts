@@ -19,10 +19,9 @@ NSR_dc_low  = 50
 
 
 class LOGIC():
-	def __init__(self, Product, articles, appendices,directiveNames=['MRL','NSR']):
+	def __init__(self, Product, dictParser):
 		self.Product = Product
-		self.appendices = appendices
-		self.articles = articles
+		self.dictParser = dictParser
 
 		'''
 		load json files
@@ -38,9 +37,15 @@ class LOGIC():
 		or not. (If directives are deactivated by some product purpose or site,
 		it is noted here. )
 		'''
-		self.directiveStates = {}
-		for n in directiveNames:
-			self.directiveStates[n] = True
+		self.directiveStates = {'MRL':None,
+								'NSR':None,
+								'ATEX':None,
+								'DGN':None}
+
+		self.stateExplanation = {'MRL':[],
+								'NSR':[],
+								'ATEX':[],
+								'DGN':[]}
 
 
 	def checkInfo(self,dName,texts,results,text_output,B):
@@ -53,8 +58,31 @@ class LOGIC():
 			text_output[dName].append(t)
 		return results, text_output
 
+	def checkFirstLevel(self):
+		result_purposes = {}
+		for D in ['MRL','NSR']:
+			t = self._checkFirstLevel(kind='Verwendungszwecke',directive=D)
+			result_purposes[D] = t
 
-	def checkFirstLevel(self,kind='Verwendungszwecke',directive='MRL'):
+		result_sites = {}
+		for D in ['MRL','NSR']:
+			t = self._checkFirstLevel(kind='Verwendungsorte',directive=D)
+			result_sites[D] = t
+
+		for D,v in result_purposes.items():
+			if not v['deactivating'] == {}:
+				self.directiveStates[D] = False
+				self.stateExplanation[D] = list(v['deactivating'].keys())
+
+		for D,v in result_sites.items():
+			if not v['deactivating'] == {}:
+				self.directiveStates[D] = False
+				self.stateExplanation[D] = list(v['deactivating'].keys())
+
+		return result_purposes, result_sites
+
+
+	def _checkFirstLevel(self,kind='Verwendungszwecke',directive='MRL'):
 		if kind == 'Verwendungszwecke':
 			kBase = self.purposes
 		elif kind == 'Verwendungsorte':
@@ -93,13 +121,12 @@ class LOGIC():
 
 	def checkNSR(self,values):
 		# names of current types
-		ac,dc = self.features['features']['Spannung']
+		ac,dc = self.features['Features']['Spannung']
 		k,v = list(values.items())[0]
 		if k == ac:
 			if  NSR_ac_low<float(v)<NSR_ac_high:
 				return True
 			else:
-				r = Q['Ressource']
 				return False
 		elif k == dc:
 			if  NSR_dc_low<float(v)<NSR_dc_high:
@@ -153,58 +180,6 @@ class LOGIC():
 			results[part] = f_res 
 		return results
 
-	def flushDict(self,D):
-		HTML = ''
-		# srt everything alphabetically
-		keys = sorted(D.keys())
-		if keys[-1]=='_':
-			keys = ['_']+keys[:-1]
-		#iterate over keys
-		for K in keys:
-			# see, if current value is dict
-			if type(D[K]) is dict:
-				# call yourself
-				HTML += self.flushDict(D[K])
-			else:
-				t = '\n'.join(D[K])
-				HTML += t
-		return HTML
-
-
-	def labelToHtml(self,label,dName,append_base=False):
-		HTML = ''
-		label = label.lower()
-		k = label.split('_')[0]
-		label = label.split('_')[1:]
-		if k == 'anhang':
-			D = self.appendices
-		elif k == 'artikel':
-			D = self.articles
-
-
-		D = D[dName]
-		d = D.copy()
-
-		for ix,l in enumerate(label):
-			# if there is a base case under the current label, append it
-			if ("_" in d) and (ix>0) and append_base:
-				t = '\n'.join(d["_"])
-				HTML += t
-			#
-			if ix==len(label)-1:
-				if type(d[l]) == dict:
-					t = self.flushDict(d[l])
-				else:
-					t = '\n'.join(d[l])
-				HTML+= t
-			#
-			# check, if current index is last index, if so, append everything downwards
-			# else overwrite dictionairy with new one one level deeper
-			if not ix==len(label)-1:
-				d = d[l].copy()
-		return HTML
-
-
 
 	def check(self):
 		HTML_out = ''
@@ -224,77 +199,56 @@ class LOGIC():
 			c[d] *= b 
 		# now c contains activations from the parts, and deactivations from first level
 
+	def getMRLProcedure(self):
+		q_head = 'Finden sie ihr Produkt in dieser Liste wieder?'
+		q_body = self.dictParser.labelToHtml('anhang_iv','MRL')
+		# depending on the user's response different things need to 
+		# be included in final output text
+		header_yes = '<h1>Produkt ist nicht in Anhang IV gelistet</h1>'
+		procedure_yes = {}
+		procedure_yes['artikel_7_'] = self.dictParser.labelToHtml('artikel_7_','MRL')	
+		procedure_yes['artikel_7_2'] = self.dictParser.labelToHtml('artikel_7_2)','MRL')		
+		procedure_yes['anhang_viii'] = self.dictParser.labelToHtml('anhang_viii','MRL')
+		procedure_yes['anhang_vii']  = self.dictParser.labelToHtml('anhang_vii','MRL')
+		procedure_yes['anhang_ix']   = self.dictParser.labelToHtml('anhang_ix','MRL')
+		procedure_yes['anhang_x']    = self.dictParser.labelToHtml('anhang_x','MRL')
+		procedure_yes['anhang_iv']   = self.dictParser.labelToHtml('anhang_iv','MRL')
 
-	def fullMRLcheck(self):
-		article_buffer = {}
-		procedure_buffer = []
-		current_state = False
-		# first see if any component activates MRL
-		parts_check = self.checkParts()
-		for part, res in parts_check.items():
-			if not "MRL" in res:
-				continue
-			# if anything activates directive, this becomes True
-			current_state += res['MRL']
-		# we now know if this directive is activated by ANY part
+		header_no = '<h1>Produkt ist in Anhang IV gelistet</h1>'
+		procedure_no = {}
+		procedure_no['anhang_viii'] = self.dictParser.labelToHtml('anhang_viii','MRL')
+		procedure_no['anhang_vii'] = self.dictParser.labelToHtml('anhang_vii','MRL')
 
-		# next we check if the directive gets deactivated by purpose/site
-		result_purpose = self.checkFirstLevel(kind='Verwendungszwecke',directive="MRL")
-		# if purpose is deactivating, we have no questions
-		if 'MRL' in r_purpose:
-			if r_purpose['MRL']==False:
-				HTML = '<h0>MRL trifft aufgrund von Verwendungszweck nicht zu.</h0>'
-				return HTML, False
-		# if directive is not activated by any part, return
-		if not current_state:
-			HTML = '<h0>MRL trifft auf keine der Komponenten zu.</h0>'
-			return HTML, False
+		procedure = {}
 
-
-		# add regular information regarding Konformitätsbewertungsverfahren
-		procedure_buffer.append(self.articles['MRL']['12']['_'])
-		procedure_buffer.append(self.articles['MRL']['12']['1)'])
-		procedure_buffer.append(self.articles['MRL']['12']['2)'])
-
-		# ask question if product is listed under Anhang IV
-		q = '<h2>Ist das Produkt hier aufgelistet?</h2>'
-		q_text = self.labelToHtml('anhang_iv','MRL')
-		T = '{0}\n{1}\n "y"/"n"\n'.format(q,q_text)
-		answer=''
-		while not answer in ['y','n']:
-			answer = input(T)
-		
-		if answer == 'n':
-			procedure_buffer.append(['<h1>Produkt ist nicht in Anhang IV gelistet</h1>'])
-			article_buffer['anhang_viii'] = self.labelToHtml('anhang_viii','MRL')
-			article_buffer['anhang_vii'] = self.labelToHtml('anhang_vii','MRL')
-		else:
-			procedure_buffer.append(['<h1>Produkt ist in Anhang IV gelistet</h1>'])
-			procedure_buffer.append(self.articles['MRL']['12']['3)'])
-			procedure_buffer.append(self.articles['MRL']['12']['4)'])
-			article_buffer['artikel_7_2'] = self.labelToHtml('artikel_7_2)','MRL')
-			article_buffer['anhang_viii'] = self.labelToHtml('anhang_viii','MRL')
-			article_buffer['anhang_vii']  = self.labelToHtml('anhang_vii','MRL')
-			article_buffer['anhang_ix']   = self.labelToHtml('anhang_ix','MRL')
-			article_buffer['anhang_x']    = self.labelToHtml('anhang_x','MRL')
-			article_buffer['anhang_iv']   = self.labelToHtml('anhang_iv','MRL')
-		# append other information based on purpose
-		for res in t_purpose['MRL']:
-			article_buffer[res.lower()] = self.labelToHtml(res,'MRL')
-
-		# append stuff, that applies in any case
-		t = '\n'.join(self.appendices['MRL']['i']['_'])
-		article_buffer['anhang_i_'] = t
-
-		t = '\n'.join(self.appendices['MRL']['i']['1.']['1.']['2.'])
-		article_buffer['anhang_i_1.1.2'] = t
-
-		t = '\n'.join(self.appendices['MRL']['i']['1.']['7.']['3.'])
-		article_buffer['anhang_i_1.7.3'] = t
-
-		t = '\n'.join(self.appendices['MRL']['i']['1.']['7.']['4.'])
-		article_buffer['anhang_i_1.7.4'] = t
+		procedure['anhang_i_'] = self.dictParser.labelToHtml('anhang_i_','MRL')
+		procedure['anhang_i_1._1._2.'] = self.dictParser.labelToHtml('anhang_i_1._1._2.','MRL')
+		procedure['anhang_i_1._7._3.'] = self.dictParser.labelToHtml('anhang_i_1._7._3.','MRL')
+		procedure['anhang_i_1._7._4.'] = self.dictParser.labelToHtml('anhang_i_1._7._4.','MRL')
 
 
-		return article_buffer, procedure_buffer
+		procedures = {'yes':procedure_yes,
+				      'no':procedure_no,
+				      'always':procedure}
+
+		headers = {'yes':header_yes,
+				   'no' :header_no}
+
+
+
+		return q_head, q_body, procedures, headers
+
+	def setMRLProcedure(self, answer, headers, procedures):
+		procedure = procedures[answer]
+		procedure.update(procedures['always'])
+		answer = headers[answer]
+
+		header = [self.dictParser.labelToHtml('artikel_12_','MRL'),
+			 	  self.dictParser.labelToHtml('artikel_12_1)','MRL'),
+			 	  self.dictParser.labelToHtml('artikel_12_2)','MRL'),
+				  answer,
+			 	  self.dictParser.labelToHtml('artikel_12_3)','MRL'),
+			 	  self.dictParser.labelToHtml('artikel_12_4)','MRL'),]
+
+		return header, procedure 
 
