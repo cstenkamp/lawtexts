@@ -1,9 +1,13 @@
 import json
 import re
+import sys
+
+from jsonParser import PARSER 
 
 purposesPath = 'json/_purposes.json'
 sitesPath = 'json/_sites.json'
 partsPath = 'json/parts.json'
+featuresPath = 'json/features.json'
 
 
 NSR_ac_high = 1000
@@ -15,205 +19,304 @@ NSR_dc_low  = 50
 
 
 class LOGIC():
-	def __init__(self, Product, articles, appendices):
+	def __init__(self, Product, articles, appendices,directiveNames=['MRL','NSR']):
 		self.Product = Product
-		self.kBase = {'Verwendungszwecke':{},
-					  'Verwendungsorte':{}}
-
-		self.HTML_Results = {'MRL':[],'NSR':[]}
-
-		self.loadPurposes()
-		self.loadSites()
-		self.loadParts()
-
-		self.articles = articles
 		self.appendices = appendices
+		self.articles = articles
 
-	def loadPurposes(self):
-		with open(purposesPath) as f:
-			self.kBase['Verwendungszwecke'] = json.load(f)
+		'''
+		load json files
+		'''
+		jParser = PARSER()
+		self.features = jParser.parse('json/features.json')
+		self.parts = jParser.parse('json/parts.json')
+		self.sites = jParser.parse('json/_sites.json')
+		self.purposes = jParser.parse('json/_purposes.json')
 
-	def loadSites(self):
-		with open(sitesPath) as f:
-			self.kBase['Verwendungsorte'] = json.load(f)
-
-	def loadParts(self):
-		with open(sitesPath) as f:
-			self.kBase['Komponenten'] = json.load(f)
-
-	def checkMachineFirstLevel(self):
-		P = self.Product
-		subject = ['Verwendungszwecke','Verwendungsorte']
-		for sj in subject:
-			for feature in P.json[sj]:
-				if feature in self.kBase[sj]:
-					info = self.kBase[sj][feature]
-					# check if any directive is directly deactivated by the machines feature
-					for dN in ['NSR','MRL']:
-						if dN in info['deaktiviert']:
-							if ((P.states[dN]['state'] == True) 
-								 and (P.states[dN]['rigid_state'] == True)):
-								continue
-							P.states[dN]['state'] = False
-							P.states[dN]['rigid_state'] = True
-							P.states[dN]['deactivators'][sj].append(feature)
-					# check if any directive is directly activated by the machines feature
-					for dN in ['NSR','MRL']:
-						if dN in info['aktiviert']:
-							if ((P.states[dN]['state'] == False) 
-								 and (P.states[dN]['rigid_state'] == True)):
-								continue
-							P.states[dN]['state'] = True
-							P.states[dN]['rigid_state'] = True
-							P.states[dN]['activators'][sj].append(feature)
-
-	def checkMachineComponents(self):
-		P = self.Product
-		for C in P.json['Komponenten'].items():
-			for featureName in C[1]:
-				if featureName == 'aktiviert Richtlinie':
-					for directive in C[1][featureName]:
-						P.states[directive]['state'] = True
-						P.states[directive]['rigid_state'] = True
-						P.states[directive]['activators']['Komponenten'].append(
-								[C[0]])
+		'''
+		keep this dict to check if a directive is still theoretically applicable 
+		or not. (If directives are deactivated by some product purpose or site,
+		it is noted here. )
+		'''
+		self.directiveStates = {}
+		for n in directiveNames:
+			self.directiveStates[n] = True
 
 
-				if featureName == 'Spannung':
-					res = self.NSRsingleCheck(C[1][featureName])
-					if res:
-						# if NSR is activated, but is already hard set false
-						if (P.states['NSR']['state'] == False 
-								and P.states['NSR']['rigid_state']):
-							continue
-						else:
-							P.states['NSR']['state'] = True
-							P.states['NSR']['activators']['Komponenten'].append(
-									[C[0],
-									 featureName,
-									 C[1][featureName]])
+	def checkInfo(self,dName,texts,results,text_output,B):
+		# append to results
+		results[dName] = B
+		# append to text outputs
+		if not dName in text_output:
+			text_output[dName] = []				
+		for t in texts:
+			text_output[dName].append(t)
+		return results, text_output
 
 
-	def NSRsingleCheck(self, feature):
-		k = list(feature.keys())[0]
-		v = list(feature.values())[0]
-		if (k == 'Volt AC') and (NSR_ac_low<float(v)<NSR_ac_high):
-			return True
-		elif (k == 'Volt DC') and (NSR_dc_low<float(v)<NSR_dc_high):
-			return True
-		else:
-			return False
-
-
-
-
-	def finalize(self):
-		P = self.Product
-		for dName in P.states:
-			if not P.states[dName]['state']:
-				self.HTML_Results[dName] = {'trifft nicht zu':P.states[dName]['deactivators']}
-			else:
-				self.HTML_Results[dName] = {'trifft zu':P.states[dName]['activators']}
-	
-	def snippetsToHtml(self):
-		out = []
-		for directive in self.snippets:
-			# put directive name in header
-			out.append('<h1>{0}</h1>'.format(directive))
-			for section in self.snippets[directive]:
-				# put section name in smaller header
-				sName = list(section.keys())[0]
-				out.append('<h2>{0}</h2>'.format(sName))
-				out.extend(section[sName])
-
-		return out
-
-	def writeToFile(self, textList, fName = 'tmp.html'):
-		with open(fName,'w') as f:
-			f.write(''.join(textList))
-
-
-
-
-
-	def getHtmlResponse(self):
-		self.snippets = {}
-
-		P = self.Product
-		for dName in P.states:
-			if not P.states[dName]['state']:
-				self.HTML_Results[dName] = {'trifft nicht zu':P.states[dName]['deactivators']}
-			else:
-				self.HTML_Results[dName] = {'trifft zu':P.states[dName]['activators']}
+	def checkFirstLevel(self,name='Verwendungszwecke',kBase=None,specific_directive=None):
+		if kBase is None:
+			kBase = self.purposes
 		"""
-		check if purpose relating to activated directive is given,
-		return part of html directive regarding that purpose.
+		checks, if product is affected by directive due to purpose/site
 		"""
-		for purpose in P.json['Verwendungszwecke']:
-			if purpose in self.kBase['Verwendungszwecke']:
-				p = self.kBase['Verwendungszwecke'][purpose]
-				for directive in p['benötigt Text']:
-					if P.states[directive]['state']:
-						texts = p['benötigt Text'][directive]['text']
-						for text in texts:
-							text = text.lower()
-							if 'anhang' in text:
-								D = self.appendices[directive]
-								# first key:
-								idx = re.search('_[ivx]+',text).span()[1]
-								fk = text[:idx].replace('_',' ')
-								if idx == len(text):
-									sk = None
-								else:	
-									sk = text[idx+1:]
-									# todo: add third level
-									if '.' in sk:
-										idx = sk.index('.')
-										sk = sk[:idx+1]
-							else:
-								D = self.articles[directive]
-								text = text.replace('artikel_','')
-								if '_' in text:
-									fk = text.split('_')[0]
-									sk = text.split('_')[1]
+		results = {}
+		text_output = {}
+		user_questions = {}
+		# iterate over purposes
+		for P in self.Product.json[name]:
+			if not P in kBase:
+				continue
+			info = kBase[P]
+			# see if a purpose in/excludes a directive			
+			for dName,texts  in info['deaktiviert'].items():
+				if not specific_directive is None:
+					if not dName == specific_directive:
+						continue
+				results, text_output = self.checkInfo(dName, 
+													  texts, 
+													  results, 
+													  text_output,
+													  False)
 
-							# find corresponding text in dictionairy
-							if not sk is None:
-								snippet = D[fk][sk]
-							else:
-								snippet = D[fk]
+			for dName,texts  in info['aktiviert'].items():
+				if not specific_directive is None:
+					if not dName == specific_directive:
+						continue
+				results, text_output = self.checkInfo(dName, 
+													  texts, 
+													  results, 
+													  text_output,
+													  True)
 
-							if not directive in self.snippets:
-								self.snippets[directive] = []
-
-							if not sk is None:
-								self.snippets[directive].append({' '.join([fk,sk]):snippet})
-							else:
-								self.snippets[directive].append({fk:snippet})
-		return self.snippets
+			# get texts regarding the purpose
+			for dName,texts  in info['benötigt Text'].items():
+				if not specific_directive is None:
+					if not dName == specific_directive:
+						continue
+				_ 		, text_output = self.checkInfo(dName, 
+													  texts, 
+													  {}, 
+													  text_output,
+													  None)
 
 
 
+			# get user questions regarding purpose of product
+			for dName,listOfTexts  in info['betrifft vielleicht'].items():
+				if not specific_directive is None:
+					if not dName == specific_directive:
+						continue
+				if not dName in user_questions:
+					user_questions[dName] = []
+				user_questions[dName].extend(listOfTexts)
+		return results, text_output, user_questions
 
 
 
+	def checkNSR(self,values):
+		# names of current types
+		ac,dc = self.features['features']['Spannung']
+		k,v = list(values.items())[0]
+		if k == ac:
+			if  NSR_ac_low<float(v)<NSR_ac_high:
+				return True
+			else:
+				r = Q['Ressource']
+				return False
+		elif k == dc:
+			if  NSR_dc_low<float(v)<NSR_dc_high:
+				return True
+			else:
+				return False
+
+	def checkFeatures(self,part):
+		results = {}
+		# get features of part of product
+		featDict = self.Product.json['Komponenten'][part]
+		if 'Spannung' in featDict:
+			B = self.checkNSR(featDict['Spannung'])
+			if B:
+				results['NSR'] = B
+		return results
+
+	def checkHiddenFeatures(self,part):
+		results = {}
+		_feat = self.getHiddenFeatures(part)
+		if _feat is None:
+			return 
+		for f in _feat:
+			if f.startswith('+'):
+				results[f[1:]] = True
+			if f.startswith('-'):
+				results[f[1:]] = False
+			return results
+
+
+	def getHiddenFeatures(self,part):
+		if part in self.parts:
+			return self.parts[part]['_Eigenschaften']
+
+
+	def checkParts(self):
+		results = {}
+		# for every part in the machine
+		for part in self.Product.json['Komponenten']:
+			# see if you find information in your knowledge base
+			_f_res = {}
+			if part in self.parts:
+				# check possible hidden features
+				_f_res = self.checkHiddenFeatures(part)
+			# check each of the features
+			f_res = self.checkFeatures(part)
+			# overwrite results of feature check with check of hidden features
+			if not _f_res is None:
+				for _f,_v in _f_res.items():
+					f_res[_f] = _v
+			results[part] = f_res 
+		return results
+
+	def flushDict(self,D):
+		HTML = ''
+		# srt everything alphabetically
+		keys = sorted(D.keys())
+		if keys[-1]=='_':
+			keys = ['_']+keys[:-1]
+		#iterate over keys
+		for K in keys:
+			# see, if current value is dict
+			if type(D[K]) is dict:
+				# call yourself
+				HTML += self.flushDict(D[K])
+			else:
+				t = '\n'.join(D[K])
+				HTML += t
+		return HTML
+
+
+	def labelToHtml(self,label,dName,append_base=False):
+		HTML = ''
+		label = label.lower()
+		k = label.split('_')[0]
+		label = label.split('_')[1:]
+		if k == 'anhang':
+			D = self.appendices
+		elif k == 'artikel':
+			D = self.articles
+
+
+		D = D[dName]
+		d = D.copy()
+
+		for ix,l in enumerate(label):
+			# if there is a base case under the current label, append it
+			if ("_" in d) and (ix>0) and append_base:
+				t = '\n'.join(d["_"])
+				HTML += t
+			#
+			if ix==len(label)-1:
+				if type(d[l]) == dict:
+					t = self.flushDict(d[l])
+				else:
+					t = '\n'.join(d[l])
+				HTML+= t
+			#
+			# check, if current index is last index, if so, append everything downwards
+			# else overwrite dictionairy with new one one level deeper
+			if not ix==len(label)-1:
+				d = d[l].copy()
+		return HTML
 
 
 
+	def check(self):
+		HTML_out = ''
+		# first level check, we assume first level is dominant over others
+		res_f0, text_out_f0, user_qu_f0 = self.checkFirstLevel()
+		# get results for each part
+		parts_results = self.checkParts()
+		# iterate over results and collect result per directive (True overwrites False)
+		c = {"MRL":False,"NSR":False}
+		for p,D in parts_results.items():
+			for k,d in D.items():
+				c[k]+=d
+		# negate via res_fo
+		for d,b in res_f0.items():
+			if not d in c:
+				continue
+			c[d] *= b 
+		# now c contains activations from the parts, and deactivations from first level
 
 
+	def fullMRLcheck(self):
+		article_buffer = {}
+		procedure_buffer = []
+		current_state = False
+		# first see if any component activates MRL
+		parts_check = self.checkParts()
+		for part, res in parts_check.items():
+			if not "MRL" in res:
+				continue
+			# if anything activates directive, this becomes True
+			current_state += res['MRL']
+		# we now know if this directive is activated by ANY part
+
+		# next we check if the directive gets deactivated by purpose/site
+		r_purpose, t_purpose, u_purpose = self.checkFirstLevel(specific_directive="MRL")
+		# if purpose is deactivating, we have no questions
+		if 'MRL' in r_purpose:
+			if r_purpose['MRL']==False:
+				HTML = '<h0>MRL trifft aufgrund von Verwendungszweck nicht zu.</h0>'
+				return HTML, False
+		# if directive is not activated by any part, return
+		if not current_state:
+			HTML = '<h0>MRL trifft auf keine der Komponenten zu.</h0>'
+			return HTML, False
 
 
+		# add regular information regarding Konformitätsbewertungsverfahren
+		procedure_buffer.append(self.articles['MRL']['12']['_'])
+		procedure_buffer.append(self.articles['MRL']['12']['1)'])
+		procedure_buffer.append(self.articles['MRL']['12']['2)'])
 
-
-
+		# ask question if product is listed under Anhang IV
+		q = '<h2>Ist das Produkt hier aufgelistet?</h2>'
+		q_text = self.labelToHtml('anhang_iv','MRL')
+		T = '{0}\n{1}\n "y"/"n"\n'.format(q,q_text)
+		answer=''
+		while not answer in ['y','n']:
+			answer = input(T)
 		
+		if answer == 'n':
+			procedure_buffer.append(['<h1>Produkt ist nicht in Anhang IV gelistet</h1>'])
+			article_buffer['anhang_viii'] = self.labelToHtml('anhang_viii','MRL')
+			article_buffer['anhang_vii'] = self.labelToHtml('anhang_vii','MRL')
+		else:
+			procedure_buffer.append(['<h1>Produkt ist in Anhang IV gelistet</h1>'])
+			procedure_buffer.append(self.articles['MRL']['12']['3)'])
+			procedure_buffer.append(self.articles['MRL']['12']['4)'])
+			article_buffer['artikel_7_2'] = self.labelToHtml('artikel_7_2)','MRL')
+			article_buffer['anhang_viii'] = self.labelToHtml('anhang_viii','MRL')
+			article_buffer['anhang_vii']  = self.labelToHtml('anhang_vii','MRL')
+			article_buffer['anhang_ix']   = self.labelToHtml('anhang_ix','MRL')
+			article_buffer['anhang_x']    = self.labelToHtml('anhang_x','MRL')
+			article_buffer['anhang_iv']   = self.labelToHtml('anhang_iv','MRL')
+		# append other information based on purpose
+		for res in t_purpose['MRL']:
+			article_buffer[res.lower()] = self.labelToHtml(res,'MRL')
+
+		# append stuff, that applies in any case
+		t = '\n'.join(self.appendices['MRL']['i']['_'])
+		article_buffer['anhang_i_'] = t
+
+		t = '\n'.join(self.appendices['MRL']['i']['1.']['1.']['2.'])
+		article_buffer['anhang_i_1.1.2'] = t
+
+		t = '\n'.join(self.appendices['MRL']['i']['1.']['7.']['3.'])
+		article_buffer['anhang_i_1.7.3'] = t
+
+		t = '\n'.join(self.appendices['MRL']['i']['1.']['7.']['4.'])
+		article_buffer['anhang_i_1.7.4'] = t
 
 
-
-
-
-
-
-
-
+		return article_buffer, procedure_buffer

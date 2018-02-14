@@ -38,7 +38,7 @@ class PARSER():
 		secondaries = ['<p class="normal">\([\d]+\)']
 		secondaryExtractor = '\([\d]+\)'
 		sStart = 1
-		sEnd = -1
+		sEnd = None
 
 		D = {}
 		primarySplit = self._split(textList,
@@ -66,7 +66,7 @@ class PARSER():
 	def parseAppendices(self, textList):
 		primaries = ['<p class="doc-ti" id="d1e3']
 		primaryExtractor = '>.+</p>'
-		pStart = 1
+		pStart = 8
 		pEnd = -4
 
 		secondaries = ['<p class="ti-grseq-1".+>\d\.[ ]']
@@ -75,9 +75,9 @@ class PARSER():
 		sEnd = 3
 
 		tertiaries = ['<p class="ti-grseq-1".+>((\d\.){2,2}|[A-Z]\.)[ ]+']
-		tertiaryExtractor = '(>(\d\.){2,2}|">[A-Z]\.)[ ]'
-		tStart = 3
-		tEnd = 5
+		tertiaryExtractor = '((\d\.){2,2}  |">[A-Z]\.)[ ]'
+		tStart = 2
+		tEnd = 4
 
 		quaternaries = ['<p class="ti-grseq-1".+>(\d\.){3,3}[ ]+']
 		quaternaryExtractor = '>(\d\.){3,3}[ ]'

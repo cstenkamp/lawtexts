@@ -1,25 +1,17 @@
 {
-	"features":[
-		{"name":"Spannung", "units":[{"Volt AC"},{"Volt DC"}] 
+	"features":{
+		"Spannung":["Volt AC","Volt DC"],
+		"Leistung":["KW/h","ps"],
+		"Volumen":["m^3","L"],
+		"Temperatur":["C","F"],
+		"Druck":["bar","psi"],
+		"Länge":["m"],
+		"Durchmesser":["m"]
+	},
+	"_features":[
+		{"_bewegliche_teile":["+MRL"]
 		},
-		
-		{"name":"Leistung","units":[{"KW/h"},{"ps"}]
-		},
-
-		{"name":"Volumen","units":[{"m^3"},{"L"}]
-		},
-
-		{"name":"Temperatur","units":[{"C"},{"F"}]
-		},
-
-		{"name":"Druck","units":[{"bar"},{"psi"}]
-		},
-
-		{"name":"Länge","units":[{"m"}]
-		},
-
-		{"name":"Durchmesser","units":[{"m"}]
-		},
-		
+		{"_keinMRL":["-MRL"]
+		}
 	]
 }
