@@ -1,5 +1,5 @@
 {
-	"Name":"testMachine",
+	"Name":"cMachine",
 	"Kundennummer":"12345",
 	"Ort":"Osnabrueck",
 	"Herstellungsdatum":"1989",
@@ -14,16 +14,16 @@
 			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
 		},
 		"Rührwerk":{
-			"Spannung":{"Volt AC":"150"},
+			"Spannung":{"Volt AC":"50"},
 			"Leistung":{"Watt":"150"},
 			"Seriennummer":"123456",
 			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
 		}
 	},
 	"Verwendungszwecke":[
-		"Heben von Personen oder von Personen und Gütern",
-		"Bearbeitung von Holz und von Werkstoffen mit ähnlichen physikalischen Eigenschaften"
+		"für kosmetische oder pharmazeutische Erzeugnisse"
 	],
 	"Verwendungsorte":[
+		"unter Tage"
 	]
 }

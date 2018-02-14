@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
 from PyQt5.QtCore import pyqtSlot, Qt
 from operator import itemgetter
 
-TABLE_HEADER = ["Name", "customerID", "Herstellungsort", "Herstellungsdatum", "Prüfdatum", "", ""]
+TABLE_HEADER = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum", "", ""]
 
 
 class CentralTable(QWidget):
@@ -18,7 +18,7 @@ class CentralTable(QWidget):
         self.mainWindow = mainWindow
         self.title = 'Central Table'
         self.machines = [[],[]]
-        self.orderKey = ["name", False]
+        self.orderKey = ["Name", False]
 
         self.create_table()
 
@@ -35,6 +35,7 @@ class CentralTable(QWidget):
         # Create table
         self.tableWidget = QTableWidget()
         self.get_machines()
+        self.order_list(self.orderKey[0], self.orderKey[1])
         self.tableWidget.setRowCount(len(self.machines[0]))
         self.tableWidget.setColumnCount(len(TABLE_HEADER))
         self.tableWidget.setHorizontalHeaderLabels(TABLE_HEADER)
@@ -54,7 +55,7 @@ class CentralTable(QWidget):
         self.tableWidget.doubleClicked.connect(self.on_double_click)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.fill_table()
-        self.order_list()
+        self.order_list(self.orderKey[0], self.orderKey[1])
         self.tableWidget.resizeColumnsToContents()
 
 
@@ -82,14 +83,14 @@ class CentralTable(QWidget):
             item.setTextAlignment(Qt.AlignHCenter)
             return item
         for i in range(len(self.machines[0])):
-            self.tableWidget.setItem(i, 0, centerItem(self.machines[0][i]["name"]))
-            self.tableWidget.setItem(i, 1, centerItem(self.machines[0][i]["customer_id"]))
-            self.tableWidget.setItem(i, 2, centerItem(self.machines[0][i]["location"]))
+            self.tableWidget.setItem(i, 0, centerItem(self.machines[0][i]["Name"]))
+            self.tableWidget.setItem(i, 1, centerItem(self.machines[0][i]["Kundennummer"]))
+            self.tableWidget.setItem(i, 2, centerItem(self.machines[0][i]["Ort"]))
             self.tableWidget.setItem(i, 3, centerItem(self.machines[0][i]["Herstellungsdatum"]))
             self.tableWidget.setItem(i, 4, centerItem(self.machines[0][i]["Prüfdatum"]))
 
 
-    def order_list(self, keyItem="name", descending=False):
+    def order_list(self, keyItem="Name", descending=False):
         """ orders list depending on the keyItem and depending on descending """
         self.order = [keyItem, descending]
         temp = sorted(zip(self.machines[0], self.machines[1]), key=lambda x: x[0][keyItem].lower(), reverse=descending)
@@ -97,6 +98,7 @@ class CentralTable(QWidget):
 
     def reload_list(self):
         self.fill_table()
+        self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
     @pyqtSlot()
@@ -129,7 +131,7 @@ class CentralTable(QWidget):
         item = [self.machines[0][index.row()], self.machines[1][index.row()]]
         reply = QMessageBox.question(self, 'Remove item',
                                      "Are you you want to delete " +
-                                     item[0]["name"] + "?", QMessageBox.Yes |
+                                     item[0]["Name"] + "?", QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
