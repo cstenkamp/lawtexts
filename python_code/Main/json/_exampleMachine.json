@@ -1,7 +1,7 @@
 {
-	"name":"testMachine",
-	"customer_id":"12345",
-	"location":"Osnabrueck",
+	"Name":"testMachine",
+	"Kundennummer":"12345",
+	"Ort":"Osnabrueck",
 	"Herstellungsdatum":"1989",
 	"Prüfdatum":"2017",
 	"Komponenten":{

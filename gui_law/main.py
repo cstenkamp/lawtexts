@@ -48,7 +48,20 @@ class mainWindow(QMainWindow):
         refresh.setShortcut("F5")
         refresh.triggered.connect(lambda: self.CentralTable.reload_list())
         editMenu.addAction(refresh)
-
+        '''
+        #orderMenu
+        orderMenu = viewMenu.addMenu('Sortiere nach')
+        nameOrder = QAction("Name", self)
+        nameOrder.triggered.connect(lambda: self.CentralTable.order_list("Name"))
+        kNummer = QACtion("Kundennummer", self)
+        kNummer.triggered.connect(lambda: self.CentralTable.order_list("Kundennummer"))
+        ortOrder = QAction("Ort", self)
+        ortOrder.triggered.connect(lambda: self.CentralTable.order_list("Ort"))
+        hDatum = QAction("Herstellungsdatum", self)
+        hDatum.triggered.connect(lambda: self.CentralTable.order_list("Herstellungsdatum"))
+        pDatum = QAction("Prüfdatum", self)
+        pDatum.triggered.connect(lambda: self.CentralTable.order_list("Prüfdatum"))
+        '''
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

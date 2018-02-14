@@ -22,8 +22,9 @@ def write_json_file(item, path):
     """ writes the jsonFile to path, overwrites if existing """
     if not path.lower().endswith('.json'):
         path += ".json"
+    # item = json.dumps(item)
     with open(path, "w") as f:
-        json.dump(item, f)
+        json.dump(item, f, ensure_ascii=False)
     print("wrote file")
 
 class ItemView(QMainWindow):
@@ -38,7 +39,7 @@ class ItemView(QMainWindow):
             for child in self.parent.children():
                 if type(child) == self.__class__:
                     child.close()
-        self.setWindowTitle(self.item[0]["name"])
+        self.setWindowTitle(self.item[0]["Name"])
         menubar = self.menuBar()
         self.initMenubar(menubar)
         sizeObject = QDesktopWidget().screenGeometry(-1)
@@ -63,6 +64,7 @@ class ItemView(QMainWindow):
         saveAs = QAction('Speichern als', self)
         fileMenu.addAction(save)
         fileMenu.addAction(saveAs)
+        # Todo add saveAs
 
 
 class ItemViewWidget(QWidget):
@@ -101,7 +103,7 @@ class ItemViewWidget(QWidget):
                 parentList.append(index2.data())
             if parentList is not []:
                 while len(parentList) > 0:
-                    item = self.item[0][parentList.pop()]
+                    item = item[parentList.pop()]
             item[key] = newData
 
 

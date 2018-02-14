@@ -1,5 +1,5 @@
 {
-	"features":{
+	"Features":{
 		"Spannung":["Volt AC","Volt DC"],
 		"Leistung":["KW/h","ps"],
 		"Volumen":["m^3","L"],
@@ -8,7 +8,7 @@
 		"Länge":["m"],
 		"Durchmesser":["m"]
 	},
-	"_features":[
+	"_Features":[
 		{"_bewegliche_teile":["+MRL"]
 		},
 		{"_keinMRL":["-MRL"]
