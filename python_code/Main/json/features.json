@@ -2,7 +2,7 @@
 	"Features":{
 		"Spannung":["Volt AC","Volt DC"],
 		"Leistung":["KW/h","ps"],
-		"Volumen":["m^3","L"],
+		"Volumen":["m³","L"],
 		"Temperatur":["C","F"],
 		"Druck":["bar","psi"],
 		"Länge":["m"],

@@ -8,7 +8,9 @@ class ExtendedComboBox(QComboBox):
         super(ExtendedComboBox, self).__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
-        self.setEditable(True)
+        self.setInsertPolicy(QComboBox.NoInsert)
+        self.setEditable(False)
+        self.setFocus()
 
         # add a filter model to filter matching items
         self.pFilterModel = QSortFilterProxyModel(self)
@@ -24,16 +26,14 @@ class ExtendedComboBox(QComboBox):
         self.setLineEdit(self.line_edit)
 
         # connect signals
-        self.line_edit.textChanged.connect(self.pFilterModel.setFilterFixedString)
-        self.completer.activated.connect(self.on_completer_activated)
-
+        # self.line_edit.textChanged.connect(self.pFilterModel.setFilterFixedString)
+        # self.completer.activated.connect(self.on_completer_activated)
 
     # on selection of an item from the completer, select the corresponding item from combobox
     def on_completer_activated(self, text):
         if text:
             index = self.findText(text)
             self.setCurrentIndex(index)
-
 
     # on model change, update the models of the filter and completer as well
     def setModel(self, model):
@@ -47,7 +47,6 @@ class ExtendedComboBox(QComboBox):
         self.completer.setCompletionColumn(column)
         self.pFilterModel.setFilterKeyColumn(column)
         super(ExtendedComboBox, self).setModelColumn(column)
-
 
 
 if __name__ == "__main__":
