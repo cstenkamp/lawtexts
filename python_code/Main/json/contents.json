@@ -1,7 +1,12 @@
 {
 	"Inhalt":[
-		{"name":"Jauche"},
-		{"name":"Gülle"},
-		{"name":"Silage"},
+		"Jauche",
+		"Gülle",
+		"Silage"
+	],
+	"Aggregatszustand":[
+		"fest",
+		"flüssig",
+		"gasförmig"
 	]
 }
