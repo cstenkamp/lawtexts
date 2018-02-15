@@ -13,7 +13,6 @@ featuresPath = 'json/features.json'
 
 
 
-
 class ATEX():
 	def __init__(self, Product, dictParser):
 		self.Product = Product
@@ -179,12 +178,11 @@ class ATEX():
 			
 			elif (e[0] == 'noMotor'):
 				html += '<h4>Bei dem Produkt handelt es sich um ein Gerät der {0} und {1}</h4>'.format(group,cat)
-				html += 'für die übrigen Geräte dieser Gruppen und Kategorien ist die interne Fertigungskontrolle gemäß Anhang VIII anzuwenden, und die technischen Unterlagen gemäß Anhang VIII Nummer 2 sind einer notifizierten Stelle zu übermitteln, die den Erhalt dieser Unterlagen unverzüglich bestätigt und sie aufbewahrt;'
-				return html
+				html += 'für Geräte dieser Gruppen und Kategorien ist die interne Fertigungskontrolle gemäß Anhang VIII anzuwenden, und die technischen Unterlagen gemäß Anhang VIII Nummer 2 sind einer notifizierten Stelle zu übermitteln, die den Erhalt dieser Unterlagen unverzüglich bestätigt und sie aufbewahrt;'
+
 			elif (e[0] == 'Gerätekategorie 3'):
 				html += '<h4>Bei dem Produkt handelt es sich um ein Gerät der {0} und {1}</h4>'.format(group,cat)
 				html += 'für Gerätegruppe II, Gerätekategorie 3 ist die interne Fertigungskontrolle gemäß Anhang VIII anzuwenden;'
-		
 
 		header  = '<h1>ATEX</h1>'
 		html = header+self.roleDuties+html

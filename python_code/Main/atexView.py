@@ -148,17 +148,15 @@ class AtexView(QWidget):
             self.atex.setUserRole(self.role, extraDuties=True)
             self.startQuestions()
         else:
-            self.effects.append(self.Q.effect['n'])
-        if b == 'y':
-            self.Q = self.Q.posChild
-        elif b == 'n':
-            self.Q = self.Q.negChild
-        if self.Q is None:
-            self.finalize()
-        else:
-            self.updateView(self.Q.text)
-
-
+            self.effects.append([self.Q.effect[b]])
+            if b == 'y':
+                self.Q = self.Q.posChild
+            elif b == 'n':
+                self.Q = self.Q.negChild
+            if self.Q is None:
+                self.finalize()
+            else:
+                self.updateView(self.Q.text)
 
     def updateView(self,html):
     	self.htmlView.setHtml(html)
