@@ -131,4 +131,3 @@ class PARSER():
 															 qEnd)
 								D[pKey][sKey][tKey] = quaternarySplit
 		return D
-

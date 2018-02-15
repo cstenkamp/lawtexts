@@ -50,7 +50,7 @@ class MRLQuestions():
 	def start(self):
 
 
-		T = Result('Produkt ist nicht aus der Richtlinie ausgenommen \n', True)
+		T = Result('', True)
 		F = Result('MRL trifft nicht zu! \n', False)
 
 
@@ -110,8 +110,8 @@ class MRLQuestions():
 		q2a_mrl_M.posChild = q3_mrl_M
 		q2a_mrl_M.negChild = F
 
-		q2b_mrl_M.posChild = F
-		q2b_mrl_M.negChild = q2a_mrl_M
+		q2b_mrl_M.posChild = q2a_mrl_M
+		q2b_mrl_M.negChild = F
 
 		q3_mrl_M.posChild = q4a_mrl_M
 		q3_mrl_M.negChild = q4b_mrl_M
@@ -273,27 +273,29 @@ class MRLQuestions():
 
 
 		t = Test()
+		results = []
 		testResult = t.start(q1_mrl_E)
+		results.append(testResult.text)
 
 		if testResult.bool:
 			testResult = t.start(q1_mrl_M)
+			results.append(testResult.text)
 
 		if testResult.bool:
 			testResult = t.start(q1_mrl_AA)
+			results.append(testResult.text)
 
 		if testResult.bool:
 			testResult = t.start(q1_mrl_SB)
+			results.append(testResult.text)
 
 		if testResult.bool:
 			testResult = t.start(q1_mrl_L)
+			results.append(testResult.text)
 
 		if testResult.bool:
 			testResult = t.start(q1_mrl_GW)
+			results.append(testResult.text)
 
-		return testResult
+		return results 
 
-
-if __name__ == '__main__':
-	result = startQuestions()
-	p = os.path.join(os.getcwd(),result.pClass.HTML_resource)
-	webbrowser.open(p)
