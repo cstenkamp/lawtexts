@@ -55,12 +55,15 @@ class ATEX():
 		if role == 'Händler':
 			self.roleDuties += self.dictParser.labelToHtml('artikel_9','ATEX')
 		if extraDuties:
-			self.roleDuties += '<h2> In diesem Falle zusätzlich: <\h2>'.format(role)
+			self.roleDuties += '<h2> In diesem Falle zusätzlich: </h2>'.format(role)
 			self.roleDuties += self.dictParser.labelToHtml('artikel_6','ATEX')
 
 
-	def getGroupAndCategory(self):
-		self.effects = self.tree.start(self.questions.Q0)
+	def getGroupAndCategory(self, effects=None):
+		if effects is None:
+			self.effects = self.tree.start(self.questions.Q0)
+		else:
+			self.effects = effects
 
 		for E in self.effects:
 			if E[0] == 'Schutzsystem':
