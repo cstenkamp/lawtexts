@@ -14,9 +14,10 @@ from jsonParser import PARSER as jPARSER
 
 sys.path.insert(0, os.path.join(os.getcwd(),'logic/'))
 from _logicUnit import LOGIC
+from atexLogic import ATEX
 
 sys.path.insert(0, os.path.join(os.getcwd(),'html_parser/'))
-from directiveParser import PARSER as dPARSER
+from directiveParser import PARSER as directivePARSER
 
 sys.path.insert(0, os.path.join(os.getcwd(),'dict_parser/'))
 from dictParser import PARSER as dictPARSER
@@ -49,21 +50,40 @@ partsData = jparser.parse(jsonPath)
 """
 load html directives
 """
-dParser = dPARSER()
+directiveParser = directivePARSER()
 # parse MRL into articles and appendices
-text = dParser.getHtml(p='html_resources/directives/mrl.html')
-mrlArticle = dParser.parseArticles(text)
-mrlAppendices = dParser.parseAppendices(text)
+text = directiveParser.getHtml(p='html_resources/directives/mrl.html')
+mrlArticle = directiveParser.parseArticles(text)
+mrlAppendices = directiveParser.parseAppendices(text)
 
-text = dParser.getHtml(p='html_resources/directives/nsr.html')
-nsrArticle = dParser.parseArticles(text)
-nsrAppendices = dParser.parseAppendices(text)
+text = directiveParser.getHtml(p='html_resources/directives/nsr.html')
+nsrArticle = directiveParser.parseArticles(text)
+nsrAppendices = directiveParser.parseAppendices(text)
+
+
+directiveParser.secondaries = ['<p class="ti-grseq-1".+>\d\.[^\d]']
+directiveParser.secondaryExtractor = '>((\d\.){1,1}|[A-Z]\.)'
+
+directiveParser.tertiaries = ['<p class="ti-grseq-1".+>(\d\.){2,2}[^\d].*<spa']
+directiveParser.tertiaryExtractor = '((\d\.){2,2})'
+
+directiveParser.quaternaries = ['<p class="ti-grseq-1".+>(\d\.){3,3}[^\d].*<spa']
+directiveParser.quaternaryExtractor = '((\d\.){3,3})'
+
+directiveParser.qStart = 4
+directiveParser.qEnd = 6
+
+text = directiveParser.getHtml(p='html_resources/directives/atex.html')
+atexArticle = directiveParser.parseArticles(text)
+atexAppendices = directiveParser.parseAppendices(text)
 
 ARTICLES = {'MRL':mrlArticle,
-		   	'NSR':nsrArticle
+		   	'NSR':nsrArticle,
+		   	'ATEX':atexArticle
 		   }
 APPENDICES = {'MRL':mrlAppendices,
-			  'NSR':nsrAppendices
+			  'NSR':nsrAppendices,
+			  'ATEX':atexAppendices
 			 }
 
 
@@ -81,6 +101,7 @@ configurator.configure(machineData)
 
 
 Logic = LOGIC(Product, dictParser)
+atexLogic = ATEX(Product, dictParser)
 
 '''
 LINUS: 
@@ -136,3 +157,13 @@ if Logic.directiveStates['NSR']:
 if Logic.directiveStates['DGN']:
 	pass
 
+
+
+
+atexLogic.setUserRole('Händler',extraDuties=False)
+
+atexLogic.getGroupAndCategory()
+html = atexLogic.formatOutput2()
+
+with open('temp.html','w') as f:
+	f.writelines(html)

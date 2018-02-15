@@ -6,7 +6,40 @@ import numpy as np
 class PARSER():
 
 	def __init__(self):
-		pass
+
+		self.primariesArt = ['class="ti-art">']
+		self.primaryExtractorArt = '[\d]+</p>'
+		self.pStartArt = 0
+		self.pEndArt = -4
+
+		self.secondariesArt = ['<p class="normal">\([\d]+\)']
+		self.secondaryExtractorArt = '\([\d]+\)'
+		self.sStartArt = 1
+		self.sEndArt = None
+
+		
+		self.primaries = ['<p class="doc-ti" id="d1e3']
+		self.primaryExtractor = '>.+</p>'
+		self.pStart = 8
+		self.pEnd = -4
+
+		self.secondaries = ['<p class="ti-grseq-1".+>\d\.[ ]']
+		self.secondaryExtractor = '>((\d\.){1,1}|[A-Z]\.)[ ]'
+		self.sStart = 1
+		self.sEnd = 3
+
+		self.tertiaries = ['<p class="ti-grseq-1".+>((\d\.){2,2}|[A-Z]\.)[ ]+']
+		self.tertiaryExtractor = '((\d\.){2,2}  |">[A-Z]\.)[ ]'
+		self.tStart = 2
+		self.tEnd = 4
+
+		self.quaternaries = ['<p class="ti-grseq-1".+>(\d\.){3,3}[ ]+']
+		self.quaternaryExtractor = '>(\d\.){3,3}[ ]'
+		self.qStart = 5
+		self.qEnd = 7
+
+
+
 
 	def getHtml(self,p='html_resources/directives/mrl.html'):
 		with open(p) as f:
@@ -30,22 +63,13 @@ class PARSER():
 		return D
 
 	def parseArticles(self, textList):
-		primaries = ['class="ti-art">']
-		primaryExtractor = '[\d]+</p>'
-		pStart = 0
-		pEnd = -4
-
-		secondaries = ['<p class="normal">\([\d]+\)']
-		secondaryExtractor = '\([\d]+\)'
-		sStart = 1
-		sEnd = None
 
 		D = {}
 		primarySplit = self._split(textList,
-								   primaries,
-								   primaryExtractor, 
-								   pStart, 
-								   pEnd)
+								   self.primariesArt,
+								   self.primaryExtractorArt, 
+								   self.pStartArt, 
+								   self.pEndArt)
 
 		for item in primarySplit.items():
 			pKey = item[0]
@@ -55,41 +79,22 @@ class PARSER():
 				D[pKey] = pContent
 			else:
 				secondarySplit = self._split(pContent,
-											 secondaries,
-											 secondaryExtractor,
-											 sStart, 
-											 sEnd)
+											 self.secondariesArt,
+											 self.secondaryExtractorArt,
+											 self.sStartArt, 
+											 self.sEndArt)
 				D[pKey] = secondarySplit
 		return D
 
 
 	def parseAppendices(self, textList):
-		primaries = ['<p class="doc-ti" id="d1e3']
-		primaryExtractor = '>.+</p>'
-		pStart = 8
-		pEnd = -4
-
-		secondaries = ['<p class="ti-grseq-1".+>\d\.[ ]']
-		secondaryExtractor = '>((\d\.){1,1}|[A-Z]\.)[ ]'
-		sStart = 1
-		sEnd = 3
-
-		tertiaries = ['<p class="ti-grseq-1".+>((\d\.){2,2}|[A-Z]\.)[ ]+']
-		tertiaryExtractor = '((\d\.){2,2}  |">[A-Z]\.)[ ]'
-		tStart = 2
-		tEnd = 4
-
-		quaternaries = ['<p class="ti-grseq-1".+>(\d\.){3,3}[ ]+']
-		quaternaryExtractor = '>(\d\.){3,3}[ ]'
-		qStart = 5
-		qEnd = 7
 
 		D = {}
 		primarySplit = self._split(textList,
-								   primaries,
-								   primaryExtractor, 
-								   pStart, 
-								   pEnd)
+								   self.primaries,
+								   self.primaryExtractor, 
+								   self.pStart, 
+								   self.pEnd)
 
 		for item in primarySplit.items():
 			pKey = item[0]
@@ -99,10 +104,10 @@ class PARSER():
 				D[pKey] = pContent
 			else:
 				secondarySplit = self._split(pContent,
-											 secondaries,
-											 secondaryExtractor,
-											 sStart, 
-											 sEnd)
+											 self.secondaries,
+											 self.secondaryExtractor,
+											 self.sStart, 
+											 self.sEnd)
 
 				for stem in secondarySplit.items():
 					sKey = stem[0]
@@ -112,10 +117,10 @@ class PARSER():
 						D[pKey][sKey] = sContent
 					else:
 						tertiarySplit = self._split(sContent,
-													 tertiaries,
-													 tertiaryExtractor,
-													 tStart, 
-													 tEnd)
+													 self.tertiaries,
+													 self.tertiaryExtractor,
+													 self.tStart, 
+													 self.tEnd)
 
 						for ttem in tertiarySplit.items():
 							tKey = ttem[0]
@@ -125,9 +130,9 @@ class PARSER():
 								D[pKey][sKey][tKey] = tContent
 							else:
 								quaternarySplit = self._split(tContent,
-															 quaternaries,
-															 quaternaryExtractor,
-															 qStart, 
-															 qEnd)
+															 self.quaternaries,
+															 self.quaternaryExtractor,
+															 self.qStart, 
+															 self.qEnd)
 								D[pKey][sKey][tKey] = quaternarySplit
 		return D
