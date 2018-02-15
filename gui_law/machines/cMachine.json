@@ -1,9 +1,9 @@
 {
 	"Name":"cMachine",
-	"Kundennummer":"12345",
-	"Ort":"Osnabrueck",
-	"Herstellungsdatum":"1989",
-	"Prüfdatum":"2017",
+	"Kundennummer":"34556",
+	"Ort":"Hannover",
+	"Herstellungsdatum":"1954",
+	"Prüfdatum":"2013",
 	"Komponenten":{
 		"Druckbehälter":{
 			"Volumen":{"L":"300"},

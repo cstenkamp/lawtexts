@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from centralTable import CentralTable
+import functools
 # from screeninfo import get_monitors
 
 
@@ -48,20 +49,20 @@ class mainWindow(QMainWindow):
         refresh.setShortcut("F5")
         refresh.triggered.connect(lambda: self.CentralTable.reload_list())
         editMenu.addAction(refresh)
-        '''
-        #orderMenu
-        orderMenu = viewMenu.addMenu('Sortiere nach')
-        nameOrder = QAction("Name", self)
-        nameOrder.triggered.connect(lambda: self.CentralTable.order_list("Name"))
-        kNummer = QACtion("Kundennummer", self)
-        kNummer.triggered.connect(lambda: self.CentralTable.order_list("Kundennummer"))
-        ortOrder = QAction("Ort", self)
-        ortOrder.triggered.connect(lambda: self.CentralTable.order_list("Ort"))
-        hDatum = QAction("Herstellungsdatum", self)
-        hDatum.triggered.connect(lambda: self.CentralTable.order_list("Herstellungsdatum"))
-        pDatum = QAction("Prüfdatum", self)
-        pDatum.triggered.connect(lambda: self.CentralTable.order_list("Prüfdatum"))
-        '''
+
+        #orderMenus
+        features = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum"]
+        orderMDescF = viewMenu.addMenu('Sortiere aufsteigend')
+        orderMDescT = viewMenu.addMenu('Sortiere absteigend')
+        self.fill_order_menu(features, orderMDescF, False)
+        self.fill_order_menu(features, orderMDescT, True)
+
+    def fill_order_menu(self, features, menu, descending):
+        for i in range(len(features)):
+            action = QAction(features[i], self)
+            action.triggered.connect(functools.partial(self.CentralTable.order_list, features[i], descending))
+            menu.addAction(action)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

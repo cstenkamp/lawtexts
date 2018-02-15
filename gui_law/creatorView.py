@@ -1,8 +1,13 @@
 import sys
-import json
+import os
+import jsonHandler
+from ExtendedComboBox import ExtendedComboBox
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+MY_PATH = os.path.abspath(os.path.dirname(__file__))
+JSON_PATH = os.path.abspath(os.path.join(MY_PATH, os.pardir)) + "/python_code/Main/json/"
 
 class CreatorView(QMainWindow):
     """ creates a ItemOverview over the given @item, @edit = readOnly? """
@@ -23,44 +28,64 @@ class CreatorView(QMainWindow):
 
         self.show()
 
-class ItemCreatorWidget(QWidget):
+class ItemCreatorWidget(QTreeWidget):
     """ The widget for creating new machines """
     def __init__(self):
-        QWidget.__init__(self)
-        self.treeView = QTreeView()
-        self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.treeView.customContextMenuRequested.connect(self.openMenu)
-        # self.treeView.setRootIsDecorated(False)
-        self.treeView.setAlternatingRowColors(True)
-
-        self.model = QStandardItemModel()
-
-        layout = QHBoxLayout()
-        layout.addWidget(self.treeView)
-        self.setLayout(layout)
-        self.treeView.setModel(self.model)
-        # self.model.dataChanged.connect(self.item_changed)
-        self.model.setHorizontalHeaderLabels(["Feature", "Wert"])
+        QTreeWidget.__init__(self)
+        self.setHeaderLabels(["Feature", "Wert"])
 
         self.createStartEntries(self.model)
 
     def createStartEntries(self, model):
         self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", "Herstellungsdatum":"", "Prüfdatum":""}
         for entry in list(self.jsonFile.keys()):
-            featureValuePair = [QStandardItem(entry), QStandardItem("")]
-            model.appendRow(featureValuePair)
-        addComponentBtn = QPushButton(self.ItemCreatorWidget)
-        addComponentBtn.setToolTip("Hier klicken um eine neue Komponente zu erstellen")
-        addComponentBtn.clicked.connect(self.ComponentCreatorWidget())
+            featureValuePair = QTreeWidgetItem([entry, ""])
+            self.addTopLevelItem(featureValuePair)
+        ## TODO delete later
+        tooltip = "Hier klicken um eine neue Komponente zu erstellen"
+        button = QPushButton()
+        button.setText( "Komponent +")
+        button.clicked.connect( self.openComponentCreator )
+        # tmp0 = CustomTreeWidgetItem(self, button, position = 0)
 
-        for i in range(self.model.columnCount()):
-            self.treeView.resizeColumnToContents(i)
+        self.combo = ExtendedComboBox()
+
+        self.parts = jsonHandler.read_json_file(JSON_PATH + "/parts.json")
+        self.combo.addItems(list(self.parts.keys()))
+        # tmp1 = CustomTreeWidgetItem(self, combo)
+        CustomTreeWidgetItems(self, [button, self.combo])
+        # self.addTopLevelItems([tmp0, tmp1])
+
+        for i in range(self.columnCount()):
+            self.resizeColumnToContents(i)
+
+    def openComponentCreator(self):
+        print(self.combo.currentText())
+        # if "Komponenten" not in list(self.jsonFile.keys())
+        # self.compCreator = ComponentCreatorWidget()
+
+
+class CustomTreeWidgetItem( QTreeWidgetItem ):
+    """ Creates a custom QTreeWidgetItem out of the given widget """
+    def __init__( self, parent, widget, position = 1):
+        ## Init super class ( QtGui.QTreeWidgetItem )
+        super( CustomTreeWidgetItem, self ).__init__( parent )
+        parent.setItemWidget( self, position, widget )
+
+class CustomTreeWidgetItems( QTreeWidgetItem ):
+    """ Creates a custom QTreeWidgetItem out of the given widget """
+    def __init__( self, parent, widgets, startingPos = 0):
+        ## Init super class ( QtGui.QTreeWidgetItem )
+        super( CustomTreeWidgetItems, self ).__init__( parent )
+        for i in range(len(widgets)):
+            parent.setItemWidget( self, startingPos + i, widgets[i] )
+        # parent.addTopLevelItems(treeWidgets)
 
 class ComponentCreatorWidget(QWidget):
     """ The widget for creating new Components """
     def __init__(self):
         QWidget.__init__(self)
-        
+
 
 
 

@@ -92,12 +92,14 @@ class CentralTable(QWidget):
 
     def order_list(self, keyItem="Name", descending=False):
         """ orders list depending on the keyItem and depending on descending """
-        self.order = [keyItem, descending]
+        order = [keyItem, descending]
+        self.orderKey = order
         temp = sorted(zip(self.machines[0], self.machines[1]), key=lambda x: x[0][keyItem].lower(), reverse=descending)
         self.machines[0], self.machines[1] = map(list, zip(*temp))
+        self.fill_table()
+        return 0
 
     def reload_list(self):
-        self.fill_table()
         self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
