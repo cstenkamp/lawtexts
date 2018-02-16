@@ -42,6 +42,10 @@ class Test():
 class Questions():
 	def __init__(self):
 
+		self.QD = Question('Produkt wird unter eigenem Namen oder unter eigener Handelsmarke in Verkehr gebracht, oder Produkt wird vor in Verkehr bringen so verändert, dass die Konformität mit dieser Richtlinie beeinträchtigt wird?',
+					  effect={'y':'extra',
+					  		  'n':'None'})
+
 		self.Q0 = Question('Handelt es sich bei dem Produkt um ein Schutzsystem?',
 					  effect={'y':'Schutzsystem',
 					  		  'n':'None'})
