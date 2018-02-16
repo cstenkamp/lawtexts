@@ -26,7 +26,7 @@ def write_json_file(item, path):
         json.dump(item, f, ensure_ascii=False)
     print("wrote file")
 
-
+ORDER = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum", "Komponenten", "Verwendungszwecke", "Verwendungsorte"]
 MY_PATH = os.path.abspath(os.path.dirname(__file__))
 MACHINE_PATH = MY_PATH + "/machines/"
 JSON_PATH = os.path.abspath(os.path.join(MY_PATH, os.pardir)) + "/python_code/Main/json/"

@@ -62,7 +62,7 @@ class ItemCreatorWidget(QTreeWidget):
     def createStartEntries(self, model):
         self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", "Herstellungsdatum":"2000", \
                          "Prüfdatum":"2000", "Verwendungszwecke":[], "Verwendungsorte": []}
-        self.minEntries = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum"]
+        self.minEntries = ORDER[0:5]
         self.parts = read_json_file(JSON_PATH + "/parts.json")
         self.features = read_json_file(JSON_PATH + "/features.json")["Features"]
         self.contents = read_json_file(JSON_PATH + "/contents.json")
@@ -221,9 +221,9 @@ class ItemCreatorWidget(QTreeWidget):
                 json[key] = {unit:value}
 
     def save_file(self):
-        if any(self.jsonFile[key] == "" for key  in self.minEntries):
+        if any(self.jsonFile[key] == "" for key  in self.minEntries) or "Komponenten" not in self.jsonFile:
             requiredFields ="\n" + "\n".join(str(x) for x in self.minEntries)
-            QMessageBox.about(self, "", "Bitte füllen sie mindestens folgende Felder aus:" + requiredFields)
+            QMessageBox.about(self, "", "Bitte fügen Sie mindestenes eine Komponente hinzu und füllen Sie mindestens folgende Felder aus:" + requiredFields)
 
         else:
             fileName = MACHINE_PATH + self.jsonFile["Name"]

@@ -86,8 +86,13 @@ class ItemViewWidget(QWidget):
 
 
     def addItems(self, parent, dict_item):
-
-        for key in dict_item:
+        order_list = list(dict_item.keys())
+        if all(entries in ORDER for entries in list(dict_item.keys())):
+            order_list = ORDER
+        else:
+            order_list.sort()
+        print("HIER: "+str(order_list))
+        for key in order_list:
             item = QStandardItem(key)
             item.setEditable(False)
             newParent = item

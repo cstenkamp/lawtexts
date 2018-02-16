@@ -1,13 +1,14 @@
 import jsonHandler
 import os
 import glob
+from jsonHandler import ORDER
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
     QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem, QHeaderView, QLabel
 from PyQt5.QtCore import pyqtSlot, Qt
 from operator import itemgetter
 from ItemView import ItemView
 
-TABLE_HEADER = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum", "", ""]
+TABLE_HEADER = ORDER[0:5] + ["", ""]
 
 
 class CentralTable(QWidget):
@@ -107,8 +108,6 @@ class CentralTable(QWidget):
         oldRowCount = self.tableWidget.rowCount()
         self.machines =[[],[]]
         self.get_machines()
-        print(oldRowCount)
-        print(self.machines[0])
         self.tableWidget.setRowCount(len(self.machines[0]))
         if oldRowCount > len(self.machines[0]):
             "we are here"
