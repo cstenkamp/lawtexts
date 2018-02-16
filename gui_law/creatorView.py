@@ -62,7 +62,7 @@ class ItemCreatorWidget(QTreeWidget):
     def createStartEntries(self, model):
         self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", "Herstellungsdatum":"2000", \
                          "Prüfdatum":"2000", "Verwendungszwecke":[], "Verwendungsorte": []}
-        self.minEntries = list(self.jsonFile.keys())[0:5]
+        self.minEntries = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum"]
         self.parts = read_json_file(JSON_PATH + "/parts.json")
         self.features = read_json_file(JSON_PATH + "/features.json")["Features"]
         self.contents = read_json_file(JSON_PATH + "/contents.json")

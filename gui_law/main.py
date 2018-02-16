@@ -47,6 +47,7 @@ class mainWindow(QMainWindow):
         helpMenu = menubar.addMenu('Hilfe')
 
         newMachine = QAction('Maschine hinzufügen', self)
+        newMachine.setShortcut("Ctrl+N")
         newMachine.triggered.connect(lambda: self.create_CreatorView())
         fileMenu.addAction(newMachine)
 
