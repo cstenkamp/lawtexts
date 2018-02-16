@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
     QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem, QHeaderView, QLabel
 from PyQt5.QtCore import pyqtSlot, Qt
 from operator import itemgetter
+from ItemView import ItemView
 
 TABLE_HEADER = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum", "", ""]
 
@@ -41,22 +42,25 @@ class CentralTable(QWidget):
         self.tableWidget.setHorizontalHeaderLabels(TABLE_HEADER)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         for row in range(self.tableWidget.rowCount()):
-            editBtn = QPushButton(self.tableWidget)
-            rmvBtn = QPushButton(self.tableWidget)
-            editBtn.setText('Edit')
-            editBtn.setToolTip('click to <b>edit</b> this item')
-            rmvBtn.setText('Remove')
-            rmvBtn.setToolTip('click to <b>remove</b> this item')
-            editBtn.clicked.connect(self.btn_edit)
-            rmvBtn.clicked.connect(self.btn_remove)
-            self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-2, editBtn)
-            self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-1, rmvBtn)
+            self.add_remove_edit_buttons(row)
         # table selection change
         self.tableWidget.doubleClicked.connect(self.on_double_click)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.fill_table()
         self.order_list(self.orderKey[0], self.orderKey[1])
         self.tableWidget.resizeColumnsToContents()
+
+    def add_remove_edit_buttons(self, row):
+        editBtn = QPushButton(self.tableWidget)
+        rmvBtn = QPushButton(self.tableWidget)
+        editBtn.setText('Edit')
+        editBtn.setToolTip('click to <b>edit</b> this item')
+        rmvBtn.setText('Remove')
+        rmvBtn.setToolTip('click to <b>remove</b> this item')
+        editBtn.clicked.connect(self.btn_edit)
+        rmvBtn.clicked.connect(self.btn_remove)
+        self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-2, editBtn)
+        self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-1, rmvBtn)
 
 
     def get_machines(self):
@@ -100,6 +104,15 @@ class CentralTable(QWidget):
         return 0
 
     def reload_list(self):
+        '''
+        oldRowCount = self.tableWidget.rowCount()
+        self.machines =[[],[]]
+        self.get_machines
+        self.tableWidget.setRowCount(len(self.machines[0]))
+        if oldRowCount > len(self.machines[0]):
+            for row in range(len(self.machines[0])-oldRowCount):
+                self.add_remove_edit_buttons(row)
+        '''
         self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
@@ -114,16 +127,14 @@ class CentralTable(QWidget):
         '''
         print(self.tableWidget.selectedItems())
         row = self.tableWidget.selectedItems()[0].row()
-        self.editWindow = jsonHandler.ItemView([self.machines[0][row],
-                                                self.machines[1][row]], self)
+        self.editWindow = ItemView([self.machines[0][row], self.machines[1][row]], self)
         self.editWindow.show()
 
     def btn_edit(self):
         """ loads a full overview over the respective item - editable """
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
-        self.editWindow = jsonHandler.ItemView([self.machines[0][index.row()],
-                                                      self.machines[1][index.row()]], self, True)
+        self.editWindow = ItemView([self.machines[0][index.row()], self.machines[1][index.row()]], self, True)
         self.editWindow.show()
 
     def btn_remove(self):

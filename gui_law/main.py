@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from centralTable import CentralTable
+from creatorView import CreatorView
 import functools
 # from screeninfo import get_monitors
 
@@ -38,12 +39,16 @@ class mainWindow(QMainWindow):
     def initMenubar(self, menubar):
         """ adds a Menubar to the mainWindow """
         # todo add functions later
-        fileMenu = menubar.addMenu('File')
-        editMenu = menubar.addMenu('Edit')
-        viewMenu = menubar.addMenu('View')
-        searchMenu = menubar.addMenu('Search')
-        toolsMenu = menubar.addMenu('Tools')
-        helpMenu = menubar.addMenu('Help')
+        fileMenu = menubar.addMenu('Datei')
+        editMenu = menubar.addMenu('Bearbeiten')
+        viewMenu = menubar.addMenu('Ansicht')
+        searchMenu = menubar.addMenu('Suche')
+        toolsMenu = menubar.addMenu('Werkzeuge')
+        helpMenu = menubar.addMenu('Hilfe')
+
+        newMachine = QAction('Maschine hinzufügen', self)
+        newMachine.triggered.connect(lambda: self.create_CreatorView())
+        fileMenu.addAction(newMachine)
 
         refresh = QAction('Erneut Laden', self)
         refresh.setShortcut("F5")
@@ -62,6 +67,9 @@ class mainWindow(QMainWindow):
             action = QAction(features[i], self)
             action.triggered.connect(functools.partial(self.CentralTable.order_list, features[i], descending))
             menu.addAction(action)
+
+    def create_CreatorView(self):
+        self.creatorView = CreatorView(self)
 
 
 if __name__ == '__main__':
