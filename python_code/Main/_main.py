@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.join(os.getcwd(),'QATree/'))
 from questions_MRL import *
 
 sys.path.insert(0, os.path.join(os.getcwd(),'Definitions/'))
-from definitions import Definitions 
+from definitions import Definitions
 
 sys.path.insert(0, os.path.join(os.getcwd(),'saveLoad/'))
 from configurator import Configurator
@@ -25,7 +25,7 @@ from dictParser import PARSER as dictPARSER
 from _printer import Printer
 
 
-#TODO: anwendbar auf/von 
+#TODO: anwendbar auf/von
 #sys.path.insert(0, os.path.join(os.getcwd(),'productClasses/'))
 
 """
@@ -104,7 +104,7 @@ Logic = LOGIC(Product, dictParser)
 atexLogic = ATEX(Product, dictParser)
 
 '''
-LINUS: 
+LINUS:
 '''
 # first check first level features, such as purpose and site:
 result_purpose, result_sites = Logic.checkFirstLevel()
@@ -118,7 +118,7 @@ for D,v in result_purpose.items():
 		else:
 			for p,l in q:
 				# display questions and collect answers
-				purpose = p 
+				purpose = p
 				for head,label in l:
 					body = Logic.labelToHtml(label,D)
 				# head = e.g. Finden sie ihr Produkt in dieser Liste wieder?

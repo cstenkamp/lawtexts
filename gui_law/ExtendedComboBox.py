@@ -8,10 +8,10 @@ class ExtendedComboBox(QComboBox):
         super(ExtendedComboBox, self).__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
-        self.setInsertPolicy(QComboBox.NoInsert)
         self.setEditable(False)
         self.setFocus()
-
+        self.insert = True
+        self.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
         # add a filter model to filter matching items
         self.pFilterModel = QSortFilterProxyModel(self)
         self.pFilterModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
@@ -29,6 +29,12 @@ class ExtendedComboBox(QComboBox):
         # self.line_edit.textChanged.connect(self.pFilterModel.setFilterFixedString)
         # self.completer.activated.connect(self.on_completer_activated)
 
+    def setInsert(self, toSet):
+        self.insert = toSet
+        if not toSet:
+            self.setInsertPolicy(QComboBox.NoInsert)
+        else:
+            self.setInsertPolicy(QComboBox.InsertAtBottom)
     # on selection of an item from the completer, select the corresponding item from combobox
     def on_completer_activated(self, text):
         if text:
