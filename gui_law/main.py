@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from centralTable import CentralTable
 from creatorView import CreatorView
+from jsonHandler import ICON_PATH
 import functools
 # from screeninfo import get_monitors
 
@@ -19,7 +20,6 @@ class mainWindow(QMainWindow):
     def initUI(self):
         """ initialises the mainWindow at the center to half the size of the
             resolution """
-        self.statusBar()
         # center window
         self.title = 'Prototyp LawText'
         self.setWindowTitle(self.title)
@@ -32,24 +32,32 @@ class mainWindow(QMainWindow):
         self.move(qr.topLeft())
 
         menubar = self.menuBar()
-
         self.initMenubar(menubar)
+
         self.show()
 
     def initMenubar(self, menubar):
+        menubarRight = QMenuBar()
+
         """ adds a Menubar to the mainWindow """
         # todo add functions later
         fileMenu = menubar.addMenu('Datei')
         editMenu = menubar.addMenu('Bearbeiten')
         viewMenu = menubar.addMenu('Ansicht')
         searchMenu = menubar.addMenu('Suche')
-        toolsMenu = menubar.addMenu('Werkzeuge')
-        helpMenu = menubar.addMenu('Hilfe')
-
+        # toolsMenu = menubar.addMenu('Werkzeuge')
+        # helpMenu = menubar.addMenu('Hilfe')
         newMachine = QAction('Maschine hinzufügen', self)
-        newMachine.setShortcut("Ctrl+N")
         newMachine.triggered.connect(lambda: self.create_CreatorView())
+        newMachine.setShortcut("Ctrl+N")
         fileMenu.addAction(newMachine)
+        newMachine_2 = QAction(QIcon(ICON_PATH+"add.png"), '', self)
+        newMachine_2.setToolTip("Maschine hinzufügen")
+        newMachine_2.triggered.connect(lambda: self.create_CreatorView())
+        menubarRight.addAction(newMachine_2)
+        menubar.setCornerWidget(menubarRight)
+        menubar.adjustSize()
+        # menubar.setCornerWidget(menubar)
 
         refresh = QAction('Erneut Laden', self)
         refresh.setShortcut("F5")

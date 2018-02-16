@@ -7,7 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 class CreatorView(QMainWindow):
-    """ creates a ItemOverview over the given @item, @edit = readOnly? """
+    """ creates a Widget to create a Machine """
     def __init__(self, parent=None, centralTable = None):
         super(CreatorView, self).__init__(parent)
         self.parent = parent
@@ -59,8 +59,9 @@ class ItemCreatorWidget(QTreeWidget):
         self.itemChanged.connect(self.item_changed)
 
     def createStartEntries(self, model):
-        self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", "Herstellungsdatum":"2000", \
-                         "Prüfdatum":"2000", "Komponenten":{}, "Verwendungszwecke":[], "Verwendungsorte": []}
+        self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", \
+            "Herstellungsdatum":"2000", "Prüfdatum":"2000", "Komponenten":{},\
+             "Verwendungszwecke":[], "Verwendungsorte": [], "Kommentare": []}
         self.minEntries = ORDER[0:5]
         self.parts = read_json_file(JSON_PATH + "/parts.json")
         self.features = read_json_file(JSON_PATH + "/features.json")["Features"]
@@ -70,6 +71,7 @@ class ItemCreatorWidget(QTreeWidget):
         self.firstComponent = self.boolObject(True)
         self.firstVZweck = self.boolObject(True)
         self.firstVOrt = self.boolObject(True)
+        self.firstComment = self.boolObject(True)
 
         for entry in self.minEntries:
             tmp = QTreeWidgetItem(["placeHolder"])
@@ -91,26 +93,36 @@ class ItemCreatorWidget(QTreeWidget):
             list(self.parts.keys()), self.combo, \
             self.firstComponent, self.addComponents, "Komponenten") )
 
-        self.vZweckCombo = ExtendedComboBox(self)
+        vZweckCombo = ExtendedComboBox(self)
         list_keys = list(self.purposes.keys())
         list_keys.sort()
-        self.vZweckCombo.addItems(list_keys)
-        btn, self.addVZweck = self.QTreeAddButtonMenu("Verwendungszwecke +", self.vZweckCombo)
+        vZweckCombo.addItems(list_keys)
+        btn, addVZweck = self.QTreeAddButtonMenu("Verwendungszwecke +", vZweckCombo)
         btn.clicked.connect(lambda: self.addExtComboBoxEdit(\
-            list(self.purposes.keys()), self.vZweckCombo, \
-            self.firstVZweck, self.addVZweck, "Verwendungszwecke") )
+            list(self.purposes.keys()), vZweckCombo, \
+            self.firstVZweck, addVZweck, "Verwendungszwecke") )
 
-        self.vOrtCombo = ExtendedComboBox(self)
+        vOrtCombo = ExtendedComboBox(self)
         list_keys = list(self.sites.keys())
         list_keys.sort()
-        self.vOrtCombo.addItems(list_keys)
-        btn, self.addVOrt = self.QTreeAddButtonMenu("Verwendungsorte +", self.vOrtCombo)
+        vOrtCombo.addItems(list_keys)
+        btn, addVOrt = self.QTreeAddButtonMenu("Verwendungsorte +", vOrtCombo)
         btn.clicked.connect(lambda: self.addExtComboBoxEdit(\
-            list(self.sites.keys()), self.vOrtCombo, \
-            self.firstVOrt, self.addVOrt, "Verwendungsorte") )
+            list(self.sites.keys()), vOrtCombo, \
+            self.firstVOrt, addVOrt, "Verwendungsorte") )
+
+        self.addCommentEdit()
 
         for i in range(self.columnCount()):
             self.resizeColumnToContents(i)
+
+    def addCommentEdit(self, parent=None):
+        lineEdit = QLineEdit()
+        btn, addLineEdit = self.QTreeAddButtonMenu("Kommentare +", lineEdit)
+        btn.clicked.connect(lambda: self.addExtComboBoxEdit([], lineEdit, \
+                            self.firstComment, addLineEdit, "Kommentare") )
+        # TODO
+        print()
 
     def QTreeAddButtonMenu(self, buttonText, widget, tooltip = None):
         button = QPushButton()
@@ -124,23 +136,38 @@ class ItemCreatorWidget(QTreeWidget):
     class boolObject():
         def __init__(self, boolToObj):
             self.bool = boolToObj
+            self.parent = None
         def getBool(self):
             return self.bool
         def setBool(self, boolToSet):
             self.bool = boolToSet
+        def setParent(self, parent):
+            self.parent = parent
+        def getParent(self):
+            return self.parent
 
     def addExtComboBoxEdit(self, listDic, exComboBox, first, addBtn, key ):
-        purpose = exComboBox.currentText()
-        if not exComboBox.insert and purpose not in listDic:
-            exComboBox.setCurrentText("")
-            exComboBox.showPopup()
-            return
-        if first:
+        if type(exComboBox) is ExtendedComboBox:
+            purpose = exComboBox.currentText()
+            if not exComboBox.insert and purpose not in listDic:
+                exComboBox.setCurrentText("")
+                exComboBox.showPopup()
+                return
+        elif type(exComboBox) is QLineEdit:
+            purpose = exComboBox.text()
+            if purpose is "":
+                return
+            else:
+                exComboBox.setText("")
+        if first.getBool():
             first.setBool(False)
             parent = QTreeWidgetItem([key])
+            first.setParent(parent)
             index = self.indexOfTopLevelItem(addBtn)
             self.insertTopLevelItem(index, parent)
             parent.setExpanded(True)
+        else:
+            parent = first.getParent()
 
         if key is not "Komponenten":
             self.jsonFile[key].append(purpose)
