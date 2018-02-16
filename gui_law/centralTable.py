@@ -104,15 +104,16 @@ class CentralTable(QWidget):
         return 0
 
     def reload_list(self):
-        '''
         oldRowCount = self.tableWidget.rowCount()
         self.machines =[[],[]]
-        self.get_machines
+        self.get_machines()
+        print(oldRowCount)
+        print(self.machines[0])
         self.tableWidget.setRowCount(len(self.machines[0]))
         if oldRowCount > len(self.machines[0]):
+            "we are here"
             for row in range(len(self.machines[0])-oldRowCount):
                 self.add_remove_edit_buttons(row)
-        '''
         self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
