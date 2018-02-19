@@ -105,14 +105,16 @@ class CentralTable(QWidget):
         return 0
 
     def reload_list(self):
+        """ reloads the list and all releated machines """
         oldRowCount = self.tableWidget.rowCount()
-        self.machines =[[],[]]
+        del self.machines
+        self.machines = [[],[]]
         self.get_machines()
         self.tableWidget.setRowCount(len(self.machines[0]))
-        if oldRowCount > len(self.machines[0]):
+        if oldRowCount < len(self.machines[0]):
             "we are here"
             for row in range(len(self.machines[0])-oldRowCount):
-                self.add_remove_edit_buttons(row)
+                self.add_remove_edit_buttons(oldRowCount+row)
         self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
@@ -137,7 +139,7 @@ class CentralTable(QWidget):
         self.editWindow = ItemView([self.machines[0][index.row()], self.machines[1][index.row()]], self, True)
         self.editWindow.show()
         '''
-        self.newCreatorView = CreatorView(self.mainWindow, self, jsonFile = self.machines[0][index.row()])
+        self.newCreatorView = CreatorView(self.mainWindow, centralTable = self, jsonFile = self.machines[0][index.row()])
         # self.newCreatorView.setJsonFile(self.machines[0][index.row()])
         self.newCreatorView.show()
 

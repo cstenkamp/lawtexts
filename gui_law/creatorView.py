@@ -10,7 +10,14 @@ class CreatorView(QMainWindow):
     """ creates a Widget to create a Machine """
     def __init__(self, parent=None, centralTable = None, jsonFile = None):
         super(CreatorView, self).__init__(parent)
-        self.parent = parent
+        if parent is not None:
+            self.parent = parent
+        else:
+             self.parent = None
+        if centralTable is not None:
+            self.centralTable = centralTable
+        else:
+            self.centralTable = None
         # close previous edit windows
         if self.parent is not None:
             for child in self.parent.children():
@@ -36,7 +43,8 @@ class CreatorView(QMainWindow):
         save.setShortcut('Ctrl+S')
         # lamda necessary in order to make it callable
         save.triggered.connect(lambda: self.ItemCreatorWidget.save_file())
-        # save.triggered.connect(lambda: self.parent.reload_list())
+        if self.centralTable is not None:
+            save.triggered.connect(lambda: self.centralTable.reload_list())
         saveAs = QAction('Speichern als', self)
         fileMenu.addAction(save)
         fileMenu.addAction(saveAs)
@@ -125,6 +133,7 @@ class ItemCreatorWidget(QTreeWidget):
             self.resizeColumnToContents(i)
 
     def loadJson(self):
+        """ loads the json parts with childs into the widget """
         keys = ["Komponenten", "Verwendungszwecke", \
                 "Verwendungsorte", "Kommentare"]
         first_list = [self.firstComponent, self.firstVZweck, \
@@ -153,13 +162,13 @@ class ItemCreatorWidget(QTreeWidget):
                     parent.addChild(placeHolder)
                     CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=False, placeHolder=placeHolder)
             else:
-                print("Hier: ", self.jsonFile[keys[i]])
                 comp_list = list(self.jsonFile[keys[i]].keys())
                 comp_list.sort()
                 for component in comp_list:
                     self.openComponentCreator(component, parent, self.jsonFile[keys[i]][component])
 
     def addCommentEdit(self, parent=None):
+        """ adds a QLineEdit + Button in order to add comments """
         lineEdit = QLineEdit()
         btn, addLineEdit = self.QTreeAddButtonMenu("Kommentare +", lineEdit)
         btn.clicked.connect(lambda: self.addExtComboBoxEdit([], lineEdit, \
@@ -167,6 +176,7 @@ class ItemCreatorWidget(QTreeWidget):
         return btn, addLineEdit
 
     def QTreeAddButtonMenu(self, buttonText, widget, tooltip = None):
+        """ adds a Button to the QTree and returns the buton and the TreeWidget """
         button = QPushButton()
         button.setText(buttonText)
         button.setMinimumSize(175,10)
@@ -176,6 +186,7 @@ class ItemCreatorWidget(QTreeWidget):
         return [button, item]
 
     class boolObject():
+        """ stores a boolean value and an attached Widget """
         def __init__(self, boolToObj):
             self.bool = boolToObj
             self.parent = None
@@ -189,11 +200,12 @@ class ItemCreatorWidget(QTreeWidget):
             return self.parent
 
     def addExtComboBoxEdit(self, listDic, exComboBox, first, addBtn, key ):
+        """ adds an (extended) ComboBox to the view """
         if type(exComboBox) is ExtendedComboBox:
             purpose = exComboBox.currentText()
             if not exComboBox.insert and purpose not in listDic:
                 exComboBox.setCurrentText("")
-                exComboBox.showPopup()
+                exComboBox.showPopup() # if empty test load the popup
                 return
         elif type(exComboBox) is QLineEdit:
             purpose = exComboBox.text()
@@ -201,6 +213,7 @@ class ItemCreatorWidget(QTreeWidget):
                 return
             else:
                 exComboBox.setText("")
+        # creates the parent entry in the Qtree
         if first.getBool():
             first.setBool(False)
             parent = QTreeWidgetItem([key])
@@ -226,6 +239,7 @@ class ItemCreatorWidget(QTreeWidget):
             self.resizeColumnToContents(i)
 
     def openComponentCreator(self, component, parent, valueDict=None):
+        """ adds components to the view """
         self.jsonFile["Komponenten"][component] = {}
         component_features = self.parts[component]["Eigenschaften"]
         component_features.sort()
@@ -273,6 +287,7 @@ class ItemCreatorWidget(QTreeWidget):
             self.resizeColumnToContents(i)
 
     def item_changed(self, item, _NotWorking):
+        """ writes the changed item at the right position into the jsonFile """
         parItem = item
         parentList = []
         while parItem.parent() is not None:
@@ -288,23 +303,27 @@ class ItemCreatorWidget(QTreeWidget):
                 unit = nonTreeWidgets[1].currentText()
                 valueAt += 1
             value = None
-            if type(nonTreeWidgets[valueAt]) is QLineEdit:
-                value = nonTreeWidgets[valueAt].text()
-            elif type(nonTreeWidgets[valueAt]) is QDoubleSpinBox:
-                value = nonTreeWidgets[valueAt].value()
-            elif type(nonTreeWidgets[valueAt]) is QComboBox:
-                value = nonTreeWidgets[valueAt].currentText()
-            elif type(nonTreeWidgets[valueAt]) is QDateEdit:
-                value = str(nonTreeWidgets[valueAt].date().year())
-            json = self.jsonFile
-            while parentList != []:
-                json = json[parentList.pop()]
-            if unit is None:
-                json[key]=value
-            else:
-                json[key] = {unit:value}
+            try:
+                if type(nonTreeWidgets[valueAt]) is QLineEdit:
+                    value = nonTreeWidgets[valueAt].text()
+                elif type(nonTreeWidgets[valueAt]) is QDoubleSpinBox:
+                    value = nonTreeWidgets[valueAt].value()
+                elif type(nonTreeWidgets[valueAt]) is QComboBox:
+                    value = nonTreeWidgets[valueAt].currentText()
+                elif type(nonTreeWidgets[valueAt]) is QDateEdit:
+                    value = str(nonTreeWidgets[valueAt].date().year())
+                json = self.jsonFile
+                while parentList != []:
+                    json = json[parentList.pop()]
+                if unit is None:
+                    json[key]=value
+                else:
+                    json[key] = {unit:value}
+            except IndexError:
+                pass # required for uninted indexError for fields which are not used
 
     def save_file(self):
+        """ writes the jsonFile to disk """
         if any(self.jsonFile[key] == "" for key  in self.minEntries) \
             or  self.jsonFile["Komponenten"] == {}:
             minEntriesBold = ["<b>"+str(x)+",</b>" for x in self.minEntries]
@@ -330,6 +349,7 @@ class ItemCreatorWidget(QTreeWidget):
                 self.centralTable.reload_list()
 
     def start_check(self):
+        """ Constantins Part goes here """
         print("creatorView.py Methodenname: startCheck")
         print("this method is currently called when the user tries to save the file")
 

@@ -13,8 +13,8 @@ import functools
 class mainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.CentralTable = CentralTable(self)
-        self.setCentralWidget(self.CentralTable)
+        self.centralTable = CentralTable(self)
+        self.setCentralWidget(self.centralTable)
         self.initUI()
 
     def initUI(self):
@@ -61,7 +61,7 @@ class mainWindow(QMainWindow):
 
         refresh = QAction('Erneut Laden', self)
         refresh.setShortcut("F5")
-        refresh.triggered.connect(lambda: self.CentralTable.reload_list())
+        refresh.triggered.connect(lambda: self.centralTable.reload_list())
         editMenu.addAction(refresh)
 
         #orderMenus
@@ -74,11 +74,11 @@ class mainWindow(QMainWindow):
     def fill_order_menu(self, features, menu, descending):
         for i in range(len(features)):
             action = QAction(features[i], self)
-            action.triggered.connect(functools.partial(self.CentralTable.order_list, features[i], descending))
+            action.triggered.connect(functools.partial(self.centralTable.order_list, features[i], descending))
             menu.addAction(action)
 
     def create_CreatorView(self):
-        self.creatorView = CreatorView(self)
+        self.creatorView = CreatorView(self, centralTable = self.centralTable)
 
 
 if __name__ == '__main__':
