@@ -93,12 +93,14 @@ class ItemViewWidget(QWidget):
             order_list = ORDER + ["Kommentare"]
         else:
             order_list.sort()
+        print(order_list)
         for key in order_list:
             item = QStandardItem(key)
             item.setEditable(False)
             newParent = item
 
             # self.model.setData(self.model.index(0, 1), "test")
+            print("DEBUGPRINT ", key)
             if type(dict_item[key]) is list:
                 parent.appendRow(item)
                 string = ""

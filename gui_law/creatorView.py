@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 
 class CreatorView(QMainWindow):
     """ creates a Widget to create a Machine """
-    def __init__(self, parent=None, centralTable = None):
+    def __init__(self, parent=None, centralTable = None, jsonFile = None):
         super(CreatorView, self).__init__(parent)
         self.parent = parent
         # close previous edit windows
@@ -21,15 +21,14 @@ class CreatorView(QMainWindow):
         self.resize(sizeObject.width() / 2, sizeObject.height() / 2)
         self.components = []
 
-        self.ItemCreatorWidget = ItemCreatorWidget(self, centralTable)
+        self.ItemCreatorWidget = ItemCreatorWidget(self, centralTable, jsonFile=jsonFile)
         self.setCentralWidget(self.ItemCreatorWidget)
         menuBar = self.menuBar()
         self.initMenubar(menuBar)
-
         self.show()
 
     def initMenubar(self, menubar):
-        """ adds a Menubar to the mainWindow """
+        """ adds a Menubar to the Window """
         # todo add functions later
         fileMenu = menubar.addMenu('Datei')
         searchMenu = menubar.addMenu('Suche')
@@ -43,25 +42,34 @@ class CreatorView(QMainWindow):
         fileMenu.addAction(saveAs)
         # TODO add saveAs
 
+    def setJsonFile(self, json):
+        self.ItemCreatorWidget.setJsonFile(json)
+
 
 class ItemCreatorWidget(QTreeWidget):
     """ The widget for creating new machines """
-    def __init__(self, parent=None, centralTable = None):
+    def __init__(self, parent=None, centralTable = None, jsonFile = None):
         self.parent = parent
         self.centralTable = centralTable
         QTreeWidget.__init__(self)
         self.setHeaderLabels(["Feature", "Einheit", "Wert"])
         self.model = QStandardItemModel()
         self.setSelectionMode(QAbstractItemView.NoSelection)
+        if jsonFile is None:
+            self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", \
+                "Herstellungsdatum":"2000", "Prüfdatum":"2000", "Komponenten":{},\
+                 "Verwendungszwecke":[], "Verwendungsorte": [], "Kommentare": []}
+        else:
+            self.jsonFile = jsonFile
         self.createStartEntries(self.model)
-        # self.itemClicked.connect(self.item_changed)
-        # self.model.dataChanged.connect(self.item_changed)
+        if jsonFile is not None:
+            self.loadJson()
+        self.itemClicked.connect(self.item_changed)
+        self.model.dataChanged.connect(self.item_changed)
         self.itemChanged.connect(self.item_changed)
 
     def createStartEntries(self, model):
-        self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", \
-            "Herstellungsdatum":"2000", "Prüfdatum":"2000", "Komponenten":{},\
-             "Verwendungszwecke":[], "Verwendungsorte": [], "Kommentare": []}
+        """ creates all the required fields and buttons in order to create a machine """
         self.minEntries = ORDER[0:5]
         self.parts = read_json_file(JSON_PATH + "/parts.json")
         self.features = read_json_file(JSON_PATH + "/features.json")["Features"]
@@ -74,22 +82,22 @@ class ItemCreatorWidget(QTreeWidget):
         self.firstComment = self.boolObject(True)
 
         for entry in self.minEntries:
-            tmp = QTreeWidgetItem(["placeHolder"])
+            tmp = QTreeWidgetItem(["placeHolder"]) # required in order to put costom widgets at the right position
             self.addTopLevelItem(tmp)
             if "datum" in entry:
-                dateEdit = QDateEdit()
+                dateEdit = QDateEdit(QDate(int(self.jsonFile[entry]),1,1))
                 dateEdit.setDisplayFormat("dd.MM.yyyy")
                 CustomTreeWidgetItems(self, [entry, dateEdit], [0,2], placeHolder = tmp)
 
             else:
-                CustomTreeWidgetItems(self, [entry, QLineEdit()], [0,2], placeHolder = tmp)
+                CustomTreeWidgetItems(self, [entry, QLineEdit(self.jsonFile[entry])], [0,2], placeHolder = tmp)
 
         tooltip = "Hier klicken um eine neue Komponente zu erstellen"
         self.combo = ExtendedComboBox(self)
         self.combo.setInsert(False)
         self.combo.addItems(list(self.parts.keys()))
-        btn, self.addComponents = self.QTreeAddButtonMenu("Komponente +", self.combo, tooltip)
-        btn.clicked.connect(lambda: self.addExtComboBoxEdit(\
+        self.btn_comp, self.addComponents = self.QTreeAddButtonMenu("Komponente +", self.combo, tooltip)
+        self.btn_comp.clicked.connect(lambda: self.addExtComboBoxEdit(\
             list(self.parts.keys()), self.combo, \
             self.firstComponent, self.addComponents, "Komponenten") )
 
@@ -97,32 +105,66 @@ class ItemCreatorWidget(QTreeWidget):
         list_keys = list(self.purposes.keys())
         list_keys.sort()
         vZweckCombo.addItems(list_keys)
-        btn, addVZweck = self.QTreeAddButtonMenu("Verwendungszwecke +", vZweckCombo)
-        btn.clicked.connect(lambda: self.addExtComboBoxEdit(\
+        self.btn_vZweck, self.addVZweck = self.QTreeAddButtonMenu("Verwendungszwecke +", vZweckCombo)
+        self.btn_vZweck.clicked.connect(lambda: self.addExtComboBoxEdit(\
             list(self.purposes.keys()), vZweckCombo, \
-            self.firstVZweck, addVZweck, "Verwendungszwecke") )
+            self.firstVZweck, self.addVZweck, "Verwendungszwecke") )
 
         vOrtCombo = ExtendedComboBox(self)
         list_keys = list(self.sites.keys())
         list_keys.sort()
         vOrtCombo.addItems(list_keys)
-        btn, addVOrt = self.QTreeAddButtonMenu("Verwendungsorte +", vOrtCombo)
-        btn.clicked.connect(lambda: self.addExtComboBoxEdit(\
+        self.btn_vOrt, self.addVOrt = self.QTreeAddButtonMenu("Verwendungsorte +", vOrtCombo)
+        self.btn_vOrt.clicked.connect(lambda: self.addExtComboBoxEdit(\
             list(self.sites.keys()), vOrtCombo, \
-            self.firstVOrt, addVOrt, "Verwendungsorte") )
+            self.firstVOrt, self.addVOrt, "Verwendungsorte") )
 
-        self.addCommentEdit()
+        self.btn_comment, self.addComment = self.addCommentEdit()
 
         for i in range(self.columnCount()):
             self.resizeColumnToContents(i)
+
+    def loadJson(self):
+        keys = ["Komponenten", "Verwendungszwecke", \
+                "Verwendungsorte", "Kommentare"]
+        first_list = [self.firstComponent, self.firstVZweck, \
+                      self.firstVOrt, self.firstComment]
+        add_list = [self.addComponents, self.addVZweck, \
+                    self.addVOrt, self.addComment]
+        for i in range(len(keys)):
+            cur_dict = self.jsonFile[keys[i]]
+            first = first_list[i]
+            if cur_dict == []:
+                continue
+            first.setBool(False)
+            parent = QTreeWidgetItem([keys[i]])
+            first.setParent(parent)
+            index = self.indexOfTopLevelItem(add_list[i])
+            self.insertTopLevelItem(index, parent)
+            parent.setExpanded(True)
+            if keys[i] is not "Komponenten":
+                text_list = self.jsonFile[keys[i]]
+                text_list.sort()
+                for text in text_list:
+                    tmpLineEdit = QLineEdit()
+                    tmpLineEdit.setText(text)
+                    tmpLineEdit.setReadOnly(True)
+                    placeHolder = QTreeWidgetItem([""])
+                    parent.addChild(placeHolder)
+                    CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=False, placeHolder=placeHolder)
+            else:
+                print("Hier: ", self.jsonFile[keys[i]])
+                comp_list = list(self.jsonFile[keys[i]].keys())
+                comp_list.sort()
+                for component in comp_list:
+                    self.openComponentCreator(component, parent, self.jsonFile[keys[i]][component])
 
     def addCommentEdit(self, parent=None):
         lineEdit = QLineEdit()
         btn, addLineEdit = self.QTreeAddButtonMenu("Kommentare +", lineEdit)
         btn.clicked.connect(lambda: self.addExtComboBoxEdit([], lineEdit, \
                             self.firstComment, addLineEdit, "Kommentare") )
-        # TODO
-        print()
+        return btn, addLineEdit
 
     def QTreeAddButtonMenu(self, buttonText, widget, tooltip = None):
         button = QPushButton()
@@ -183,40 +225,55 @@ class ItemCreatorWidget(QTreeWidget):
         for i in range(self.columnCount()):
             self.resizeColumnToContents(i)
 
-    def openComponentCreator(self, component, parent):
+    def openComponentCreator(self, component, parent, valueDict=None):
         self.jsonFile["Komponenten"][component] = {}
         component_features = self.parts[component]["Eigenschaften"]
+        component_features.sort()
         item = QTreeWidgetItem([component])
         parent.addChild(item)
         item.setExpanded(True)
-        for feature in component_features:
+        for i in range(len(component_features)):
             tmp = QTreeWidgetItem(["placeHolder"])
             item.addChild(tmp)
-            if feature in list(self.features.keys()):
-                cur_feature = self.features[feature]
+            feature_keys = list(self.features.keys())
+            feature_keys.sort()
+            if valueDict is not None:
+                curValue = valueDict[component_features[i]]
+                keyOFcurValue = list(curValue.keys())
+            if component_features[i] in feature_keys:
+                cur_feature = self.features[component_features[i]]
                 spinBox = QDoubleSpinBox()
-                spinBox.setValue( 0 )
+                if valueDict is None:
+                    spinBox.setValue( 0 )
+                else:
+                    spinBox.setValue(curValue[keyOFcurValue[0]])
                 spinBox.setMaximum(99999.99)
                 spinBox.setMinimumSize(25,10)
                 unitBox = QComboBox()
                 unitBox.addItems(cur_feature)
-                self.jsonFile["Komponenten"][component][feature] = {cur_feature[0]:0}
-                CustomTreeWidgetItems(self, [str(feature), unitBox, spinBox], range(3), placeHolder=tmp)
+                if valueDict is not None:
+                    unitBox.setCurrentText(keyOFcurValue[0])
+                else:
+                    self.jsonFile["Komponenten"][component][component_features[i]] = {cur_feature[0]:float(0)}
+                CustomTreeWidgetItems(self, [str(component_features[i]), unitBox, spinBox], range(3), placeHolder=tmp)
 
-            elif feature == "Inhalt":
+            elif component_features[i] == "Inhalt":
                 contentBox = QComboBox()
                 contentBox.addItems(self.contents["Inhalt"])
                 unitBox = QComboBox()
                 unitBox.addItems(self.contents["Aggregatszustand"])
+                if valueDict is not None:
+                    unitBox.setCurrentText(keyOFcurValue[0])
+                    contentBox.setCurrentText(curValue[keyOFcurValue[0]])
                 parent.addChild(tmp)
-                self.jsonFile["Komponenten"][component][feature] = {unitBox.currentText(): contentBox.currentText()}
-                CustomTreeWidgetItems(self,[str(feature),unitBox, contentBox],range(3), placeHolder=tmp)
+                self.jsonFile["Komponenten"][component][component_features[i]] = {unitBox.currentText(): contentBox.currentText()}
+                CustomTreeWidgetItems(self,[str(component_features[i]),unitBox, contentBox],range(3), placeHolder=tmp)
 
         for i in range(self.columnCount()):
             self.resizeColumnToContents(i)
 
     def item_changed(self, item, _NotWorking):
-        parItem= item
+        parItem = item
         parentList = []
         while parItem.parent() is not None:
             parItem = parItem.parent()
@@ -248,7 +305,8 @@ class ItemCreatorWidget(QTreeWidget):
                 json[key] = {unit:value}
 
     def save_file(self):
-        if any(self.jsonFile[key] == "" for key  in self.minEntries) or "Komponenten" not in self.jsonFile:
+        if any(self.jsonFile[key] == "" for key  in self.minEntries) \
+            or  self.jsonFile["Komponenten"] == {}:
             minEntriesBold = ["<b>"+str(x)+",</b>" for x in self.minEntries]
             requiredFields = "\n"+ "\n".join(str(x) for x in minEntriesBold)
             QMessageBox.about(self, "", "Bitte fügen Sie <b>mindestenes eine Komponente</b> hinzu"\
@@ -257,10 +315,16 @@ class ItemCreatorWidget(QTreeWidget):
         else:
             self.start_check()
             fileName = MACHINE_PATH + self.jsonFile["Name"]
-            i = 1
-            while os.path.exists(fileName):
-                fileName += str(i)
-                i += 1
+            if os.path.isfile(fileName+".json"):
+                reply = QMessageBox.question(self, "Dateiname existiert bereits", \
+                    "Der Dateiname " + self.jsonFile["Name"] + " existiert bereits,"\
+                    " soll die Datei überschrieben werden? \n  Andernfalls wird eine neue Datei erzeugt",\
+                     QMessageBox.Yes | QMessageBox.No)
+                if reply == QMessageBox.No:
+                    i = 1
+                    while os.path.isfile(fileName+".json"):
+                        fileName += str(i)
+                        i += 1
             write_json_file(self.jsonFile, fileName)
             if self.centralTable is not None:
                 self.centralTable.reload_list()

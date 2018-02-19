@@ -1,6 +1,7 @@
 import jsonHandler
 import os
 import glob
+from creatorView import *
 from jsonHandler import ORDER
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
     QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem, QHeaderView, QLabel
@@ -63,7 +64,6 @@ class CentralTable(QWidget):
         self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-2, editBtn)
         self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-1, rmvBtn)
 
-
     def get_machines(self):
         """ loads all machines out of the json into the class list """
         path = os.path.dirname(os.path.abspath(__file__))
@@ -125,7 +125,6 @@ class CentralTable(QWidget):
             print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(
             ), currentQTableWidgetItem.text())
         '''
-        print(self.tableWidget.selectedItems())
         row = self.tableWidget.selectedItems()[0].row()
         self.editWindow = ItemView([self.machines[0][row], self.machines[1][row]], self)
         self.editWindow.show()
@@ -134,8 +133,13 @@ class CentralTable(QWidget):
         """ loads a full overview over the respective item - editable """
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
+        '''
         self.editWindow = ItemView([self.machines[0][index.row()], self.machines[1][index.row()]], self, True)
         self.editWindow.show()
+        '''
+        self.newCreatorView = CreatorView(self.mainWindow, self, jsonFile = self.machines[0][index.row()])
+        # self.newCreatorView.setJsonFile(self.machines[0][index.row()])
+        self.newCreatorView.show()
 
     def btn_remove(self):
         """ removes the respective item after a confirmation dialog """
@@ -145,7 +149,7 @@ class CentralTable(QWidget):
         reply = QMessageBox.question(self, 'Remove item',
                                      "Are you you want to delete " +
                                      item[0]["Name"] + "?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
+                                     QMessageBox.No)
 
         if reply == QMessageBox.Yes:
             # remove the file
