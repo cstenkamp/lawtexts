@@ -157,7 +157,8 @@ class ItemCreatorWidget(QTreeWidget):
                 for text in text_list:
                     tmpLineEdit = QLineEdit()
                     tmpLineEdit.setText(text)
-                    tmpLineEdit.setReadOnly(True)
+                    if keys[i] is not "Kommentare":
+                        tmpLineEdit.setReadOnly(True)
                     placeHolder = QTreeWidgetItem([""])
                     parent.addChild(placeHolder)
                     CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=False, placeHolder=placeHolder)
@@ -228,7 +229,8 @@ class ItemCreatorWidget(QTreeWidget):
             self.jsonFile[key].append(purpose)
             tmpLineEdit = QLineEdit()
             tmpLineEdit.setText(purpose)
-            tmpLineEdit.setReadOnly(True)
+            if key is not "Kommentare":
+                tmpLineEdit.setReadOnly(True)
             placeHolder = QTreeWidgetItem([""])
             parent.addChild(placeHolder)
             CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=False, placeHolder=placeHolder)
@@ -290,9 +292,12 @@ class ItemCreatorWidget(QTreeWidget):
         """ writes the changed item at the right position into the jsonFile """
         parItem = item
         parentList = []
-        while parItem.parent() is not None:
-            parItem = parItem.parent()
-            parentList.append(parItem.text(0))
+        try:
+            while parItem.parent() is not None:
+                parItem = parItem.parent()
+                parentList.append(parItem.text(0))
+        except RecursionError:
+            pass #needed to handle empty fields in custromtreeWidgets
 
         if type(item) is CustomTreeWidgetItems:
             nonTreeWidgets, pos = item.widgets_and_position()
