@@ -100,7 +100,8 @@ class CentralTable(QWidget):
         order = [keyItem, descending]
         self.orderKey = order
         temp = sorted(zip(self.machines[0], self.machines[1]), key=lambda x: x[0][keyItem].lower(), reverse=descending)
-        self.machines[0], self.machines[1] = map(list, zip(*temp))
+        if len(self.machines[0]) > 0:
+            self.machines[0], self.machines[1] = map(list, zip(*temp))
         self.fill_table()
         return 0
 

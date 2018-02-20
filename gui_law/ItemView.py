@@ -100,18 +100,22 @@ class ItemViewWidget(QWidget):
 
             # self.model.setData(self.model.index(0, 1), "test")
             if type(dict_item[key]) is list:
-                parent.appendRow(item)
-                string = ""
-                for entry in dict_item[key]:
-                    '''
-                    if string is not "":
-                        string += "\n"
-                    string += entry
-                    '''
-                    item.appendRow([QStandardItem(""), QStandardItem(entry)])
-                self.treeView.setExpanded(item.index(), True)
-                # item2 = QStandardItem(string)
-                # parent.appendRow([item, item2])
+                if len(dict_item[key]) > 0 and type(dict_item[key][0]) is list:
+                        #TODO check for komponententen
+                        for entryInd in range(len(dict_item[key])):
+                            parent.appendRow(item)
+                            for dictEntry in dict_item[key][entryInd]:
+                                self.addItems(item, dictEntry)
+                            if entryInd < len(dict_item[key])-1:
+                                item = QStandardItem(key)
+                                item.setEditable(False)
+                                newParent = item
+                else:
+                    parent.appendRow(item)
+                    string = ""
+                    for entry in dict_item[key]:
+                        item.appendRow([QStandardItem(""), QStandardItem(entry)])
+                    self.treeView.setExpanded(item.index(), True)
             elif type(dict_item[key]) is dict and len(dict_item[key]) == 1 and \
                     list(dict_item[key].keys())[0].lower() in EINHEITEN:
                     einheit = list(dict_item[key].keys())[0]

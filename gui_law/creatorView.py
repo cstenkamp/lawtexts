@@ -141,6 +141,7 @@ class ItemCreatorWidget(QTreeWidget):
         add_list = [self.addComponents, self.addVZweck, \
                     self.addVOrt, self.addComment]
         for i in range(len(keys)):
+            print(i)
             cur_dict = self.jsonFile[keys[i]]
             first = first_list[i]
             if cur_dict == []:
@@ -161,12 +162,17 @@ class ItemCreatorWidget(QTreeWidget):
                         tmpLineEdit.setReadOnly(True)
                     placeHolder = QTreeWidgetItem([""])
                     parent.addChild(placeHolder)
-                    CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=False, placeHolder=placeHolder)
+                    CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=True, placeHolder=placeHolder)
             else:
                 comp_list = list(self.jsonFile[keys[i]].keys())
                 comp_list.sort()
+                print("Comp_list: ", comp_list)
                 for component in comp_list:
-                    self.openComponentCreator(component, parent, self.jsonFile[keys[i]][component])
+                    for compOfSameType in self.jsonFile[keys[i]][component]:
+                        shortedenedDict = compOfSameType # TODO check
+                        self.openComponentCreator(component, parent, shortedenedDict)
+                        print("hier")
+                        print("JSONFILE: ", self.jsonFile[keys[i]])
 
     def addCommentEdit(self, parent=None):
         """ adds a QLineEdit + Button in order to add comments """
@@ -233,7 +239,7 @@ class ItemCreatorWidget(QTreeWidget):
                 tmpLineEdit.setReadOnly(True)
             placeHolder = QTreeWidgetItem([""])
             parent.addChild(placeHolder)
-            CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=False, placeHolder=placeHolder)
+            CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=True, placeHolder=placeHolder)
         else:
             self.openComponentCreator(purpose, parent)
 
@@ -241,21 +247,31 @@ class ItemCreatorWidget(QTreeWidget):
             self.resizeColumnToContents(i)
 
     def openComponentCreator(self, component, parent, valueDict=None):
+        if valueDict is not None:
+            print("GAGA: ", valueDict)
+            print("Tada: ", component)
         """ adds components to the view """
-        self.jsonFile["Komponenten"][component] = {}
+        if component not in self.jsonFile["Komponenten"] and valueDict is None:
+            self.jsonFile["Komponenten"][component] = []
         component_features = self.parts[component]["Eigenschaften"]
         component_features.sort()
         item = QTreeWidgetItem([component])
         parent.addChild(item)
         item.setExpanded(True)
+        newCompList = []
         for i in range(len(component_features)):
             tmp = QTreeWidgetItem(["placeHolder"])
             item.addChild(tmp)
             feature_keys = list(self.features.keys())
             feature_keys.sort()
             if valueDict is not None:
-                curValue = valueDict[component_features[i]]
-                keyOFcurValue = list(curValue.keys())
+                print(component_features[i])
+                ind = [l for l in range(len(valueDict)) if component_features[i] in valueDict[l]]
+                if ind != []:
+                    ind = ind[0]
+                    print("Hier index: ", valueDict[ind])
+                    curValue = valueDict[ind][component_features[i]]
+                    keyOFcurValue = list(curValue.keys())
             if component_features[i] in feature_keys:
                 cur_feature = self.features[component_features[i]]
                 spinBox = QDoubleSpinBox()
@@ -267,10 +283,11 @@ class ItemCreatorWidget(QTreeWidget):
                 spinBox.setMinimumSize(25,10)
                 unitBox = QComboBox()
                 unitBox.addItems(cur_feature)
-                if valueDict is not None:
+                if valueDict is not None: # in case an existing json File is loaded
                     unitBox.setCurrentText(keyOFcurValue[0])
                 else:
-                    self.jsonFile["Komponenten"][component][component_features[i]] = {cur_feature[0]:float(0)}
+                    #TODO implement this change everywhere else as well
+                    newCompList.append({component_features[i]: {cur_feature[0]:float(0)}})
                 CustomTreeWidgetItems(self, [str(component_features[i]), unitBox, spinBox], range(3), placeHolder=tmp)
 
             elif component_features[i] == "Inhalt":
@@ -278,12 +295,16 @@ class ItemCreatorWidget(QTreeWidget):
                 contentBox.addItems(self.contents["Inhalt"])
                 unitBox = QComboBox()
                 unitBox.addItems(self.contents["Aggregatszustand"])
-                if valueDict is not None:
+                if valueDict is not None: # in case an existing json File is loaded
                     unitBox.setCurrentText(keyOFcurValue[0])
                     contentBox.setCurrentText(curValue[keyOFcurValue[0]])
+                else:
+                    newCompList.append({component_features[i]: {unitBox.currentText(): contentBox.currentText()}})
                 parent.addChild(tmp)
-                self.jsonFile["Komponenten"][component][component_features[i]] = {unitBox.currentText(): contentBox.currentText()}
+                # self.jsonFile["Komponenten"][component].append([component_features[i]: {unitBox.currentText(): contentBox.currentText()}])
                 CustomTreeWidgetItems(self,[str(component_features[i]),unitBox, contentBox],range(3), placeHolder=tmp)
+        if valueDict is None:
+            self.jsonFile["Komponenten"][component].append(newCompList)
 
         for i in range(self.columnCount()):
             self.resizeColumnToContents(i)
@@ -303,29 +324,42 @@ class ItemCreatorWidget(QTreeWidget):
             nonTreeWidgets, pos = item.widgets_and_position()
             key = nonTreeWidgets[0]
             unit = None
-            valueAt = 1
-            if 1 in pos:
-                unit = nonTreeWidgets[1].currentText()
-                valueAt += 1
-            value = None
-            try:
-                if type(nonTreeWidgets[valueAt]) is QLineEdit:
-                    value = nonTreeWidgets[valueAt].text()
-                elif type(nonTreeWidgets[valueAt]) is QDoubleSpinBox:
-                    value = nonTreeWidgets[valueAt].value()
-                elif type(nonTreeWidgets[valueAt]) is QComboBox:
-                    value = nonTreeWidgets[valueAt].currentText()
-                elif type(nonTreeWidgets[valueAt]) is QDateEdit:
-                    value = str(nonTreeWidgets[valueAt].date().year())
-                json = self.jsonFile
-                while parentList != []:
-                    json = json[parentList.pop()]
-                if unit is None:
-                    json[key]=value
-                else:
-                    json[key] = {unit:value}
-            except IndexError:
-                pass # required for uninted indexError for fields which are not used
+            if len(nonTreeWidgets) > 1:
+                valueAt = 1
+                if 1 in pos:
+                    unit = nonTreeWidgets[1].currentText()
+                    valueAt += 1
+                value = None
+                try:
+                    if type(nonTreeWidgets[valueAt]) is QLineEdit:
+                        value = nonTreeWidgets[valueAt].text()
+                    elif type(nonTreeWidgets[valueAt]) is QDoubleSpinBox:
+                        value = nonTreeWidgets[valueAt].value()
+                    elif type(nonTreeWidgets[valueAt]) is QComboBox:
+                        value = nonTreeWidgets[valueAt].currentText()
+                    elif type(nonTreeWidgets[valueAt]) is QDateEdit:
+                        value = str(nonTreeWidgets[valueAt].date().year())
+                    json = self.jsonFile
+                    while parentList != []:
+                        json = json[parentList.pop()]
+                    if unit is None:
+                        json[key]=value
+                    else:
+                        print(json)
+                        json[key] = {unit:value}
+                except IndexError:
+                    pass # required for uninted indexError for fields which are not used
+            else:
+                # change the edited comment in the jsonFile
+                value = nonTreeWidgets[0].text()
+                key = "Kommentare"
+                old_list = self.jsonFile[key]
+                parent = item.parent()
+                # check what's the index of the comment in order to edit the right one at the jsonFile
+                list_index = [i for i in range(parent.childCount()) if parent.child(i) == item.get_placeHolder()]
+                self.jsonFile[key][list_index[0]] = value
+
+
 
     def save_file(self):
         """ writes the jsonFile to disk """
@@ -396,11 +430,16 @@ class CustomTreeWidgetItems( QTreeWidgetItem ):
                         widgets[i].currentTextChanged.connect(lambda: self.emitDataChanged())
                     elif type(widgets[i]) is QDateEdit:
                         widgets[i].dateChanged.connect(lambda: self.emitDataChanged())
+        self.placeHolder = placeHolder
 
     def widgets_and_position(self):
         return [self.widgets, self.position]
+
     def parent(self):
         return self.parent
+
+    def get_placeHolder(self):
+        return self.placeHolder
 
 
 if __name__ == "__main__":
