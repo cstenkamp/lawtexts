@@ -141,7 +141,6 @@ class ItemCreatorWidget(QTreeWidget):
         add_list = [self.addComponents, self.addVZweck, \
                     self.addVOrt, self.addComment]
         for i in range(len(keys)):
-            print(i)
             cur_dict = self.jsonFile[keys[i]]
             first = first_list[i]
             if cur_dict == []:
@@ -166,13 +165,10 @@ class ItemCreatorWidget(QTreeWidget):
             else:
                 comp_list = list(self.jsonFile[keys[i]].keys())
                 comp_list.sort()
-                print("Comp_list: ", comp_list)
                 for component in comp_list:
                     for compOfSameType in self.jsonFile[keys[i]][component]:
                         shortedenedDict = compOfSameType # TODO check
                         self.openComponentCreator(component, parent, shortedenedDict)
-                        print("hier")
-                        print("JSONFILE: ", self.jsonFile[keys[i]])
 
     def addCommentEdit(self, parent=None):
         """ adds a QLineEdit + Button in order to add comments """
@@ -247,9 +243,6 @@ class ItemCreatorWidget(QTreeWidget):
             self.resizeColumnToContents(i)
 
     def openComponentCreator(self, component, parent, valueDict=None):
-        if valueDict is not None:
-            print("GAGA: ", valueDict)
-            print("Tada: ", component)
         """ adds components to the view """
         if component not in self.jsonFile["Komponenten"] and valueDict is None:
             self.jsonFile["Komponenten"][component] = []
@@ -265,11 +258,9 @@ class ItemCreatorWidget(QTreeWidget):
             feature_keys = list(self.features.keys())
             feature_keys.sort()
             if valueDict is not None:
-                print(component_features[i])
                 ind = [l for l in range(len(valueDict)) if component_features[i] in valueDict[l]]
                 if ind != []:
                     ind = ind[0]
-                    print("Hier index: ", valueDict[ind])
                     curValue = valueDict[ind][component_features[i]]
                     keyOFcurValue = list(curValue.keys())
             if component_features[i] in feature_keys:
@@ -345,8 +336,9 @@ class ItemCreatorWidget(QTreeWidget):
                     if unit is None:
                         json[key]=value
                     else:
-                        print(json)
-                        json[key] = {unit:value}
+                        super_parent = item.parent().parent()
+                        ind = [i for i in range(super_parent.childCount()) if super_parent.child(i) == item.parent()][0]
+                        json[ind][0][key] = {unit:value}
                 except IndexError:
                     pass # required for uninted indexError for fields which are not used
             else:
