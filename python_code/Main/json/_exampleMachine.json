@@ -5,20 +5,20 @@
 	"Herstellungsdatum":"1989",
 	"Prüfdatum":"2017",
 	"Komponenten":{
-		"Druckbehälter":{
+		"Druckbehälter":[{
 			"Volumen":{"L":"300"},
 			"Inhalt":{"flüssig":"Gülle"},
 			"Druck":{"bar":"5"},
 			"Temperatur":{"C":"36"},
 			"Seriennummer":"123456",
 			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
-		},
-		"Rührwerk":{
+		}],
+		"Rührwerk":[{
 			"Spannung":{"Volt AC":"50"},
 			"Leistung":{"Watt":"150"},
 			"Seriennummer":"123456",
 			"Kommentar":"User Kommentare über Zustand, Einbauort, etc. der Komponente"
-		}
+		}]
 	},
 	"Verwendungszwecke":[
 		"für kosmetische oder pharmazeutische Erzeugnisse"
