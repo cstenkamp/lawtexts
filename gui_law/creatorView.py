@@ -5,6 +5,7 @@ from ExtendedComboBox import ExtendedComboBox
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import functools
 
 class CreatorView(QMainWindow):
     """ creates a Widget to create a Machine """
@@ -161,7 +162,10 @@ class ItemCreatorWidget(QTreeWidget):
                         tmpLineEdit.setReadOnly(True)
                     placeHolder = QTreeWidgetItem([""])
                     parent.addChild(placeHolder)
-                    CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=True, placeHolder=placeHolder)
+                    btn_del, widget = self.delButton()
+                    delCustom = CustomTreeWidgetItems(self,\
+                        [widget,tmpLineEdit],[1,2], connect=True, placeHolder=placeHolder, component=True)
+                    btn_del.clicked.connect(functools.partial(self.del_item, delCustom))
             else:
                 comp_list = list(self.jsonFile[keys[i]].keys())
                 comp_list.sort()
@@ -187,6 +191,19 @@ class ItemCreatorWidget(QTreeWidget):
 
         item = CustomTreeWidgetItems(self, [button, widget],[0,2], connect=False)
         return [button, item]
+
+    def delButton(self):
+        widget = QWidget();
+        layout= QHBoxLayout();
+        layout.setAlignment( Qt.AlignCenter );
+        btn_del = QPushButton()
+        btn_del.setIcon(QIcon(ICON_PATH+"trash.png"))
+        btn_del.setIconSize(QSize(24,24))
+        btn_del.setFixedSize(64,32)
+        btn_del.setToolTip("Hier klicken um dieses Element zu löschen")
+        layout.addWidget(btn_del);
+        widget.setLayout(layout);
+        return [btn_del, widget]
 
     class boolObject():
         """ stores a boolean value and an attached Widget """
@@ -235,7 +252,9 @@ class ItemCreatorWidget(QTreeWidget):
                 tmpLineEdit.setReadOnly(True)
             placeHolder = QTreeWidgetItem([""])
             parent.addChild(placeHolder)
-            CustomTreeWidgetItems(self, [tmpLineEdit],[2], connect=True, placeHolder=placeHolder)
+            btn_del, widget = self.delButton()
+            delCustom = CustomTreeWidgetItems(self, [widget,tmpLineEdit],[1,2], connect=True, placeHolder=placeHolder, component=True)
+            btn_del.clicked.connect(functools.partial(self.del_item, delCustom))
         else:
             self.openComponentCreator(purpose, parent)
 
@@ -309,13 +328,13 @@ class ItemCreatorWidget(QTreeWidget):
                 parItem = parItem.parent()
                 parentList.append(parItem.text(0))
         except RecursionError:
-            pass #needed to handle empty fields in custromtreeWidgets
+            return #needed to handle empty fields in custromtreeWidgets
 
         if type(item) is CustomTreeWidgetItems:
             nonTreeWidgets, pos = item.widgets_and_position()
             key = nonTreeWidgets[0]
             unit = None
-            if len(nonTreeWidgets) > 1:
+            if not item.isComponent():
                 valueAt = 1
                 if 1 in pos:
                     unit = nonTreeWidgets[1].currentText()
@@ -340,7 +359,7 @@ class ItemCreatorWidget(QTreeWidget):
                         ind = [i for i in range(super_parent.childCount()) if super_parent.child(i) == item.parent()][0]
                         json[ind][0][key] = {unit:value}
                 except IndexError:
-                    pass # required for uninted indexError for fields which are not used
+                    return # required for uninted indexError for fields which are not used
             else:
                 # change the edited comment in the jsonFile
                 value = nonTreeWidgets[0].text()
@@ -351,6 +370,13 @@ class ItemCreatorWidget(QTreeWidget):
                 list_index = [i for i in range(parent.childCount()) if parent.child(i) == item.get_placeHolder()]
                 self.jsonFile[key][list_index[0]] = value
 
+    def del_item(self,item):
+        if type(item) is CustomTreeWidgetItems:
+            parent = item.parent()
+            index = [i for i in range(parent.childCount()) if parent.child(i) == item.get_placeHolder()][0]
+            parent.takeChild(index)
+            widgets, positions = item.widgets_and_position()
+            self.jsonFile[parent.text(0)].remove(widgets[1].text())
 
 
     def save_file(self):
@@ -368,8 +394,10 @@ class ItemCreatorWidget(QTreeWidget):
             if os.path.isfile(fileName+".json"):
                 reply = QMessageBox.question(self, "Dateiname existiert bereits", \
                     "Der Dateiname " + self.jsonFile["Name"] + " existiert bereits,"\
-                    " soll die Datei überschrieben werden? \n  Andernfalls wird eine neue Datei erzeugt",\
-                     QMessageBox.Yes | QMessageBox.No)
+                    " soll die Datei überschrieben werden? \nAndernfalls wird eine neue Datei erzeugt",\
+                     QMessageBox.Yes | QMessageBox.No | QMessageBox.Discard)
+                if reply == QMessageBox.Discard:
+                    return
                 if reply == QMessageBox.No:
                     i = 1
                     while os.path.isfile(fileName+".json"):
@@ -398,12 +426,13 @@ class CustomTreeWidgetItem( QTreeWidgetItem ):
 
 class CustomTreeWidgetItems( QTreeWidgetItem ):
     """ Creates a custom QTreeWidgetItem out of the given widget """
-    def __init__( self, treeWidget, widgets, position, placeHolder= None, connect = True):
+    def __init__( self, treeWidget, widgets, position, placeHolder= None, connect = True, component=False):
         ## Init super class ( QtGui.QTreeWidgetItem )
         super( CustomTreeWidgetItems, self ).__init__( treeWidget )
         self.widgets = widgets
         self.parent = None
         self.position = position
+        self.component = component
         for i in range(len(widgets)):
             if placeHolder is None:
                 placeHolder = self
@@ -429,6 +458,9 @@ class CustomTreeWidgetItems( QTreeWidgetItem ):
 
     def parent(self):
         return self.parent
+
+    def isComponent(self):
+        return self.component
 
     def get_placeHolder(self):
         return self.placeHolder
