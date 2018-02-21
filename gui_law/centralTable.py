@@ -4,7 +4,9 @@ import glob
 from creatorView import *
 from jsonHandler import ORDER
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
-    QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem, QHeaderView, QLabel
+    QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem,\
+    QHeaderView, QLabel
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, Qt
 from operator import itemgetter
 from ItemView import ItemView
@@ -55,9 +57,11 @@ class CentralTable(QWidget):
     def add_remove_edit_buttons(self, row):
         editBtn = QPushButton(self.tableWidget)
         rmvBtn = QPushButton(self.tableWidget)
-        editBtn.setText('Edit')
+        editBtn.setIcon(QIcon(ICON_PATH + "edit.png"))
         editBtn.setToolTip('click to <b>edit</b> this item')
-        rmvBtn.setText('Remove')
+        editBtn.setIconSize(QSize(24, 24))
+        rmvBtn.setIcon(QIcon(ICON_PATH + "trash.png"))
+        rmvBtn.setIconSize(QSize(24, 24))
         rmvBtn.setToolTip('click to <b>remove</b> this item')
         editBtn.clicked.connect(self.btn_edit)
         rmvBtn.clicked.connect(self.btn_remove)
