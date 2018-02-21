@@ -32,11 +32,13 @@ class mainWindow(QMainWindow):
         self.move(qr.topLeft())
 
         menubar = self.menuBar()
-        self.initMenubar(menubar)
+        toolbar = self.addToolBar('Edit')
+        toolbar.setIconSize(QSize(32,32))
+        self.initMenubar(menubar, toolbar)
 
         self.show()
 
-    def initMenubar(self, menubar):
+    def initMenubar(self, menubar, toolbar):
         menubarRight = QMenuBar()
 
         """ adds a Menubar to the mainWindow """
@@ -52,10 +54,12 @@ class mainWindow(QMainWindow):
         newMachine.setShortcut("Ctrl+N")
         fileMenu.addAction(newMachine)
         newMachine_2 = QAction(QIcon(ICON_PATH+"add.png"), '', self)
+        newMachine_2.setIcon
         newMachine_2.setToolTip("Maschine hinzufügen")
         newMachine_2.triggered.connect(lambda: self.create_CreatorView())
-        menubarRight.addAction(newMachine_2)
-        menubar.setCornerWidget(menubarRight)
+        # menubarRight.addAction(newMachine_2)
+        toolbar.addAction(newMachine_2)
+        menubar.setCornerWidget(toolbar)
         menubar.adjustSize()
         # menubar.setCornerWidget(menubar)
 
