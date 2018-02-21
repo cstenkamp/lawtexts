@@ -105,7 +105,7 @@ class ItemCreatorWidget(QTreeWidget):
         self.combo = ExtendedComboBox(self)
         self.combo.setInsert(False)
         self.combo.addItems(list(self.parts.keys()))
-        self.btn_comp, self.addComponents = self.QTreeAddButtonMenu("Komponente +", self.combo, tooltip)
+        self.btn_comp, self.addComponents = self.QTreeAddButtonMenu("Komponente", self.combo, tooltip)
         self.btn_comp.clicked.connect(lambda: self.addExtComboBoxEdit(\
             list(self.parts.keys()), self.combo, \
             self.firstComponent, self.addComponents, "Komponenten") )
@@ -114,7 +114,7 @@ class ItemCreatorWidget(QTreeWidget):
         list_keys = list(self.purposes.keys())
         list_keys.sort()
         vZweckCombo.addItems(list_keys)
-        self.btn_vZweck, self.addVZweck = self.QTreeAddButtonMenu("Verwendungszwecke +", vZweckCombo)
+        self.btn_vZweck, self.addVZweck = self.QTreeAddButtonMenu("Verwendungszwecke", vZweckCombo)
         self.btn_vZweck.clicked.connect(lambda: self.addExtComboBoxEdit(\
             list(self.purposes.keys()), vZweckCombo, \
             self.firstVZweck, self.addVZweck, "Verwendungszwecke") )
@@ -123,7 +123,7 @@ class ItemCreatorWidget(QTreeWidget):
         list_keys = list(self.sites.keys())
         list_keys.sort()
         vOrtCombo.addItems(list_keys)
-        self.btn_vOrt, self.addVOrt = self.QTreeAddButtonMenu("Verwendungsorte +", vOrtCombo)
+        self.btn_vOrt, self.addVOrt = self.QTreeAddButtonMenu("Verwendungsorte", vOrtCombo)
         self.btn_vOrt.clicked.connect(lambda: self.addExtComboBoxEdit(\
             list(self.sites.keys()), vOrtCombo, \
             self.firstVOrt, self.addVOrt, "Verwendungsorte") )
@@ -177,18 +177,20 @@ class ItemCreatorWidget(QTreeWidget):
     def addCommentEdit(self, parent=None):
         """ adds a QLineEdit + Button in order to add comments """
         lineEdit = QLineEdit()
-        btn, addLineEdit = self.QTreeAddButtonMenu("Kommentare +", lineEdit)
+        btn, addLineEdit = self.QTreeAddButtonMenu("Kommentare", lineEdit)
         btn.clicked.connect(lambda: self.addExtComboBoxEdit([], lineEdit, \
                             self.firstComment, addLineEdit, "Kommentare") )
         return btn, addLineEdit
 
     def QTreeAddButtonMenu(self, buttonText, widget, tooltip = None):
         """ adds a Button to the QTree and returns the buton and the TreeWidget """
-        button = QPushButton()
+        button = QToolButton()
         button.setText(buttonText)
+        button.setIcon(QIcon(ICON_PATH + "add.png"))
+        button.setIcon(QIcon(ICON_PATH + "add.png"))
         button.setMinimumSize(175,10)
         button.setToolTip(tooltip)
-
+        button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         item = CustomTreeWidgetItems(self, [button, widget],[0,2], connect=False)
         return [button, item]
 
@@ -388,12 +390,9 @@ class ItemCreatorWidget(QTreeWidget):
             indicesOfItemType = [i for i in range(parent.childCount()) if parent.child(i).text(0) == item_key]
             indexInJson = indicesOfItemType.index(index)
             parent.takeChild(index)
-            print(indexInJson)
-            print(self.jsonFile[parent_key][item_key])
             del self.jsonFile[parent_key][item_key][indexInJson]
             if len(indicesOfItemType) == 1:
                 self.jsonFile[parent_key].pop(item_key)
-        print(self.jsonFile)
 
     def save_file(self):
         """ writes the jsonFile to disk """
