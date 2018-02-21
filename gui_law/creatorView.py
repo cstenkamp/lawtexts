@@ -198,8 +198,8 @@ class ItemCreatorWidget(QTreeWidget):
         layout.setAlignment( Qt.AlignCenter );
         btn_del = QPushButton()
         btn_del.setIcon(QIcon(ICON_PATH+"trash.png"))
-        btn_del.setIconSize(QSize(24,24))
-        btn_del.setFixedSize(64,32)
+        btn_del.setIconSize(QSize(18,18))
+        btn_del.setFixedSize(64,24)
         btn_del.setToolTip("Hier klicken um dieses Element zu löschen")
         layout.addWidget(btn_del);
         widget.setLayout(layout);
@@ -267,8 +267,11 @@ class ItemCreatorWidget(QTreeWidget):
             self.jsonFile["Komponenten"][component] = []
         component_features = self.parts[component]["Eigenschaften"]
         component_features.sort()
+        btn_del, widget = self.delButton()
         item = QTreeWidgetItem([component])
         parent.addChild(item)
+        self.setItemWidget(item, 1, widget)
+        btn_del.clicked.connect(functools.partial(self.del_item, item))
         item.setExpanded(True)
         newCompList = []
         for i in range(len(component_features)):
@@ -377,7 +380,20 @@ class ItemCreatorWidget(QTreeWidget):
             parent.takeChild(index)
             widgets, positions = item.widgets_and_position()
             self.jsonFile[parent.text(0)].remove(widgets[1].text())
-
+        elif type(item ) is QTreeWidgetItem:
+            parent = item.parent()
+            index = parent.indexOfChild(item)
+            parent_key = parent.text(0)
+            item_key = item.text(0)
+            indicesOfItemType = [i for i in range(parent.childCount()) if parent.child(i).text(0) == item_key]
+            indexInJson = indicesOfItemType.index(index)
+            parent.takeChild(index)
+            print(indexInJson)
+            print(self.jsonFile[parent_key][item_key])
+            del self.jsonFile[parent_key][item_key][indexInJson]
+            if len(indicesOfItemType) == 1:
+                self.jsonFile[parent_key].pop(item_key)
+        print(self.jsonFile)
 
     def save_file(self):
         """ writes the jsonFile to disk """
