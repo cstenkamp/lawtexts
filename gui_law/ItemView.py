@@ -100,16 +100,14 @@ class ItemViewWidget(QWidget):
 
             # self.model.setData(self.model.index(0, 1), "test")
             if type(dict_item[key]) is list:
-                if len(dict_item[key]) > 0 and type(dict_item[key][0]) is list:
-                        #TODO check for komponententen
-                        for entryInd in range(len(dict_item[key])):
+                # in case of it being a component
+                if len(dict_item[key]) > 0 and type(dict_item[key][0]) is dict:
+                        for entry in dict_item[key]:
+                            item = QStandardItem(key)
+                            item.setEditable(False)
                             parent.appendRow(item)
-                            for dictEntry in dict_item[key][entryInd]:
-                                self.addItems(item, dictEntry)
-                            if entryInd < len(dict_item[key])-1:
-                                item = QStandardItem(key)
-                                item.setEditable(False)
-                                newParent = item
+                            self.addItems(item, entry)
+                # in case of it being "Verwenungszweck/ort, Kommentar"
                 else:
                     parent.appendRow(item)
                     string = ""

@@ -140,12 +140,9 @@ class CentralTable(QWidget):
         """ loads a full overview over the respective item - editable """
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
-        '''
-        self.editWindow = ItemView([self.machines[0][index.row()], self.machines[1][index.row()]], self, True)
-        self.editWindow.show()
-        '''
-        self.newCreatorView = CreatorView(self.mainWindow, centralTable = self, jsonFile = self.machines[0][index.row()])
-        # self.newCreatorView.setJsonFile(self.machines[0][index.row()])
+        machineFile = self.machines[0][index.row()]
+        machinePath = self.machines[1][index.row()]
+        self.newCreatorView = CreatorView(self.mainWindow, centralTable = self, jsonFile = machineFile, path = machinePath)
         self.newCreatorView.show()
 
     def btn_remove(self):
