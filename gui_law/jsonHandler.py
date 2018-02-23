@@ -30,5 +30,6 @@ ORDER = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum", "Komp
 MY_PATH = os.path.abspath(os.path.dirname(__file__))
 MACHINE_PATH = MY_PATH + "/machines/"
 JSON_PATH = os.path.abspath(os.path.join(MY_PATH, os.pardir)) + "/python_code/Main/json/"
+ICON_PATH = MY_PATH + "/icons/"
 EINHEITEN = [x.lower() for x in list(chain(*list(read_json_file(JSON_PATH + "/features.json")["Features"].values())))] + \
             [x.lower() for x in read_json_file(JSON_PATH + "/contents.json")["Aggregatszustand"]]

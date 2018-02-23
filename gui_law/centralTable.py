@@ -1,9 +1,12 @@
 import jsonHandler
 import os
 import glob
+from creatorView import *
 from jsonHandler import ORDER
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
-    QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem, QHeaderView, QLabel
+    QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem,\
+    QHeaderView, QLabel
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, Qt
 from operator import itemgetter
 from ItemView import ItemView
@@ -54,15 +57,16 @@ class CentralTable(QWidget):
     def add_remove_edit_buttons(self, row):
         editBtn = QPushButton(self.tableWidget)
         rmvBtn = QPushButton(self.tableWidget)
-        editBtn.setText('Edit')
+        editBtn.setIcon(QIcon(ICON_PATH + "edit.png"))
         editBtn.setToolTip('click to <b>edit</b> this item')
-        rmvBtn.setText('Remove')
+        editBtn.setIconSize(QSize(24, 24))
+        rmvBtn.setIcon(QIcon(ICON_PATH + "trash.png"))
+        rmvBtn.setIconSize(QSize(24, 24))
         rmvBtn.setToolTip('click to <b>remove</b> this item')
         editBtn.clicked.connect(self.btn_edit)
         rmvBtn.clicked.connect(self.btn_remove)
         self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-2, editBtn)
         self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-1, rmvBtn)
-
 
     def get_machines(self):
         """ loads all machines out of the json into the class list """
@@ -100,19 +104,22 @@ class CentralTable(QWidget):
         order = [keyItem, descending]
         self.orderKey = order
         temp = sorted(zip(self.machines[0], self.machines[1]), key=lambda x: x[0][keyItem].lower(), reverse=descending)
-        self.machines[0], self.machines[1] = map(list, zip(*temp))
+        if len(self.machines[0]) > 0:
+            self.machines[0], self.machines[1] = map(list, zip(*temp))
         self.fill_table()
         return 0
 
     def reload_list(self):
+        """ reloads the list and all releated machines """
         oldRowCount = self.tableWidget.rowCount()
-        self.machines =[[],[]]
+        del self.machines
+        self.machines = [[],[]]
         self.get_machines()
         self.tableWidget.setRowCount(len(self.machines[0]))
-        if oldRowCount > len(self.machines[0]):
+        if oldRowCount < len(self.machines[0]):
             "we are here"
             for row in range(len(self.machines[0])-oldRowCount):
-                self.add_remove_edit_buttons(row)
+                self.add_remove_edit_buttons(oldRowCount+row)
         self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
@@ -125,7 +132,6 @@ class CentralTable(QWidget):
             print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(
             ), currentQTableWidgetItem.text())
         '''
-        print(self.tableWidget.selectedItems())
         row = self.tableWidget.selectedItems()[0].row()
         self.editWindow = ItemView([self.machines[0][row], self.machines[1][row]], self)
         self.editWindow.show()
@@ -134,8 +140,13 @@ class CentralTable(QWidget):
         """ loads a full overview over the respective item - editable """
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
+        '''
         self.editWindow = ItemView([self.machines[0][index.row()], self.machines[1][index.row()]], self, True)
         self.editWindow.show()
+        '''
+        self.newCreatorView = CreatorView(self.mainWindow, centralTable = self, jsonFile = self.machines[0][index.row()])
+        # self.newCreatorView.setJsonFile(self.machines[0][index.row()])
+        self.newCreatorView.show()
 
     def btn_remove(self):
         """ removes the respective item after a confirmation dialog """
@@ -145,7 +156,7 @@ class CentralTable(QWidget):
         reply = QMessageBox.question(self, 'Remove item',
                                      "Are you you want to delete " +
                                      item[0]["Name"] + "?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
+                                     QMessageBox.No)
 
         if reply == QMessageBox.Yes:
             # remove the file

@@ -89,37 +89,46 @@ class ItemViewWidget(QWidget):
         order_list = list(dict_item.keys())
         if all(entries in ORDER for entries in list(dict_item.keys())):
             order_list = ORDER
+        elif all(entries in ORDER+ ["Kommentare"] for entries in list(dict_item.keys())):
+            order_list = ORDER + ["Kommentare"]
         else:
             order_list.sort()
-        print("HIER: "+str(order_list))
         for key in order_list:
             item = QStandardItem(key)
             item.setEditable(False)
             newParent = item
+
             # self.model.setData(self.model.index(0, 1), "test")
             if type(dict_item[key]) is list:
-                string = ""
-                for entry in dict_item[key]:
-                    if string is not "":
-                        string += "\n"
-                    string += entry
-                item2 = QStandardItem(string)
-                parent.appendRow([item, item2])
-
+                if len(dict_item[key]) > 0 and type(dict_item[key][0]) is list:
+                        #TODO check for komponententen
+                        for entryInd in range(len(dict_item[key])):
+                            parent.appendRow(item)
+                            for dictEntry in dict_item[key][entryInd]:
+                                self.addItems(item, dictEntry)
+                            if entryInd < len(dict_item[key])-1:
+                                item = QStandardItem(key)
+                                item.setEditable(False)
+                                newParent = item
+                else:
+                    parent.appendRow(item)
+                    string = ""
+                    for entry in dict_item[key]:
+                        item.appendRow([QStandardItem(""), QStandardItem(entry)])
+                    self.treeView.setExpanded(item.index(), True)
             elif type(dict_item[key]) is dict and len(dict_item[key]) == 1 and \
                     list(dict_item[key].keys())[0].lower() in EINHEITEN:
                     einheit = list(dict_item[key].keys())[0]
                     item2 = str(dict_item[key][einheit]) + " (" + einheit +")"
                     item2 = QStandardItem(item2)
                     parent.appendRow([item, item2])
-
             elif type(dict_item[key]) is dict:
                 parent.appendRow(item)
                 self.addItems(item, dict_item[key])
-
             else:
                 item2 = QStandardItem(dict_item[key])
                 parent.appendRow([item, item2])
+
         for i in range(self.model.columnCount()):
             self.treeView.resizeColumnToContents(i)
 
