@@ -162,7 +162,7 @@ class ItemCreatorWidget(QTreeWidget):
                         tmpLineEdit.setReadOnly(True)
                     placeHolder = QTreeWidgetItem([""])
                     parent.addChild(placeHolder)
-                    btn_del, widget = self.delButton()
+                    btn_del, widget = self.del_or_addFeature_button()
                     delCustom = CustomTreeWidgetItems(self,\
                         [widget,tmpLineEdit],[1,2], connect=True, placeHolder=placeHolder, component=True)
                     btn_del.clicked.connect(functools.partial(self.del_item, delCustom))
@@ -194,15 +194,19 @@ class ItemCreatorWidget(QTreeWidget):
         item = CustomTreeWidgetItems(self, [button, widget],[0,2], connect=False)
         return [button, item]
 
-    def delButton(self):
+    def del_or_addFeature_button(self, feature=False):
         widget = QWidget();
         layout= QHBoxLayout();
         layout.setAlignment( Qt.AlignCenter );
         btn_del = QPushButton()
-        btn_del.setIcon(QIcon(ICON_PATH+"trash.png"))
+        if not feature:
+            btn_del.setToolTip("Hier klicken um dieses Element zu löschen")
+            btn_del.setIcon(QIcon(ICON_PATH+"trash.png"))
+        else:
+            btn_del.setToolTip("Hier klicken um eine Eigenschaft hinzuzufügen")
+            btn_del.setIcon(QIcon(ICON_PATH+"add.png"))
         btn_del.setIconSize(QSize(18,18))
         btn_del.setFixedSize(64,24)
-        btn_del.setToolTip("Hier klicken um dieses Element zu löschen")
         layout.addWidget(btn_del);
         widget.setLayout(layout);
         return [btn_del, widget]
@@ -254,7 +258,7 @@ class ItemCreatorWidget(QTreeWidget):
                 tmpLineEdit.setReadOnly(True)
             placeHolder = QTreeWidgetItem([""])
             parent.addChild(placeHolder)
-            btn_del, widget = self.delButton()
+            btn_del, widget = self.del_or_addFeature_button()
             delCustom = CustomTreeWidgetItems(self, [widget,tmpLineEdit],[1,2], connect=True, placeHolder=placeHolder, component=True)
             btn_del.clicked.connect(functools.partial(self.del_item, delCustom))
         else:
@@ -267,13 +271,24 @@ class ItemCreatorWidget(QTreeWidget):
         """ adds components to the view """
         if component not in self.jsonFile["Komponenten"] and valueDict is None:
             self.jsonFile["Komponenten"][component] = []
+        # TODO replace with decommented thing and make it work
         component_features = self.parts[component]["Eigenschaften"]
+        '''
+        if valueDict is None:
+            component_features = self.parts[component]["Eigenschaften"]
+        else:
+            print(valueDict)
+            component_features = list(valueDict[0].keys())
+        '''
         component_features.sort()
-        btn_del, widget = self.delButton()
+        btn_del, widget = self.del_or_addFeature_button()
+        btn_add_feature, widget2 = self.del_or_addFeature_button(True)
         item = QTreeWidgetItem([component])
         parent.addChild(item)
         self.setItemWidget(item, 1, widget)
+        self.setItemWidget(item, 2, widget2)
         btn_del.clicked.connect(functools.partial(self.del_item, item))
+        btn_add_feature.clicked.connect(functools.partial(self.add_feature, item))
         item.setExpanded(True)
         newCompList = []
         for i in range(len(component_features)):
@@ -366,14 +381,28 @@ class ItemCreatorWidget(QTreeWidget):
                 except IndexError:
                     return # required for uninted indexError for fields which are not used
             else:
-                # change the edited comment in the jsonFile
-                value = nonTreeWidgets[0].text()
-                key = "Kommentare"
-                old_list = self.jsonFile[key]
                 parent = item.parent()
-                # check what's the index of the comment in order to edit the right one at the jsonFile
-                list_index = [i for i in range(parent.childCount()) if parent.child(i) == item.get_placeHolder()]
-                self.jsonFile[key][list_index[0]] = value
+                if parent.parent() is None:
+                    # change the edited comment in the jsonFile
+                    value = nonTreeWidgets[0].text()
+                    key = "Kommentare"
+                    old_list = self.jsonFile[key]
+                    # check what's the index of the comment in order to edit the right one at the jsonFile
+                    list_index = [i for i in range(parent.childCount()) if parent.child(i) == item.get_placeHolder()]
+                    self.jsonFile[key][list_index[0]] = value
+                else: # one of the added components
+                    widgets, position = item.widgets_and_position()
+                    value = widgets[1].text()
+                    index = parent.parent().indexOfChild(parent)
+                    parent_key = parent.text(0)
+                    indicesOfItemType = [i for i in range(parent.parent().childCount())\
+                                if parent.parent().child(i).text(0) == parent.text(0)]
+                    indexInJson = indicesOfItemType.index(index)
+                    print(self.jsonFile[parent.parent().text(0)][parent.text(0)][indexInJson])
+                    print("vorher: ", self.jsonFile)
+                    print("Wert", value)
+                    self.jsonFile[parent.parent().text(0)][parent.text(0)][indexInJson][0][key] = value
+                    print("nachher :", self.jsonFile)
 
     def del_item(self,item):
         if type(item) is CustomTreeWidgetItems:
@@ -393,6 +422,20 @@ class ItemCreatorWidget(QTreeWidget):
             del self.jsonFile[parent_key][item_key][indexInJson]
             if len(indicesOfItemType) == 1:
                 self.jsonFile[parent_key].pop(item_key)
+
+    def add_feature(self, item):
+        text, ok = QInputDialog.getText(self, 'Eigenschaft hinzufügen', 'Name der Eigenschaft:')
+        if not ok:
+           return
+        parent = item.parent()
+        index = parent.indexOfChild(item)
+        indicesOfItemType = [i for i in range(parent.childCount()) if parent.child(i).text(0) == item.text(0)]
+        indexInJson = indicesOfItemType.index(index)
+        tmp = QTreeWidgetItem(["placeHolder"])
+        item.addChild(tmp)
+        lineE01 = QLineEdit()
+        CustomTreeWidgetItems(self, [str(text), lineE01], [0,2], placeHolder=tmp, connect=True, component=True)
+        print(self.jsonFile[parent.text(0)][item.text(0)])
 
     def save_file(self):
         """ writes the jsonFile to disk """

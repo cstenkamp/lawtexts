@@ -1,1 +1,0 @@
-- Allgemeines Dialogfenster mit einer Frage und Fragetext - Tuple (String, HTML-String) --> dargestellt als HTML: Antwort Ja und Nein
