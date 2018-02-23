@@ -38,6 +38,7 @@ class PARSER():
 		self.qStart = 5
 		self.qEnd = 7
 
+		self.parse()
 
 
 
@@ -136,3 +137,49 @@ class PARSER():
 															 self.qEnd)
 								D[pKey][sKey][tKey] = quaternarySplit
 		return D
+
+	def parse(self):
+		self.parseMRL()
+		self.parseNSR()
+		self.parseATEX()
+
+
+		self.articles = {'MRL':self.mrlArticle,
+				   	'NSR':self.nsrArticle,
+				   	'ATEX':self.atexArticle
+				   }
+		self.appendices = {'MRL':self.mrlAppendices,
+					  'NSR':self.nsrAppendices,
+					  'ATEX':self.atexAppendices
+					 }
+
+					 
+
+	def parseMRL(self):
+		# parse MRL into articles and appendices
+		text = self.getHtml(p='html_resources/directives/mrl.html')
+		self.mrlArticle = self.parseArticles(text)
+		self.mrlAppendices = self.parseAppendices(text)
+
+	def parseNSR(self):
+		# parse MRL into articles and appendices
+		text = self.getHtml(p='html_resources/directives/nsr.html')
+		self.nsrArticle = self.parseArticles(text)
+		self.nsrAppendices = self.parseAppendices(text)
+
+	def parseATEX(self):
+		self.secondaries = ['<p class="ti-grseq-1".+>\d\.[^\d]']
+		self.secondaryExtractor = '>((\d\.){1,1}|[A-Z]\.)'
+
+		self.tertiaries = ['<p class="ti-grseq-1".+>(\d\.){2,2}[^\d].*<spa']
+		self.tertiaryExtractor = '((\d\.){2,2})'
+
+		self.quaternaries = ['<p class="ti-grseq-1".+>(\d\.){3,3}[^\d].*<spa']
+		self.quaternaryExtractor = '((\d\.){3,3})'
+
+		self.qStart = 4
+		self.qEnd = 6
+
+		text = self.getHtml(p='html_resources/directives/atex.html')
+		self.atexArticle = self.parseArticles(text)
+		self.atexAppendices = self.parseAppendices(text)

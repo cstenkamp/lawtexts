@@ -15,12 +15,19 @@ from jsonParser import PARSER as jPARSER
 sys.path.insert(0, os.path.join(os.getcwd(),'logic/'))
 from _logicUnit import LOGIC
 from atexLogic import ATEX
+from mrlLogic import MRL
+from atexTree import Questions
 
 sys.path.insert(0, os.path.join(os.getcwd(),'html_parser/'))
 from directiveParser import PARSER as directivePARSER
 
 sys.path.insert(0, os.path.join(os.getcwd(),'dict_parser/'))
 from dictParser import PARSER as dictPARSER
+
+from PyQt5.QtWidgets import QApplication
+from atexView import AtexView
+from mrlView import MrlView
+from basicView import QuestionInterface
 
 from _printer import Printer
 
@@ -94,7 +101,6 @@ Product = Machine()
 """
 add machineData to Product
 """
-
 configurator = Configurator(Product)
 configurator.configure(machineData)
 
@@ -102,6 +108,7 @@ configurator.configure(machineData)
 
 Logic = LOGIC(Product, dictParser)
 atexLogic = ATEX(Product, dictParser)
+mrlLogic = MRL(Product, dictParser)
 
 '''
 LINUS: 
@@ -158,12 +165,18 @@ if Logic.directiveStates['DGN']:
 	pass
 
 
+questions = Questions()
 
 
-atexLogic.setUserRole('Händler',extraDuties=False)
 
-atexLogic.getGroupAndCategory()
-html = atexLogic.formatOutput2()
+app = QApplication(sys.argv)
 
-with open('temp.html','w') as f:
-	f.writelines(html)
+qi = QuestionInterface(Product)
+qi.getUserRole()
+
+'''
+
+av = AtexView(atexLogic, Product)
+mv = MrlView(mrlLogic, Product)
+
+'''

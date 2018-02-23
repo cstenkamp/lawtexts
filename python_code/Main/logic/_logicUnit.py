@@ -78,7 +78,6 @@ class LOGIC():
 			if not v['deactivating'] == {}:
 				self.directiveStates[D] = False
 				self.stateExplanation[D] = list(v['deactivating'].keys())
-
 		return result_purposes, result_sites
 
 
@@ -215,7 +214,9 @@ class LOGIC():
 		procedure_yes['anhang_iv']   = self.dictParser.labelToHtml('anhang_iv','MRL')
 
 		header_no = '<h1>Produkt ist in Anhang IV gelistet</h1>'
+
 		procedure_no = {}
+		
 		procedure_no['anhang_viii'] = self.dictParser.labelToHtml('anhang_viii','MRL')
 		procedure_no['anhang_vii'] = self.dictParser.labelToHtml('anhang_vii','MRL')
 
