@@ -15,6 +15,8 @@ class Machine():
 			1.7.4
 	'''
 	def __init__(self):
-
+		# user's role (Hersteller, Beauftragter, ...)
+		self.role = None
+		self.extraDuties = None
 		self.activated_by_purpose = []
 		self.deactivated_by_purpose = []
