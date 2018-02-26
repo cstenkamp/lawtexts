@@ -21,9 +21,11 @@ def write_json_file(item, path):
     """ writes the jsonFile to path, overwrites if existing """
     if not path.lower().endswith('.json'):
         path += ".json"
-    # item = json.dumps(item)
-    with open(path, "w") as f:
-        json.dump(item, f, ensure_ascii=False)
+    # with open(path, "w") as f:
+        # json.dump(item, f, ensure_ascii=False)
+    final_json = json.dumps(item, indent=4, ensure_ascii=True)
+    with open(path, "w") as file:
+        file.write(final_json)
     print("wrote file")
 
 ORDER = ["Name", "Kundennummer", "Ort", "Herstellungsdatum", "Prüfdatum", "Komponenten", "Verwendungszwecke", "Verwendungsorte"]

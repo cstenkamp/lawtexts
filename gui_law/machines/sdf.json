@@ -1,0 +1,28 @@
+{
+    "Name": "sdf",
+    "Kundennummer": "sdf",
+    "Ort": "sdf",
+    "Herstellungsdatum": "2000",
+    "Pr\u00fcfdatum": "2000",
+    "Komponenten": {
+        "Druckbeh\u00e4lter": [
+            {
+                "Druck": {
+                    "bar": 0.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Temperatur": {
+                    "C": 0.0
+                },
+                "Volumen": {
+                    "m\u00b3": 0.0
+                }
+            }
+        ]
+    },
+    "Verwendungszwecke": [],
+    "Verwendungsorte": [],
+    "Kommentare": []
+}
