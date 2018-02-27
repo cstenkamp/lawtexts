@@ -42,7 +42,7 @@ class CreatorView(QMainWindow):
         """ adds a Menubar to the Window """
         # todo add functions later
         fileMenu = menubar.addMenu('Datei')
-        searchMenu = menubar.addMenu('Suche')
+        # searchMenu = menubar.addMenu('Suche')
         save = QAction('Speichern', self)
         save.setShortcut('Ctrl+S')
         # lamda necessary in order to make it callable

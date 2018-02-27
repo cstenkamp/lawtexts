@@ -46,7 +46,7 @@ class mainWindow(QMainWindow):
         fileMenu = menubar.addMenu('Datei')
         editMenu = menubar.addMenu('Bearbeiten')
         viewMenu = menubar.addMenu('Ansicht')
-        searchMenu = menubar.addMenu('Suche')
+        # searchMenu = menubar.addMenu('Suche')
         # toolsMenu = menubar.addMenu('Werkzeuge')
         # helpMenu = menubar.addMenu('Hilfe')
         newMachine = QAction('Maschine hinzufügen', self)

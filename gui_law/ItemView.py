@@ -31,8 +31,8 @@ class ItemView(QMainWindow):
     def initMenubar(self, menubar):
         """ adds a Menubar to the mainWindow """
         # todo add functions later
-        fileMenu = menubar.addMenu('File')
-        searchMenu = menubar.addMenu('Search')
+        fileMenu = menubar.addMenu('Datei')
+        #searchMenu = menubar.addMenu('Search')
 
         save = QAction('Speichern', self)
         save.setShortcut('Ctrl+S')

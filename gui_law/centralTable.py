@@ -150,9 +150,9 @@ class CentralTable(QWidget):
         button = self.sender()
         index = self.tableWidget.indexAt(button.pos())
         item = [self.machines[0][index.row()], self.machines[1][index.row()]]
-        reply = QMessageBox.question(self, 'Remove item',
-                                     "Are you you want to delete " +
-                                     item[0]["Name"] + "?", QMessageBox.Yes |
+        reply = QMessageBox.question(self, 'Maschine löschen',
+                                     "Wollen Sie " +
+                                     item[0]["Name"] + " wirklich löschen?", QMessageBox.Yes |
                                      QMessageBox.No)
 
         if reply == QMessageBox.Yes:
