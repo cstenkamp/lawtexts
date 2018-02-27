@@ -87,5 +87,10 @@ class mainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    translator = QTranslator(app) # no idea if it works due to my system set to english
+    locale = QLocale.system().name()
+    path = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
+    translator.load('qt_%s' % locale, path)
+    app.installTranslator(translator)
     ex = mainWindow()
     sys.exit(app.exec_())

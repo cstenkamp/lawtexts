@@ -1,11 +1,14 @@
 import sys
 import os
+from newComponentCreator import ComponentGenerator
 from jsonHandler import *
 from ExtendedComboBox import ExtendedComboBox
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import functools
+
+TEXT_GENERATE =  "generiere neue Komponente"
 
 class CreatorView(QMainWindow):
     """ creates a Widget to create a Machine """
@@ -104,10 +107,10 @@ class ItemCreatorWidget(QTreeWidget):
         tooltip = "Hier klicken um eine neue Komponente zu erstellen"
         self.combo = ExtendedComboBox(self)
         self.combo.setInsert(False)
-        self.combo.addItems(list(self.parts.keys()))
+        self.combo.addItems(list(self.parts.keys())+[TEXT_GENERATE])
         self.btn_comp, self.addComponents = self.QTreeAddButtonMenu("Komponente", self.combo, tooltip)
-        self.btn_comp.clicked.connect(lambda: self.addExtComboBoxEdit(\
-            list(self.parts.keys()), self.combo, \
+        self.btn_comp.clicked.connect(functools.partial(self.addExtComboBoxEdit,
+            list(self.parts.keys())+[TEXT_GENERATE], self.combo, \
             self.firstComponent, self.addComponents, "Komponenten") )
 
         vZweckCombo = ExtendedComboBox(self)
@@ -171,8 +174,7 @@ class ItemCreatorWidget(QTreeWidget):
                 comp_list.sort()
                 for component in comp_list:
                     for compOfSameType in self.jsonFile[keys[i]][component]:
-                        shortedenedDict = compOfSameType # TODO check
-                        print(shortedenedDict)
+                        shortedenedDict = compOfSameType
                         self.openComponentCreator(component, parent, shortedenedDict)
 
     def addCommentEdit(self, parent=None):
@@ -232,8 +234,33 @@ class ItemCreatorWidget(QTreeWidget):
             purpose = exComboBox.currentText()
             if not exComboBox.insert and purpose not in listDic:
                 exComboBox.setCurrentText("")
-                exComboBox.showPopup() # if empty test load the popup
+                exComboBox.showPopup() # if empty text load the popup
                 return
+            if purpose == TEXT_GENERATE:
+                dialog = ComponentGenerator()
+                reply = dialog.exec_()
+                # if not accepted
+                if reply == 0:
+                    return
+                else:
+                    newDict = dialog.getDict() # get the created component dict
+                    dialog.save(custom_parts=self.parts) # saves the dict to the current partsDict
+                    component = list(newDict.keys())[0]
+                    # set the corresponding entries in the custom boolean class
+                    if self.firstComponent.getBool():
+                        self.firstComponent.setBool(False)
+                        parent = QTreeWidgetItem(["Komponenten"])
+                        index = self.indexOfTopLevelItem(self.addComponents)
+                        self.insertTopLevelItem(index, parent)
+                        self.firstComponent.setParent(parent)
+                        parent.setExpanded(True)
+                    parent = self.firstComponent.getParent()
+                    # add the component the same way it is done in loadJson
+                    self.openComponentCreator(component, parent, valueDict=newDict[component] )
+                    # reload the itemList and set it to the same generiere neue Komponente entry
+                    self.combo.clear()
+                    self.combo.addItems(list(self.parts.keys())+[TEXT_GENERATE])
+                    self.combo.setCurrentIndex(self.combo.count()-1)
         elif type(exComboBox) is QLineEdit:
             purpose = exComboBox.text()
             if purpose is "":
@@ -263,6 +290,8 @@ class ItemCreatorWidget(QTreeWidget):
             delCustom = CustomTreeWidgetItems(self, [widget,tmpLineEdit],[1,2], connect=True, placeHolder=placeHolder, comment=True)
             btn_del.clicked.connect(functools.partial(self.del_item, delCustom))
         else:
+            if purpose == TEXT_GENERATE:
+                return
             self.openComponentCreator(purpose, parent)
 
         for i in range(self.columnCount()):
@@ -272,7 +301,6 @@ class ItemCreatorWidget(QTreeWidget):
         """ adds components to the view """
         if component not in self.jsonFile["Komponenten"] and valueDict is None:
             self.jsonFile["Komponenten"][component] = []
-        # TODO replace with decommented thing and make it work
         component_features = self.parts[component]["Eigenschaften"]
         if valueDict is None:
             component_features = self.parts[component]["Eigenschaften"]
@@ -446,15 +474,25 @@ class ItemCreatorWidget(QTreeWidget):
                 fileName = MACHINE_PATH + self.jsonFile["Name"]
             else:
                 fileName = path.replace(".json", "")
-                print(fileName)
             if os.path.isfile(fileName+".json"):
-                reply = QMessageBox.question(self, "Dateiname existiert bereits", \
-                    "Der Dateiname " + fileName + " existiert bereits,"\
-                    " soll die Datei überschrieben werden? \nAndernfalls wird eine neue Datei erzeugt",\
-                     QMessageBox.Yes | QMessageBox.No | QMessageBox.Discard)
-                if reply == QMessageBox.Discard:
+                cancel = QPushButton("abbrechen")
+                cancel.setIcon(QIcon(ICON_PATH+"cancel.png"))
+                save = QPushButton("als neue Datei speichern")
+                save.setIcon(QIcon(ICON_PATH+"save.png"))
+                overwrite = QPushButton("überschreiben")
+                overwrite.setIcon(QIcon(ICON_PATH+"overwrite.png"))
+                box = QMessageBox()
+                box.setIcon(QMessageBox.Question)
+                box.setWindowTitle("Komponentenname bereits vorhanden")
+                box.setText("Die Datei " + fileName + " existiert bereits,"\
+                " soll die Datei überschrieben werden?")
+                box.addButton(save, QMessageBox.NoRole)
+                box.addButton(overwrite, QMessageBox.YesRole)
+                box.addButton(cancel, QMessageBox.DestructiveRole)
+                reply = box.exec_()
+                if reply == 2:
                     return
-                if reply == QMessageBox.No:
+                if reply == QMessageBox.Rejected:
                     i = 1
                     while os.path.isfile(fileName+".json"):
                         fileName += str(i)

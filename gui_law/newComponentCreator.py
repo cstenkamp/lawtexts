@@ -9,12 +9,12 @@ from creatorView import *
 import functools
 
 
-class Dialog(QDialog):
+class ComponentGenerator(QDialog):
     NumGridRows = 3
     NumButtons = 4
 
     def __init__(self):
-        super(Dialog, self).__init__()
+        super(ComponentGenerator, self).__init__()
         self.parts = read_json_file(JSON_PATH + "/parts.json")
         self.features = read_json_file(JSON_PATH + "/features.json")["Features"]
         self.contents = read_json_file(JSON_PATH + "/contents.json")
@@ -41,11 +41,15 @@ class Dialog(QDialog):
         self.rowCounter = 3
         self.setWindowTitle("Neue Komponente")
 
-    def save(self):
+    def save(self, custom_parts=None):
+        if custom_parts == None:
+            parts = self.parts
+        else:
+            parts = custom_parts
         name = self.nameLineEdit.text()
         selfDict = self.writeResult()
         if selfDict is not None:
-            if any(part == name for part in self.parts):
+            if any(part == name for part in parts):
                 reply = QMessageBox.question(self, "Komponentenname bereits vorhanden", \
                     "Eine Komponenten mit Namen: " + name + " existiert bereits,"\
                     " soll die Komponente wirklich überschrieben werden?",\
@@ -54,12 +58,13 @@ class Dialog(QDialog):
                     return
         saveDict = list(selfDict[name].keys())
         saveDict.sort()
-        self.parts[name] = {"Eigenschaften": saveDict, "_Eigenschaften":[]}
-        write_json_file(self.parts, JSON_PATH + "/parts.json")
+        parts[name] = {"Eigenschaften": saveDict, "_Eigenschaften":[]}
+        if custom_parts == None:
+            write_json_file(parts, JSON_PATH + "/parts.json")
 
     def newAccept(self):
         self.writeResult()
-        self.accept
+        self.accept()
 
     def writeResult(self):
         name = self.nameLineEdit.text()
@@ -160,15 +165,14 @@ class Dialog(QDialog):
         self.adjustSize()
 
 
-class Abbrechen(QPushButton):
-    def __init__(self):
-        super(self).__init__()
-        self.setText("abbrechen")
-
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    dialog = Dialog()
+    translator = QTranslator(app)
+    locale = QLocale.system().name()
+    path = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
+    translator.load('qt_%s' % locale, path)
+    app.installTranslator(translator)
+    dialog = ComponentGenerator()
     if dialog.exec_():
         print(dialog.getDict())
 #sys.exit(dialog.exec_())
