@@ -69,7 +69,7 @@ class ItemCreatorWidget(QTreeWidget):
         self.setSelectionMode(QAbstractItemView.NoSelection)
         if jsonFile is None:
             self.jsonFile = {"Name":"", "Kundennummer":"", "Ort":"", \
-                "Herstellungsdatum":"2000", "Prüfdatum":"2000", "Komponenten":{},\
+                "Herstellungsdatum":"2000-01-01", "Prüfdatum":"2000-01-01", "Komponenten":{},\
                  "Verwendungszwecke":[], "Verwendungsorte": [], "Kommentare": []}
         else:
             self.jsonFile = jsonFile
@@ -97,7 +97,10 @@ class ItemCreatorWidget(QTreeWidget):
             tmp = QTreeWidgetItem(["placeHolder"]) # required in order to put costom widgets at the right position
             self.addTopLevelItem(tmp)
             if "datum" in entry:
-                dateEdit = QDateEdit(QDate(int(self.jsonFile[entry]),1,1))
+                print(self.jsonFile[entry])
+                date = self.jsonFile[entry].split('-')
+                print(date)
+                dateEdit = QDateEdit(QDate(int(date[0]),int(date[1]),int(date[2])))
                 dateEdit.setDisplayFormat("dd.MM.yyyy")
                 CustomTreeWidgetItems(self, [entry, dateEdit], [0,2], placeHolder = tmp)
 
@@ -395,7 +398,7 @@ class ItemCreatorWidget(QTreeWidget):
                     elif type(nonTreeWidgets[valueAt]) is QComboBox:
                         value = nonTreeWidgets[valueAt].currentText()
                     elif type(nonTreeWidgets[valueAt]) is QDateEdit:
-                        value = str(nonTreeWidgets[valueAt].date().year())
+                        value = nonTreeWidgets[valueAt].date().toString(Qt.ISODate)
                     json = self.jsonFile
                     while parentList != []:
                         json = json[parentList.pop()]

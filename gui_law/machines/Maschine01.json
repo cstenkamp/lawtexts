@@ -1,0 +1,32 @@
+{
+    "Name": "Maschine01",
+    "Kundennummer": "11880",
+    "Ort": "WoSieGeholfenWerden",
+    "Herstellungsdatum": "2013-02-12",
+    "Pr\u00fcfdatum": "2015-09-30",
+    "Komponenten": {
+        "Druckbeh\u00e4lter": [
+            {
+                "Druck": {
+                    "bar": 4.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Temperatur": {
+                    "C": 8.0
+                },
+                "Volumen": {
+                    "m\u00b3": 4.0
+                }
+            }
+        ]
+    },
+    "Verwendungszwecke": [
+        "Bearbeitung von Fleisch und von Werkstoffen mit \u00e4hnlichen physikalischen Eigenschaften"
+    ],
+    "Verwendungsorte": [
+        "auf Eisenbahnen"
+    ],
+    "Kommentare": []
+}
