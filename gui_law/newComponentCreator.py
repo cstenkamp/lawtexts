@@ -10,8 +10,6 @@ import functools
 
 
 class ComponentGenerator(QDialog):
-    NumGridRows = 3
-    NumButtons = 4
 
     def __init__(self):
         super(ComponentGenerator, self).__init__()

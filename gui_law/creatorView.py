@@ -1,10 +1,11 @@
 import sys
 import os
-from newComponentCreator import ComponentGenerator
+from newComponentCreator import *
 from jsonHandler import *
 from ExtendedComboBox import ExtendedComboBox
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from customerDialog import *
 from PyQt5.QtWidgets import *
 import functools
 
@@ -51,11 +52,36 @@ class CreatorView(QMainWindow):
             save.triggered.connect(lambda: self.centralTable.reload_list())
         saveAs = QAction('Speichern als', self)
         fileMenu.addAction(save)
+        toolbar = self.addToolBar('Auf zutreffende Richtlinien überprüfen')
+        toolbar.setIconSize(QSize(32,32))
+        check = QAction(QIcon(ICON_PATH+"law.png"), '', self)
+        check.setIcon
+        check.setToolTip("Richtlinien auf dieser Maschine überprüfen")
+        check.triggered.connect(functools.partial(CreatorView.start_check, \
+                self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget))
+        toolbar.addAction(check)
         fileMenu.addAction(saveAs)
+        menubar.setCornerWidget(toolbar)
+        menubar.adjustSize()
         # TODO add saveAs
 
     def setJsonFile(self, json):
         self.ItemCreatorWidget.setJsonFile(json)
+
+    @staticmethod
+    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None):
+        if finishCheckRequired and creatorWidget is not None:
+            if not creatorWidget.finishCheck():
+                return
+        customerDialog = CustomerDialog()
+        result = customerDialog.exec_()
+        if result:
+            role = customerDialog.getRole()
+            del customerDialog
+            print(role)
+            """ Constantins Part goes here jsonFile is the machine"""
+            print("creatorView.py Methodenname: startCheck")
+            print("this method is currently called when the user tries to save the file")
 
 
 class ItemCreatorWidget(QTreeWidget):
@@ -97,9 +123,7 @@ class ItemCreatorWidget(QTreeWidget):
             tmp = QTreeWidgetItem(["placeHolder"]) # required in order to put costom widgets at the right position
             self.addTopLevelItem(tmp)
             if "datum" in entry:
-                print(self.jsonFile[entry])
                 date = self.jsonFile[entry].split('-')
-                print(date)
                 dateEdit = QDateEdit(QDate(int(date[0]),int(date[1]),int(date[2])))
                 dateEdit.setDisplayFormat("dd.MM.yyyy")
                 CustomTreeWidgetItems(self, [entry, dateEdit], [0,2], placeHolder = tmp)
@@ -462,17 +486,22 @@ class ItemCreatorWidget(QTreeWidget):
         lineE01 = QLineEdit()
         CustomTreeWidgetItems(self, [str(text), lineE01], [0,2], placeHolder=tmp, connect=True, comment=True)
 
-    def save_file(self, path):
-        """ writes the jsonFile to disk """
+    def finishCheck(self):
+        """ checks if all required fields are filled out """
         if any(self.jsonFile[key] == "" for key  in self.minEntries) \
             or  self.jsonFile["Komponenten"] == {}:
             minEntriesBold = ["<b>"+str(x)+",</b>" for x in self.minEntries]
             requiredFields = "\n"+ "\n".join(str(x) for x in minEntriesBold)
             QMessageBox.about(self, "", "Bitte fügen Sie <b>mindestenes eine Komponente</b> hinzu"\
                 "und füllen Sie mindestens folgende Felder aus:" + requiredFields)
-
+            return False
         else:
-            self.start_check()
+            return True
+
+    def save_file(self, path):
+        """ writes the jsonFile to disk """
+        if self.finishCheck():
+            # CreatorView.start_check()
             if path == None:
                 fileName = MACHINE_PATH + self.jsonFile["Name"]
             else:
@@ -503,11 +532,6 @@ class ItemCreatorWidget(QTreeWidget):
             write_json_file(self.jsonFile, fileName)
             if self.centralTable is not None:
                 self.centralTable.reload_list()
-
-    def start_check(self):
-        """ Constantins Part goes here """
-        print("creatorView.py Methodenname: startCheck")
-        print("this method is currently called when the user tries to save the file")
 
 
 class CustomTreeWidgetItem( QTreeWidgetItem ):

@@ -11,7 +11,7 @@ from PyQt5.QtCore import pyqtSlot, Qt
 from operator import itemgetter
 from ItemView import ItemView
 
-TABLE_HEADER = ORDER[0:5] + ["", ""]
+TABLE_HEADER = ORDER[0:5] + ["", "", ""]
 
 
 class CentralTable(QWidget):
@@ -46,7 +46,7 @@ class CentralTable(QWidget):
         self.tableWidget.setHorizontalHeaderLabels(TABLE_HEADER)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         for row in range(self.tableWidget.rowCount()):
-            self.add_remove_edit_buttons(row)
+            self.add_remove_edit_check_btns(row)
         # table selection change
         self.tableWidget.doubleClicked.connect(self.on_double_click)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -54,17 +54,23 @@ class CentralTable(QWidget):
         self.order_list(self.orderKey[0], self.orderKey[1])
         self.tableWidget.resizeColumnsToContents()
 
-    def add_remove_edit_buttons(self, row):
+    def add_remove_edit_check_btns(self, row):
         editBtn = QPushButton(self.tableWidget)
         rmvBtn = QPushButton(self.tableWidget)
+        checkBtn = QPushButton(self.tableWidget)
         editBtn.setIcon(QIcon(ICON_PATH + "edit.png"))
-        editBtn.setToolTip('click to <b>edit</b> this item')
+        editBtn.setToolTip('hier klicken um diese Maschine zu <b>bearbeiten</b>')
         editBtn.setIconSize(QSize(24, 24))
         rmvBtn.setIcon(QIcon(ICON_PATH + "trash.png"))
         rmvBtn.setIconSize(QSize(24, 24))
-        rmvBtn.setToolTip('click to <b>remove</b> this item')
+        rmvBtn.setToolTip('hier klicken um diese Maschine zu<b>löschen</b>')
+        checkBtn.setIcon(QIcon(ICON_PATH + "law.png"))
+        checkBtn.setIconSize(QSize(24, 24))
+        checkBtn.setToolTip('hier klicken um diese Maschine \n auf zutreffende Richtlinien zu <b>überprüfen</b>')
         editBtn.clicked.connect(self.btn_edit)
         rmvBtn.clicked.connect(self.btn_remove)
+        checkBtn.clicked.connect(self.btn_check)
+        self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-3, checkBtn)
         self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-2, editBtn)
         self.tableWidget.setCellWidget(row, self.tableWidget.columnCount()-1, rmvBtn)
 
@@ -119,7 +125,7 @@ class CentralTable(QWidget):
         if oldRowCount < len(self.machines[0]):
             "we are here"
             for row in range(len(self.machines[0])-oldRowCount):
-                self.add_remove_edit_buttons(oldRowCount+row)
+                self.add_remove_edit_check_btns(oldRowCount+row)
         self.order_list(self.orderKey[0], self.orderKey[1])
 
     # start of the button functions
@@ -142,7 +148,8 @@ class CentralTable(QWidget):
         index = self.tableWidget.indexAt(button.pos())
         machineFile = self.machines[0][index.row()]
         machinePath = self.machines[1][index.row()]
-        self.newCreatorView = CreatorView(self.mainWindow, centralTable = self, jsonFile = machineFile, path = machinePath)
+        self.newCreatorView = CreatorView(self.mainWindow, centralTable = self,\
+                                    jsonFile = machineFile, path = machinePath)
         self.newCreatorView.show()
 
     def btn_remove(self):
@@ -161,3 +168,10 @@ class CentralTable(QWidget):
             self.tableWidget.removeRow(index.row())
             self.machines[0].pop(index.row())
             self.machines[1].pop(index.row())
+
+    def btn_check(self):
+        button = self.sender()
+        index = self.tableWidget.indexAt(button.pos())
+        machineFile = self.machines[0][index.row()]
+        machinePath = self.machines[1][index.row()]
+        CreatorView.start_check(machineFile)
