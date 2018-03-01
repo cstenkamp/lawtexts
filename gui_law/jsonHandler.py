@@ -12,7 +12,7 @@ def read_json_file(jsonFile):
     if not jsonFile.lower().endswith('.json'):
         print("Given File is no json")
         return
-    with open(jsonFile, 'r') as f:
+    with open(jsonFile, 'r', encoding='utf-8') as f:
         datastor = json.load(f)
         return datastor
 
