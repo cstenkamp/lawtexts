@@ -1,0 +1,29 @@
+{
+	"in einer explosionsfähigen Atmosphäre":{
+			"benötigt text":{
+				"MRL":{
+					"text":"Anhang_I_5"
+				}
+			},
+			"aktiviert":{
+				"ATEX":{"text":"Artikel_1_1)"}
+			},
+			"deaktiviert":{
+				"NSR":{"text":"Anhang_II"}
+			},
+			"betrifft vielleicht":{
+			}
+		},
+	"in untertägigen Bergwerken sowie deren Übertageanlagen":{
+			"benötigt text":{
+			},
+			"aktiviert":{
+				"ATEX":{"text":"Artikel_1_1)"}
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+			},
+			"ATEX":"Gerätegruppe I"
+		}
+}

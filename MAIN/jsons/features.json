@@ -1,0 +1,17 @@
+{
+	"Features":{
+		"Spannung":["Volt AC","Volt DC"],
+		"Leistung":["KW/h","ps"],
+		"Volumen":["m³","L"],
+		"Temperatur":["C","F"],
+		"Druck":["bar","psi"],
+		"Länge":["m"],
+		"Durchmesser":["m"]
+	},
+	"_Features":[
+		{"_bewegliche_teile":["+MRL"]
+		},
+		{"_keinMRL":["-MRL"]
+		}
+	]
+}

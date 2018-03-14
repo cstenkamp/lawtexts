@@ -1,0 +1,32 @@
+{
+	"Druckbehälter":{
+		"Eigenschaften":[
+			"Druck",
+			"Inhalt",
+			"Volumen",
+			"Temperatur"
+			],
+		"_Eigenschaften":[
+			]
+	},
+	"Rührwerk":{
+		"Eigenschaften":[
+			"Leistung",
+			"Spannung"
+			],
+		"_Eigenschaften":[
+			"+MRL"
+			]
+	},
+	"Elektromotor":{
+		"Eigenschaften":[
+			"Leistung",
+			"Spannung"
+			],
+		"_Eigenschaften":[
+			"-MRL"
+			]
+
+	}
+		
+}

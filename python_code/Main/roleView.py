@@ -1,7 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from PyQt5.QtCore import Qt, QTimer, QObjectCleanupHandler
 from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import *
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+#from PyQt5.QtWebEngineWidgets import QWebEngineView
 import sys, os
 
 
@@ -38,7 +40,7 @@ class RoleView(QuestionInterface):
 
         self.role = None
 
-        self.logic.QD = Question('Produkt wird unter eigenem Namen oder unter eigener Handelsmarke in Verkehr gebracht, oder Produkt wird vor in Verkehr bringen so verändert, dass die Konformität mit dieser Richtlinie beeinträchtigt wird?',
+        self.logic.QD = Question('Produkt wird unter eigenem Namen oder unter eigener Handelsmarke in Verkehr gebracht, oder Produkt wird vor in Verkehr bringen so verändert, dass die Konformität mit einer oder mehreren der EU-Richtlinien beeinträchtigt werden könnte?',
                       effect={'y':'extra',
                               'n':'None'})
 
@@ -93,5 +95,4 @@ class RoleView(QuestionInterface):
 
 
     def getExtraDuties(self):
-        self.yesNoLayout()
         self.startYesNoQuestions(self.logic.QD)

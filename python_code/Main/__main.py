@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys, os, webbrowser
-from pprint import pprint as print
+import sys, os
+#from pprint import pprint as print
 from _machine import Machine
 
 
@@ -10,7 +10,7 @@ from configurator import Configurator
 from jsonParser import PARSER as jPARSER
 
 sys.path.insert(0, os.path.join(os.getcwd(),'logic/'))
-from _logicUnit import LOGIC
+#from _logicUnit import LOGIC
 from atexLogic import AtexLogic
 from mrlLogic import MrlLogic
 from nsrLogic import NsrLogic

@@ -1,0 +1,12 @@
+{
+	"Inhalt":[
+		"Jauche",
+		"Gülle",
+		"Silage"
+	],
+	"Aggregatszustand":[
+		"fest",
+		"flüssig",
+		"gasförmig"
+	]
+}

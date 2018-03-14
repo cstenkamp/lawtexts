@@ -1,0 +1,48 @@
+{
+    "Herstellungsdatum": "2000-01-01",
+    "Verwendungsorte": [],
+    "Komponenten": {
+        "Druckbeh\u00e4lter": [
+            {
+                "Temperatur": {
+                    "C": 0.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Druck": {
+                    "bar": 0.0
+                },
+                "Volumen": {
+                    "m\u00b3": 0.0
+                }
+            }
+        ],
+        "Elektromotor": [
+            {
+                "Leistung": {
+                    "ps": 100.0
+                },
+                "Spannung": {
+                    "Volt AC": 381.0
+                }
+            }
+        ],
+        "R\u00fchrwerk": [
+            {
+                "Leistung": {
+                    "KW/h": 0.0
+                },
+                "Spannung": {
+                    "Volt AC": 0.0
+                }
+            }
+        ]
+    },
+    "Kundennummer": "12345",
+    "Kommentare": [],
+    "Name": "testMachine",
+    "Ort": "osna",
+    "Pr\u00fcfdatum": "2000-01-01",
+    "Verwendungszwecke": []
+}

@@ -1,0 +1,74 @@
+{
+	"in einer explosionsfähigen Atmosphäre":{
+		"MRL":{
+			"+":["Anhang_I_5"],
+			"?":["Anhang_IV"],
+			"-":[]
+		},
+		"NSR":{
+			"+":[],
+			"?":[],
+			"-":["NSR"]
+		}
+	},
+	"auf Seeschiffen/Offshore Anlagen":{
+		"MRL":{
+			"+":[],
+			"?":[],
+			"-":["MRL"]
+		},
+		"NSR":{
+			"+":[],
+			"?":[],
+			"-":["NSR"]
+		}
+	},
+	"auf Eisenbahnen":{
+		"MRL":{
+			"+":[],
+			"?":[],
+			"-":["MRL"]
+		},
+		"NSR":{
+			"+":[],
+			"?":[],
+			"-":["NSR"]
+		}
+	},
+	"auf Flugzeugen":{
+		"MRL":{
+			"+":[],
+			"?":[],
+			"-":["MRL"]
+		},
+		"NSR":{
+			"+":[],
+			"?":[],
+			"-":["NSR"]
+		}
+	},
+	
+	"auf Jahrmärkten und in Vergnügungsparks":{
+		"MRL":{
+			"+":[],
+			"?":[],
+			"-":["MRL"]
+		}
+	},
+	
+	"in Laboratorien":{
+		"MRL":{
+			"+":[],
+			"?":[],
+			"-":["MRL"]
+		}
+	},
+	
+	"im Haushalt":{
+		"MRL":{
+			"+":[],
+			"?":[],
+			"-":["MRL"]
+		}
+	}
+}
