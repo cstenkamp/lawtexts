@@ -35,7 +35,7 @@ class CheckableComboBox(QComboBox):
             item.setCheckState(Qt.Checked)
 
 class QuestionInterface(QWidget):
-    def __init__(self, Product, logic, childView=None, childLogic=None, fileHandle=None):
+    def __init__(self, Product, logic, childView=None, childLogic=None, buffer=None, parentLogic=None):
         super(QuestionInterface,self).__init__()
 
         self.setGeometry(100,100,850,300)
@@ -62,8 +62,10 @@ class QuestionInterface(QWidget):
 
         self.childView = childView
         self.childLogic = childLogic
-        self.fileHandle = fileHandle
 
+        self.parentLogic = parentLogic
+
+        self.buffer = buffer
 
         self.hide()
 
@@ -109,7 +111,6 @@ class QuestionInterface(QWidget):
         pass
 
     def dropDownLayout(self):
-
         self.ddLayout = QVBoxLayout()
         self.ddLayout.setAlignment(Qt.AlignTop)
         self.mainLayout.addLayout(self.ddLayout)
@@ -129,10 +130,17 @@ class QuestionInterface(QWidget):
 
 
     def closeEvent(self,event):
+        # get result as html
         html=self.logic.finalize()
-        self.fileHandle.writelines(html)
+        # append in buffer string
+        self.buffer.append(html)
         if not self.childView is None:
+            # start questions
             self.childView.startYesNoQuestions(self.childLogic.QA)
         else:
-            self.fileHandle.close()
-            self.childLogic.checkParts()
+            # if no further questions, check parts
+            parts_res = self.childLogic.checkParts()
+            html=self.childLogic.resultsToHtml(parts_res)
+            self.buffer.append(html)
+            self.parentLogic.fileHandle.writelines(self.buffer.str)
+            self.parentLogic.fileHandle.close()

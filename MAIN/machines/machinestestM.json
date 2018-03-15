@@ -1,0 +1,48 @@
+{
+    "Kundennummer": "123456",
+    "Komponenten": {
+        "Elektromotor": [
+            {
+                "Spannung": {
+                    "Volt AC": 300.0
+                },
+                "Leistung": {
+                    "ps": 50.0
+                }
+            }
+        ],
+        "R\u00fchrwerk": [
+            {
+                "Spannung": {
+                    "Volt AC": 240.0
+                },
+                "Leistung": {
+                    "KW/h": 100.0
+                }
+            }
+        ],
+        "Druckbeh\u00e4lter": [
+            {
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Temperatur": {
+                    "C": 30.0
+                },
+                "Druck": {
+                    "bar": 5.0
+                },
+                "Volumen": {
+                    "m\u00b3": 10.0
+                }
+            }
+        ]
+    },
+    "Name": "testM",
+    "Verwendungszwecke": [],
+    "Verwendungsorte": [],
+    "Kommentare": [],
+    "Pr\u00fcfdatum": "2000-01-01",
+    "Ort": "osna",
+    "Herstellungsdatum": "2000-01-01"
+}

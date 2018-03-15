@@ -3,11 +3,11 @@ from basicView import QuestionInterface
 
 
 class MrlView(QuestionInterface):
-    def __init__(self, Product, logic, childView=None, childLogic=None, fileHandle=None):
+    def __init__(self, Product, logic, childView=None, childLogic=None, buffer=''):
         super(MrlView,self).__init__(Product, logic, 
                                      childView=childView,
                                      childLogic=childLogic,
-                                     fileHandle=fileHandle)
+                                     buffer=buffer)
 
         self.logic.initQuestions()
         self.hide()

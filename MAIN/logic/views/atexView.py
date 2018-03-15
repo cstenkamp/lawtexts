@@ -3,11 +3,12 @@ from basicView import QuestionInterface
 
 
 class AtexView(QuestionInterface):
-    def __init__(self, Product, logic, childView=None, childLogic=None, fileHandle=None):
+    def __init__(self, Product, logic, childView=None, childLogic=None, buffer='',parentLogic=None):
         super(AtexView,self).__init__(Product, logic, 
                                       childView=childView, 
                                       childLogic=childLogic,
-                                      fileHandle=fileHandle)
+                                      buffer=buffer,
+                                      parentLogic=parentLogic)
 
 
     def next(self,b):

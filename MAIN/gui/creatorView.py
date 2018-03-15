@@ -71,11 +71,8 @@ class CreatorView(QMainWindow):
 
 
     @staticmethod
-    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None):
+    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, logic=None):
         # init file to save check results:
-        resFileName = jsonFile['Name']+'.html'
-        resPath = os.path.join(os.getcwd(),resFileName)
-        logic = MainLogic(machineData=jsonFile,filePath=resPath)
         
         if finishCheckRequired and creatorWidget is not None:
             if not creatorWidget.finishCheck():
@@ -512,7 +509,7 @@ class ItemCreatorWidget(QTreeWidget):
         if self.finishCheck():
             # CreatorView.start_check()
             if path == None:
-                fileName = MACHINE_PATH + self.jsonFile["Name"]
+                fileName = os.path.join(MACHINE_PATH,self.jsonFile["Name"])
             else:
                 fileName = path.replace(".json", "")
             if os.path.isfile(fileName+".json"):

@@ -2,8 +2,12 @@ import os, sys, json, re
 
 from jsonParser import PARSER 
 
+sys.path.insert(0, os.path.join(os.getcwd(),'logic/html_resources'))
+from header import getHtmlHeader
+
+
 class BaseLogic():
-    def __init__(self,Product, dictParser, name):
+    def __init__(self,Product, dictParser, name, childLogics=None):
         self.path = os.path.split(os.getcwd())[0]
 
         self.purposesPath = os.path.join(self.path,'jsons/_purposes.json')
@@ -17,6 +21,7 @@ class BaseLogic():
         self.state = None
         self.roleDuties = None
         self.Q = None
+        self.childLogics = childLogics
 
 
         '''
@@ -28,6 +33,16 @@ class BaseLogic():
         self.sites = jParser.parse(self.sitesPath)
         self.purposes = jParser.parse(self.purposesPath)
 
+        self.ac_high = 1000
+        self.ac_low  = 50
+
+        self.dc_high = 1000
+        self.dc_low  = 50
+
+
+        self.headerString = getHtmlHeader()
+        self.componentString = '<h3>{0}</h3>'
+        self.componentResultString = '<p class = "tab"><b> {0}: </b> {1} </p>'
 
 
     def setState(self,B):
@@ -49,18 +64,57 @@ class BaseLogic():
             if not _f_res is None:
                 for _f,_v in _f_res.items():
                     f_res[_f] = _v
+            # see, if directive is already deactivated by purpose,site etc.
+            for d,s in f_res.items():
+                dState = self.childLogics[d].state
+                if (not dState) and (s):
+                    f_res[d] = False
             results[part] = f_res 
         return results
+
+    def checkVoltage(self,val,type):
+        type = type.lower()
+        type = type.split(' ')[1]
+        if type == 'ac':
+            if self.ac_low < val < self.ac_high:
+                return True
+            else:
+                return False
+        elif type == 'dc':
+            if self.dc_low < val < self.dc_high:
+                return True
+            else:
+                return False
+        else:
+            print('unknown voltage type. Must either be "ac" or "dc"')
+
+    def resultsToHtml(self,results):
+        html = self.headerString
+        for part, dRes in results.items():
+            a = self.componentString.format(part)
+            for directive, res in dRes.items():
+                if res:
+                    res = 'trifft zu'
+                else:
+                    res = 'trifft nicht zu'
+                b = self.componentResultString.format(directive,res)
+                a += b
+            html += a
+        return html 
 
 
     def checkFeatures(self,part):
         results = {}
         # get features of part of product
         featDict = self.Product.json['Komponenten'][part]
-        if 'Spannung' in featDict:
-            B = self.checkNSR(featDict['Spannung'])
-            if B:
-                results['NSR'] = B
+        for entry in featDict:
+            if 'Spannung' in entry:
+                t = list(entry['Spannung'].keys())[0]
+                val = list(entry['Spannung'].values())[0]
+                B = self.checkVoltage(val,t)
+                if B:
+                    results['NSR'] = B
+        #html = self.resultsToHtml(results)
         return results
 
     def checkHiddenFeatures(self,part):

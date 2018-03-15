@@ -22,13 +22,20 @@ sys.path.insert(0, os.path.join(os.getcwd(),'logic/dict_parser/'))
 from dictParser import PARSER as dictPARSER
 
 from PyQt5.QtWidgets import QApplication
+
+
+sys.path.insert(0, os.path.join(os.getcwd(),'logic/views/'))
 from roleView import RoleView
 from atexView import AtexView
 from mrlView import MrlView
 from nsrView import NsrView
 from basicView import QuestionInterface
 
-
+class ResultBuffer():
+    def __init__(self,str):
+        self.str=str
+    def append(self,str):
+        self.str+=str
 
 class MainLogic():
     def __init__(self, machineData=None, filePath=None):
@@ -80,32 +87,39 @@ class MainLogic():
         """
         load logic engines
         """
-        self.baseLogic = BaseLogic(self.Product, self.dictParser, 'name')
         self.atexLogic = AtexLogic(self.Product, self.dictParser)
         self.mrlLogic = MrlLogic(self.Product, self.dictParser)
         self.nsrLogic = NsrLogic(self.Product, self.dictParser)
 
+        childLogics = {'ATEX':self.atexLogic,
+                       'MRL':self.mrlLogic,
+                       'NSR':self.nsrLogic}
+
+        self.baseLogic = BaseLogic(self.Product, self.dictParser, 'name', childLogics=childLogics)
+
 
     def loadViews(self):
+        self.result_buffer = ResultBuffer('')
         self.atexView = AtexView(self.Product, self.atexLogic, 
                                  childView = None,
                                  childLogic=self.baseLogic,
-                                 fileHandle=self.fileHandle)
+                                 buffer=self.result_buffer,
+                                 parentLogic=self)
 
         self.nsrView  = NsrView( self.Product, self.nsrLogic,  
                                  childView = self.atexView,
                                  childLogic=self.atexLogic,
-                                 fileHandle=self.fileHandle)
+                                 buffer=self.result_buffer)
 
         self.mrlView  = MrlView( self.Product, self.mrlLogic,  
                                  childView = self.nsrView,
                                  childLogic=self.nsrLogic,
-                                 fileHandle=self.fileHandle)
+                                 buffer=self.result_buffer)
 
         self.roleView = RoleView(self.Product, self.baseLogic,           
                                  childView = self.mrlView,
                                  childLogic=self.mrlLogic,
-                                 fileHandle=self.fileHandle)
+                                 buffer=self.result_buffer)
 
 
 
@@ -127,9 +141,8 @@ class MainLogic():
 
 
 if __name__ == '__main__':
-    m = MainLogic(machineJsonPath='json/__exampleMachine.json',
-             )
-    self = m 
-    m.loadLogicEngines()
-    m.loadViews()
-    m.getUserRole()
+    jparser = jPARSER()
+    data=jparser.parse('/home/me/Dropbox/Alles_fuer_die_Uni/Master/0_Study-Project/git/lawtexts/MAIN/machines/machinestestM.json')
+    m = MainLogic(machineData=data, 
+                filePath='/home/me/Dropbox/Alles_fuer_die_Uni/Master/0_Study-Project/git/lawtexts/MAIN/machines/testM.html')
+    m.start()

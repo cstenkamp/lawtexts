@@ -9,29 +9,6 @@ class NsrLogic(BaseLogic):
         super(NsrLogic,self).__init__(Product, dictParser, name)
         self.initQuestions()
 
-        self.ac_high = 1000
-        self.ac_low  = 50
-
-        self.dc_high = 1000
-        self.dc_low  = 50
-
-
-    def checkVoltage(self, val, type):
-        type = type.lower()
-        if type == 'ac':
-            if self.ac_low < val < self.ac_high:
-                return True
-            else:
-                return False
-        elif type == 'dc':
-            if self.dc_low < val < self.dc_high:
-                return True
-            else:
-                return False
-        else:
-            print('wrong voltage type. Must either be "ac" or "dc"')
-
-
 
     def getRoleDuties(self):
         self.roleDuties = '<h2> Durch ihre Rolle als {0} obliegen ihnen folgende Pflichten: </h2>'.format(self.Product.role)
@@ -50,7 +27,7 @@ class NsrLogic(BaseLogic):
                                      dass die Konformität mit dieser Richtlinie 
                                      beeinträchtigt wird</h3>'''
             self.roleDuties += self.dictParser.labelToHtml('artikel_6',self.name)
-        return self.roleDuties
+        
 
 
     def initQuestions(self):
@@ -60,3 +37,13 @@ class NsrLogic(BaseLogic):
         self.QA = Question(tmp,
                       effect={'y':False,
                               'n':True})
+
+
+    def finalize(self):
+        self.getRoleDuties()
+        if self.state:
+            self.html = '<h1>{0}</h1>'  .format(self.name)
+            self.html += self.roleDuties
+        else:
+            self.html = '<h1>{0} trifft nicht zu!</h1>'.format(self.name)
+        return self.html 

@@ -13,6 +13,8 @@ from ItemView import ItemView
 
 TABLE_HEADER = ORDER[0:5] + ["", "", ""]
 
+sys.path.insert(0,os.path.join(os.getcwd(),'logic/'))
+from mainLogic import MainLogic 
 
 class CentralTable(QWidget):
     """ A class to create a table where all machines will be presented in an
@@ -149,6 +151,8 @@ class CentralTable(QWidget):
         index = self.tableWidget.indexAt(button.pos())
         machineFile = self.machines[0][index.row()]
         machinePath = self.machines[1][index.row()]
+        htmlPath = machinePath.split('.json')[0]+'.html'
+        logic = MainLogic(machineFile,htmlPath)
         self.newCreatorView = CreatorView(self.mainWindow, centralTable = self,\
                                     jsonFile = machineFile, path = machinePath)
         self.newCreatorView.show()
@@ -175,4 +179,7 @@ class CentralTable(QWidget):
         index = self.tableWidget.indexAt(button.pos())
         machineFile = self.machines[0][index.row()]
         machinePath = self.machines[1][index.row()]
-        CreatorView.start_check(machineFile)
+        resFileName = machineFile['Name']+'.html'
+        resPath = os.path.join(os.getcwd(),resFileName)
+        self.logic = MainLogic(machineData=machineFile,filePath=resPath)
+        CreatorView.start_check(machineFile,logic=self.logic)

@@ -23,7 +23,7 @@ class MrlLogic(BaseLogic):
 
 
     def getRoleDuties(self):
-        if self.Product.role == 'Hersteller':
+        if self.Product.role in ['Hersteller','Bevollmächtigter']:
             self.roleDuties = '<h2> In ihrer Rolle als {0} obliegen ihnen folgende Pflichten: </h2>'.format(self.Product.role)
             self.roleDuties += self.dictParser.labelToHtml('artikel_5',self.name)
         elif self.Product.extraDuties:
@@ -52,7 +52,7 @@ class MrlLogic(BaseLogic):
 
     def finalize(self):
         if self.state:
-            self.html = '<h1>MRL</h1>'       
+            self.html = '<h1>{0}</h1>'  .format(self.name)
             if not self.Product.harmonized:
                 if (self.Product.role == 'Hersteller') or (self.Product.extraDuties):
                     self.getRoleDuties()    
@@ -64,10 +64,10 @@ class MrlLogic(BaseLogic):
                     self.html += self.roleDuties
             else:
                 self.getHarmDuties()
-                self.html = '<h1>MRL</h1>'       
+                self.html = '<h1>{0}</h1>'.format(self.name)
                 self.html += self.harmDuties
         else:
-            self.html = '<h1>MRL trifft nicht zu!</h1>'
+            self.html = '<h1>{0} trifft nicht zu!</h1>'.format(self.name)
         return self.html 
 
 
