@@ -19,8 +19,3 @@ class NsrView(QuestionInterface):
         if self.logic.Q is None:
             self.finalize()
 
-
-    def finalize(self):
-        self.close()
-
-

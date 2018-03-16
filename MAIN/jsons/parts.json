@@ -27,6 +27,18 @@
 			"-MRL"
 			]
 
+	},
+	"Rohrleitung":{
+		"Eigenschaften":[
+			"Durchmesser",
+			"Länge",
+			"Temperatur",
+			"Druck",
+			"Inhalt"
+			],
+		"_Eigenschaften":[
+			]
+
 	}
 		
 }

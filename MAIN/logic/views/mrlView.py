@@ -38,12 +38,3 @@ class MrlView(QuestionInterface):
             self.updateView(self.logic.Q.text)
         else:
             self.finalize() 
-
-
-
-    def finalize(self):
-        self.close()
-        html = self.logic.finalize()
-        #self.clearLayout(self.bottomLayout)
-        #self.updateView(html)
-        return self.logic.state, self.Product.extraDuties, html

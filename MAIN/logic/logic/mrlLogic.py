@@ -9,12 +9,6 @@ class MrlLogic(BaseLogic):
         super(MrlLogic,self).__init__(Product, dictParser, name)
 
 
-    def setRole(self,role):
-        self.Product.role = role 
-
-    def setState(self,B):
-        self.state=B
-
     def setType(self,B):
         self.type=B
 

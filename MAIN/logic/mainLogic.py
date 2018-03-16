@@ -13,6 +13,7 @@ from baseLogic import BaseLogic
 from atexLogic import AtexLogic
 from mrlLogic import MrlLogic
 from nsrLogic import NsrLogic
+from dgrLogic import DgrLogic
 from atexTree import Questions
 
 sys.path.insert(0, os.path.join(os.getcwd(),'logic/html_parser/'))
@@ -27,6 +28,7 @@ from PyQt5.QtWidgets import QApplication
 sys.path.insert(0, os.path.join(os.getcwd(),'logic/views/'))
 from roleView import RoleView
 from atexView import AtexView
+from dgrView import DgrView
 from mrlView import MrlView
 from nsrView import NsrView
 from basicView import QuestionInterface
@@ -90,19 +92,33 @@ class MainLogic():
         self.atexLogic = AtexLogic(self.Product, self.dictParser)
         self.mrlLogic = MrlLogic(self.Product, self.dictParser)
         self.nsrLogic = NsrLogic(self.Product, self.dictParser)
+        self.dgrLogic = DgrLogic(self.Product, self.dictParser)
 
         childLogics = {'ATEX':self.atexLogic,
                        'MRL':self.mrlLogic,
-                       'NSR':self.nsrLogic}
+                       'NSR':self.nsrLogic,
+                       'DGR':self.dgrLogic}
 
         self.baseLogic = BaseLogic(self.Product, self.dictParser, 'name', childLogics=childLogics)
 
+        res = self.baseLogic.checkParts(overwrite=False)
+
+        # MRL should be asked always:
+        self.mrlLogic.state = True
+        self.baseLogic.state = True
 
     def loadViews(self):
         self.result_buffer = ResultBuffer('')
-        self.atexView = AtexView(self.Product, self.atexLogic, 
+
+        self.dgrView = DgrView(self.Product, self.dgrLogic, 
                                  childView = None,
                                  childLogic=self.baseLogic,
+                                 buffer=self.result_buffer,
+                                 parentLogic=self)
+
+        self.atexView = AtexView(self.Product, self.atexLogic, 
+                                 childView = self.dgrView,
+                                 childLogic=self.dgrLogic,
                                  buffer=self.result_buffer,
                                  parentLogic=self)
 

@@ -146,31 +146,33 @@ class PARSER():
 		self.parseMRL()
 		self.parseNSR()
 		self.parseATEX()
+		self.parseDGR()
 
 
-		self.articles = {'MRL':self.mrlArticle,
-				   	'NSR':self.nsrArticle,
-				   	'ATEX':self.atexArticle
+		self.articles = {'MRL':self.mrlArticles,
+				   	'NSR':self.nsrArticles,
+				   	'ATEX':self.atexArticles,
+				   	'DGR':self.dgrArticles
 				   }
 		self.appendices = {'MRL':self.mrlAppendices,
 					  'NSR':self.nsrAppendices,
-					  'ATEX':self.atexAppendices
+					  'ATEX':self.atexAppendices,
+					  'DGR':self.dgrAppendices
 					 }
 
-					 
 
 	def parseMRL(self):
 		# parse MRL into articles and appendices
 		p = os.path.join(self.path,'mrl.html')
 		text = self.getHtml(p=p)
-		self.mrlArticle = self.parseArticles(text)
+		self.mrlArticles = self.parseArticles(text)
 		self.mrlAppendices = self.parseAppendices(text)
 
 	def parseNSR(self):
 		# parse MRL into articles and appendices
 		p = os.path.join(self.path,'nsr.html')
 		text = self.getHtml(p=p)
-		self.nsrArticle = self.parseArticles(text)
+		self.nsrArticles = self.parseArticles(text)
 		self.nsrAppendices = self.parseAppendices(text)
 
 	def parseATEX(self):
@@ -188,5 +190,11 @@ class PARSER():
 
 		p = os.path.join(self.path,'atex.html')
 		text = self.getHtml(p=p)
-		self.atexArticle = self.parseArticles(text)
+		self.atexArticles = self.parseArticles(text)
 		self.atexAppendices = self.parseAppendices(text)
+
+	def parseDGR(self):
+		p = os.path.join(self.path,'dgr.html')
+		text = self.getHtml(p=p)
+		self.dgrArticles = self.parseArticles(text)
+		self.dgrAppendices = self.parseAppendices(text)

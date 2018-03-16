@@ -2,11 +2,30 @@
 	"Inhalt":[
 		"Jauche",
 		"Gülle",
-		"Silage"
+		"Silage",
+		"organische Peroxide",
+		""
 	],
 	"Aggregatszustand":[
 		"fest",
 		"flüssig",
-		"gasförmig"
+		"gasförmig",
+		"verflüssigtes Gas",
+		"unter Druck gelöstes Gas"
+	],
+	"Eigenschaften":[
+		"instabil",
+		"reizend",
+		"radioaktiv",
+		"explosiv",
+		"entzündbar",
+		"oxidierend",
+		"selbstzersetzlich",
+		"pyrophor",
+		"akut oral toxisch",
+		"akut dermal toxisch",
+		"akut inhalativ toxisch",
+		"Zielorgan spezifisch toxisch",
+		"Temperatur höher als Flammpunkt"
 	]
 }

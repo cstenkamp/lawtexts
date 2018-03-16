@@ -358,7 +358,7 @@ class ItemCreatorWidget(QTreeWidget):
             if valueDict is not None:
                 curValue = valueDict[component_features[i]]
                 if type(curValue) is dict:
-                    keyOFcurValue = list(curValue.keys())
+                    keyOfCurValue = list(curValue.keys())
                 # else:
             if component_features[i] in feature_keys:
                 cur_feature = self.features[component_features[i]]
@@ -366,13 +366,13 @@ class ItemCreatorWidget(QTreeWidget):
                 if valueDict is None:
                     spinBox.setValue( 0 )
                 else:
-                    spinBox.setValue(curValue[keyOFcurValue[0]])
+                    spinBox.setValue(curValue[keyOfCurValue[0]])
                 spinBox.setMaximum(99999.99)
                 spinBox.setMinimumSize(25,10)
                 unitBox = QComboBox()
                 unitBox.addItems(cur_feature)
                 if valueDict is not None: # in case an existing json File is loaded
-                    unitBox.setCurrentText(keyOFcurValue[0])
+                    unitBox.setCurrentText(keyOfCurValue[0])
                 else:
                     #TODO implement this change everywhere else as well
                     newCompList[component_features[i]] = {cur_feature[0]:float(0)}
@@ -384,8 +384,8 @@ class ItemCreatorWidget(QTreeWidget):
                 unitBox = QComboBox()
                 unitBox.addItems(self.contents["Aggregatszustand"])
                 if valueDict is not None: # in case an existing json File is loaded
-                    unitBox.setCurrentText(keyOFcurValue[0])
-                    contentBox.setCurrentText(curValue[keyOFcurValue[0]])
+                    unitBox.setCurrentText(keyOfCurValue[0])
+                    contentBox.setCurrentText(curValue[keyOfCurValue[0]])
                 else:
                     newCompList[component_features[i]] = {unitBox.currentText(): contentBox.currentText()}
                 parent.addChild(tmp)

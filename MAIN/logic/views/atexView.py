@@ -32,21 +32,6 @@ class AtexView(QuestionInterface):
                 self.updateView(self.logic.Q.text)
 
 
-    def finalize(self):
-        self.close()
-        #self.clearLayout(self.bottomLayout)
-        #self.buttonClose = QPushButton('Schließen')
-        #self.buttonClose.clicked.connect(self.close)
-        #self.bottomLayout.addWidget(self.buttonClose)
-        #self.logic.getGroupAndCategory(effects=self.effects)
-        html = self.logic.finalize()
-        #self.updateView(html)
-        return self.logic.state, html
-
-
-
-
-
 
 if __name__ == '__main__':
 

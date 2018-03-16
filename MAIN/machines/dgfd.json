@@ -1,0 +1,41 @@
+{
+    "Name": "dgfd",
+    "Kundennummer": "dsa",
+    "Verwendungsorte": [],
+    "Verwendungszwecke": [],
+    "Herstellungsdatum": "2000-01-01",
+    "Kommentare": [],
+    "Komponenten": {
+        "Elektromotor": [
+            {
+                "Leistung": {
+                    "KW/h": 100.0
+                },
+                "Spannung": {
+                    "Volt AC": 230.0
+                }
+            }
+        ],
+        "Rohrleitung": [
+            {
+                "L\u00e4nge": {
+                    "m": 0.0
+                },
+                "Druck": {
+                    "bar": 0.0
+                },
+                "Temperatur": {
+                    "C": 0.0
+                },
+                "Durchmesser": {
+                    "m": 0.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                }
+            }
+        ]
+    },
+    "Ort": "dsa",
+    "Pr\u00fcfdatum": "2000-01-01"
+}

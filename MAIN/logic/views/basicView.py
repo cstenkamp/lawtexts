@@ -85,10 +85,13 @@ class QuestionInterface(QWidget):
 
 
     def startYesNoQuestions(self, firstQuestion):
-        self.show()
-        self.yesNoLayout()
-        self.logic.Q = firstQuestion
-        self.updateView(self.logic.Q.text)
+        if self.logic.state:
+            self.show()
+            self.yesNoLayout()
+            self.logic.Q = firstQuestion
+            self.updateView(self.logic.Q.text)
+        else:
+            self.closeEvent(None)
 
     def yesNoLayout(self):
         self.clearLayout(self.topLayout)
@@ -144,3 +147,8 @@ class QuestionInterface(QWidget):
             self.buffer.append(html)
             self.parentLogic.fileHandle.writelines(self.buffer.str)
             self.parentLogic.fileHandle.close()
+
+    
+    def finalize(self):
+        self.close()
+        html = self.logic.finalize()

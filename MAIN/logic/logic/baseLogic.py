@@ -45,11 +45,16 @@ class BaseLogic():
         self.componentResultString = '<p class = "tab"><b> {0}: </b> {1} </p>'
 
 
+    def setRole(self,role):
+        self.Product.role = role 
+
     def setState(self,B):
-        self.state = B
+        self.state=B
 
+    def checkSites(self):
+        results = {}
 
-    def checkParts(self):
+    def checkParts(self,overwrite=True):
         results = {}
         # for every part in the machine
         for part in self.Product.json['Komponenten']:
@@ -64,11 +69,17 @@ class BaseLogic():
             if not _f_res is None:
                 for _f,_v in _f_res.items():
                     f_res[_f] = _v
-            # see, if directive is already deactivated by purpose,site etc.
-            for d,s in f_res.items():
-                dState = self.childLogics[d].state
-                if (not dState) and (s):
-                    f_res[d] = False
+            if overwrite:
+                # see, if directive is already deactivated by purpose,site etc.
+                for d,s in f_res.items():
+                    dState = self.childLogics[d].state
+                    if (not dState) and (s):
+                        f_res[d] = False
+            else:           
+                # see if part activates directive     
+                for d,s in f_res.items():
+                    if s:
+                        self.childLogics[d].state = True
             results[part] = f_res 
         return results
 
@@ -87,6 +98,22 @@ class BaseLogic():
                 return False
         else:
             print('unknown voltage type. Must either be "ac" or "dc"')
+
+
+    def checkPressure(self,entry,partName):
+        val = list(entry['Druck'].values())[0]
+        content = list(entry['Inhalt'].values())[0]
+        c_state = list(entry['Inhalt'].keys())[0]
+        vol = list(entry['Volumen'].values())[0]
+        vol_type = list(entry['Volumen'].keys())[0]
+        temp = list(entry['Temperatur'].values())[0]
+        temp_type = list(entry['Temperatur'].keys())[0]
+
+        if val < 0.5:
+            return True
+        else:
+            return False
+
 
     def resultsToHtml(self,results):
         html = self.headerString
@@ -114,8 +141,14 @@ class BaseLogic():
                 B = self.checkVoltage(val,t)
                 if B:
                     results['NSR'] = B
+            if 'Druck' in entry:
+                B = self.checkPressure(entry,part)
+                if B:
+                    results['DGR'] = B
         #html = self.resultsToHtml(results)
         return results
+
+
 
     def checkHiddenFeatures(self,part):
         results = {}
