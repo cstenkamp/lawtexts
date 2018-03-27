@@ -1,0 +1,46 @@
+{
+	"Druckbehälter":{
+		"Eigenschaften":[
+			"Druck",
+			"Inhalt",
+			"Volumen",
+			"Temperatur"
+			],
+		"_Eigenschaften":[
+				"DGR_a"
+			]
+	},
+	"Rührwerk":{
+		"Eigenschaften":[
+			"Leistung",
+			"Spannung"
+			],
+		"_Eigenschaften":[
+			"+MRL"
+			]
+	},
+	"Elektromotor":{
+		"Eigenschaften":[
+			"Leistung",
+			"Spannung"
+			],
+		"_Eigenschaften":[
+			"-MRL"
+			]
+
+	},
+	"Rohrleitung":{
+		"Eigenschaften":[
+			"Durchmesser",
+			"Länge",
+			"Temperatur",
+			"Druck",
+			"Inhalt"
+			],
+		"_Eigenschaften":[
+				"DGR_c"
+			]
+
+	}
+		
+}

@@ -1,0 +1,151 @@
+{
+	"Bearbeitung von Holz und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"benötigt Text":{
+				"MRL":[
+					"Anhang_I_2._3."]
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+			}
+		},
+	"Bearbeitung von Metallen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+			}
+		},
+
+	"Bearbeitung von Fleisch und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"benötigt Text":{
+				"MRL":[
+					"Anhang_I_2._1."]
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+			}
+		},
+
+	"Bearbeitung von Kunstoffen und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+			}
+		},
+
+	"Bearbeitung von Gummi und von Werkstoffen mit ähnlichen physikalischen Eigenschaften":{
+			"aktiviert":{
+			},
+			"deaktiviert":{
+			},
+			"betrifft vielleicht":{
+			}
+		},
+
+
+	"Heben von Personen oder von Personen und Gütern":{
+			"benötigt Text":{
+				"MRL":[
+					"Anhang_I_6.",
+					"Anhang_I_4."]
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"NSR":[
+					"Anhang_II"
+				]
+			},
+			"betrifft vielleicht":{
+				"MRL":[
+					{
+						"Frage":"Finden sie ihr Produkt in dieser Liste wieder?",
+					 	"Ressource":"Anhang_V"
+					}
+				]
+			}
+		},
+
+
+	"Sicherheitsbauteile, die als Ersatzteile zur Ersetzung identischer Bauteile bestimmt sind und die vom Hersteller der Ursprungsmaschine geliefert werden;":{
+			"benötigt Text":{
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"MRL":[
+					"Artikel_1_2)"
+				]
+			},
+			"betrifft vielleicht":{
+			}
+	},
+
+
+	"spezielle Einrichtungen für die Verwendung auf Jahrmärkten und in Vergnügungsparks":{
+			"benötigt Text":{
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"MRL":[
+					"Artikel_1_2)"
+				]
+			},
+			"betrifft vielleicht":{
+			}
+	},
+
+
+
+	"speziell für eine nukleare Verwendung konstruierte oder eingesetzte Maschinen, deren Ausfall zu einer Emission von Radioaktivität führen kann":{
+			"benötigt Text":{
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"MRL":[
+					"Artikel_1_2)"
+				]
+			},
+			"betrifft vielleicht":{
+			}
+	},
+
+	"Förderung von Gütern in Schächten":{
+			"benötigt Text":{
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"MRL":[
+					"Artikel_1_2)"
+				]
+			},
+			"betrifft vielleicht":{
+			}
+	},
+
+	"Maschinen zur Beförderung von Darstellern während künstlerischer Vorführungen":{
+			"benötigt Text":{
+			},
+			"aktiviert":{
+			},
+			"deaktiviert":{
+				"MRL":[
+					"Artikel_1_2)"
+				]
+			},
+			"betrifft vielleicht":{
+			}
+	}
+}
