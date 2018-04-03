@@ -19,8 +19,8 @@ class CreatorView(QMainWindow):
         super(CreatorView, self).__init__(parent)
 
         self.path = path
-        self.parent = None
-        self.centralTable = None
+        self.parent = parent
+        self.centralTable = centralTable
 
         # close previous edit windows
         if self.parent is not None:
@@ -56,9 +56,10 @@ class CreatorView(QMainWindow):
         check = QAction(QIcon(ICON_PATH+"law.png"), '', self)
         check.setIcon
         check.setToolTip("Richtlinien auf dieser Maschine überprüfen")
+        print("path: ", self.path)
         check.triggered.connect(functools.partial(CreatorView.start_check, \
                 self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget, \
-                self.centralTable))
+                self.centralTable, self.path))
         toolbar.addAction(check)
         fileMenu.addAction(saveAs)
         menubar.setCornerWidget(toolbar)
@@ -71,15 +72,23 @@ class CreatorView(QMainWindow):
 
 
     @staticmethod
-    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, logic=None, centralTable = None):
+    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, centralTable = None, path = None, logic = None):
         # init file to save check results:
-        if centralTable is not None:
-            logic = centralTable.logic
-            print("hier")
-            print(type(logic))
         if finishCheckRequired and creatorWidget is not None:
             if not creatorWidget.finishCheck():
                 return
+        if centralTable is not None:
+            if path == None:
+                machinePath = os.path.join(MACHINE_PATH, jsonFile["Name"])
+            else:
+                machinePath = path
+            machineFile = jsonFile
+            resFileName = machineFile['Name']+'.html'
+            resPath = os.path.join(os.getcwd(),resFileName)
+            centralTable.logic = MainLogic(machineData=machineFile, filePath=resPath)
+            logic = centralTable.logic
+            print("hier")
+            print(type(logic))
         logic.start()
         #customerDialog = CustomerDialog()
         #result = customerDialog.exec_()
@@ -92,12 +101,12 @@ class CreatorView(QMainWindow):
         #    print("creatorView.py Methodenname: startCheck")
         #    print("this method is currently called when the user tries to save the file")
 
-
 class ItemCreatorWidget(QTreeWidget):
     """ The widget for creating new machines """
     def __init__(self, parent=None, centralTable = None, jsonFile = None):
         self.parent = parent
         self.centralTable = centralTable
+        print("init centralTable: ", centralTable)
         QTreeWidget.__init__(self)
         self.setHeaderLabels(["Feature", "Einheit", "Wert"])
         self.model = QStandardItemModel()

@@ -26,6 +26,7 @@ class CentralTable(QWidget):
         self.title = 'Central Table'
         self.machines = [[],[]]
         self.orderKey = ["Name", False]
+        self.logic = None
 
         self.create_table()
 

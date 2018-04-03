@@ -1,0 +1,56 @@
+{
+    "Name": "test2",
+    "Kundennummer": "sfsa",
+    "Ort": "dsafasd",
+    "Herstellungsdatum": "2021-01-01",
+    "Pr\u00fcfdatum": "2034-01-01",
+    "Komponenten": {
+        "Druckbeh\u00e4lter": [
+            {
+                "Druck": {
+                    "bar": 12.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Temperatur": {
+                    "C": 321.0
+                },
+                "Volumen": {
+                    "m\u00b3": 123.0
+                }
+            },
+            {
+                "Druck": {
+                    "bar": 12.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Temperatur": {
+                    "C": 421.0
+                },
+                "Volumen": {
+                    "m\u00b3": 0.0
+                }
+            }
+        ],
+        "Elektromotor": [
+            {
+                "Leistung": {
+                    "KW/h": 0.0
+                },
+                "Spannung": {
+                    "Volt AC": 0.0
+                }
+            }
+        ]
+    },
+    "Verwendungszwecke": [
+        "Bearbeitung von Fleisch und von Werkstoffen mit \u00e4hnlichen physikalischen Eigenschaften"
+    ],
+    "Verwendungsorte": [
+        "auf Eisenbahnen"
+    ],
+    "Kommentare": []
+}
