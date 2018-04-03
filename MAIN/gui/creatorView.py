@@ -8,9 +8,8 @@ from PyQt5.QtGui import *
 from customerDialog import *
 from PyQt5.QtWidgets import *
 import functools
-
 sys.path.insert(0,os.path.join(os.getcwd(),'logic'))
-from mainLogic import MainLogic 
+from mainLogic import MainLogic
 
 TEXT_GENERATE =  "generiere neue Komponente"
 
@@ -19,7 +18,7 @@ class CreatorView(QMainWindow):
     def __init__(self, parent=None, centralTable = None, jsonFile = None, path=None):
         super(CreatorView, self).__init__(parent)
 
-        self.path = path 
+        self.path = path
         self.parent = None
         self.centralTable = None
 
@@ -58,7 +57,8 @@ class CreatorView(QMainWindow):
         check.setIcon
         check.setToolTip("Richtlinien auf dieser Maschine überprüfen")
         check.triggered.connect(functools.partial(CreatorView.start_check, \
-                self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget))
+                self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget, \
+                self.centralTable))
         toolbar.addAction(check)
         fileMenu.addAction(saveAs)
         menubar.setCornerWidget(toolbar)
@@ -71,9 +71,12 @@ class CreatorView(QMainWindow):
 
 
     @staticmethod
-    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, logic=None):
+    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, logic=None, centralTable = None):
         # init file to save check results:
-        
+        if centralTable is not None:
+            logic = centralTable.logic
+            print("hier")
+            print(type(logic))
         if finishCheckRequired and creatorWidget is not None:
             if not creatorWidget.finishCheck():
                 return
@@ -431,16 +434,21 @@ class ItemCreatorWidget(QTreeWidget):
                         value = nonTreeWidgets[valueAt].date().toString(Qt.ISODate)
                     json = self.jsonFile
                     while parentList != []:
+                        parentJson = json
                         json = json[parentList.pop()]
                     if unit is None:
                         json[key]=value
                     else:
+                        keyParent = item.parent().text(0)
                         super_parent = item.parent().parent()
-                        ind = [i for i in range(super_parent.childCount()) if super_parent.child(i) == item.parent()][0]
-                        json[ind][key] = {unit:value}
+                        OccOfSameType = [i for i in range(super_parent.childCount()) if super_parent.child(i).text(0) == item.parent().text(0)]
+                        indInTree = [i for i in range(super_parent.childCount()) if super_parent.child(i) == item.parent()][0]
+                        ind = OccOfSameType.index(indInTree)
+                        parentJson[keyParent][ind][key] = {unit:value}
                 except IndexError:
                     return # required for uninted indexError for fields which are not used
             else:
+                print("WE SHOULDNT EVEN BE HERE")
                 parent = item.parent()
                 if parent.parent() is None:
                     # change the edited comment in the jsonFile
