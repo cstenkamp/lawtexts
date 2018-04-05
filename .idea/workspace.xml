@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ddb9feb2-81b3-4788-908e-764da9e4b787" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/gui_law/ExtendedComboBox.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/gui_law/centralTable.py" afterPath="$PROJECT_DIR$/gui_law/centralTable.py" />
-      <change beforePath="$PROJECT_DIR$/gui_law/creatorView.py" afterPath="$PROJECT_DIR$/gui_law/creatorView.py" />
-      <change beforePath="$PROJECT_DIR$/gui_law/machines/cMachine.json" afterPath="$PROJECT_DIR$/gui_law/machines/cMachine.json" />
-      <change beforePath="$PROJECT_DIR$/gui_law/main.py" afterPath="$PROJECT_DIR$/gui_law/main.py" />
-      <change beforePath="$PROJECT_DIR$/gui_law/temp2.py" afterPath="" />
-    </list>
+    <list default="true" id="ddb9feb2-81b3-4788-908e-764da9e4b787" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,7 +15,7 @@
         <entry file="file://$PROJECT_DIR$/gui_law/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="378">
-              <caret line="26" column="26" lean-forward="false" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
+              <caret line="27" column="26" lean-forward="false" selection-start-line="27" selection-start-column="26" selection-end-line="27" selection-end-column="26" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -34,12 +26,10 @@
       <file leaf-file-name="centralTable.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gui_law/centralTable.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2106">
-              <caret line="125" column="96" lean-forward="false" selection-start-line="125" selection-start-column="96" selection-end-line="125" selection-end-column="96" />
+            <state relative-caret-position="2574">
+              <caret line="149" column="51" lean-forward="false" selection-start-line="149" selection-start-column="51" selection-end-line="149" selection-end-column="51" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-                <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
               </folding>
             </state>
           </provider>
@@ -48,8 +38,8 @@
       <file leaf-file-name="jsonHandler.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gui_law/jsonHandler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="537">
-              <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+            <state relative-caret-position="486">
+              <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -58,8 +48,8 @@
       <file leaf-file-name="creatorView.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gui_law/creatorView.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="54" column="38" lean-forward="false" selection-start-line="54" selection-start-column="38" selection-end-line="54" selection-end-column="38" />
+            <state relative-caret-position="3105">
+              <caret line="215" column="38" lean-forward="false" selection-start-line="215" selection-start-column="38" selection-end-line="215" selection-end-column="38" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -70,10 +60,11 @@
       <file leaf-file-name="ExtendedComboBox.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gui_law/ExtendedComboBox.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="14" column="42" lean-forward="false" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
+            <state relative-caret-position="234">
+              <caret line="16" column="42" lean-forward="false" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
+                <marker date="1518790981269" expanded="true" signature="166:292" ph="..." />
               </folding>
             </state>
           </provider>
@@ -126,7 +117,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -161,11 +151,12 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="preferences.editor" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -292,7 +283,7 @@
   <component name="ToolWindowManager">
     <frame x="0" y="34" width="1920" height="1055" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17291667" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17291667" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32799146" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -324,6 +315,55 @@
     <entry file="file://$PROJECT_DIR$/gui_law/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
+          <caret line="26" column="26" lean-forward="false" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui_law/centralTable.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2142">
+          <caret line="125" column="96" lean-forward="false" selection-start-line="125" selection-start-column="96" selection-end-line="125" selection-end-column="96" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui_law/jsonHandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1152">
+          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui_law/ExtendedComboBox.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="14" column="42" lean-forward="false" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <marker date="1518790981269" expanded="true" signature="166:292" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui_law/creatorView.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="864">
+          <caret line="54" column="38" lean-forward="false" selection-start-line="54" selection-start-column="38" selection-end-line="54" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui_law/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
           <caret line="25" column="26" lean-forward="false" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
@@ -337,8 +377,6 @@
           <caret line="123" column="96" lean-forward="false" selection-start-line="123" selection-start-column="96" selection-end-line="123" selection-end-column="96" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -355,7 +393,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1674">
           <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -365,6 +402,7 @@
           <caret line="14" column="42" lean-forward="true" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+            <marker date="1518790981269" expanded="true" signature="166:292" ph="..." />
           </folding>
         </state>
       </provider>
@@ -385,8 +423,6 @@
           <caret line="115" column="96" lean-forward="false" selection-start-line="115" selection-start-column="96" selection-end-line="115" selection-end-column="96" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -395,7 +431,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="16" lean-forward="true" selection-start-line="0" selection-start-column="16" selection-end-line="0" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -431,8 +466,6 @@
           <caret line="18" column="30" lean-forward="false" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -461,8 +494,6 @@
           <caret line="18" column="30" lean-forward="false" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -491,8 +522,6 @@
           <caret line="18" column="30" lean-forward="false" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -513,8 +542,6 @@
           <caret line="123" column="45" lean-forward="false" selection-start-line="123" selection-start-column="45" selection-end-line="123" selection-end-column="45" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -538,7 +565,7 @@
     <entry file="file://$PROJECT_DIR$/gui_law/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
-          <caret line="26" column="26" lean-forward="false" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
+          <caret line="27" column="26" lean-forward="false" selection-start-line="27" selection-start-column="26" selection-end-line="27" selection-end-column="26" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -547,12 +574,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gui_law/centralTable.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2106">
-          <caret line="125" column="96" lean-forward="false" selection-start-line="125" selection-start-column="96" selection-end-line="125" selection-end-column="96" />
+        <state relative-caret-position="2574">
+          <caret line="149" column="51" lean-forward="false" selection-start-line="149" selection-start-column="51" selection-end-line="149" selection-end-column="51" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1518622791029" expanded="true" signature="3996:4086" ph="..." />
-            <marker date="1518622791029" expanded="true" signature="4403:4463" ph="..." />
           </folding>
         </state>
       </provider>
@@ -561,32 +586,32 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1674">
           <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gui_law/ExtendedComboBox.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="14" column="42" lean-forward="false" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
+        <state relative-caret-position="234">
+          <caret line="16" column="42" lean-forward="false" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+            <marker date="1518790981269" expanded="true" signature="166:292" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gui_law/jsonHandler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="537">
-          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+        <state relative-caret-position="486">
+          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gui_law/creatorView.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="54" column="38" lean-forward="false" selection-start-line="54" selection-start-column="38" selection-end-line="54" selection-end-column="38" />
+        <state relative-caret-position="3105">
+          <caret line="215" column="38" lean-forward="false" selection-start-line="215" selection-start-column="38" selection-end-line="215" selection-end-column="38" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

@@ -2,7 +2,7 @@ import jsonHandler
 import os
 import glob
 from creatorView import *
-from jsonHandler import ORDER
+from jsonHandler import ORDER, MACHINE_PATH
 from PyQt5.QtWidgets import QPushButton, QWidget, QAction, QTableWidget, \
     QVBoxLayout, QMessageBox, QAbstractScrollArea, QTableWidgetItem,\
     QHeaderView, QLabel
@@ -14,7 +14,7 @@ from ItemView import ItemView
 TABLE_HEADER = ORDER[0:5] + ["", "", ""]
 
 sys.path.insert(0,os.path.join(os.getcwd(),'logic/'))
-from mainLogic import MainLogic 
+from mainLogic import MainLogic
 
 class CentralTable(QWidget):
     """ A class to create a table where all machines will be presented in an
@@ -26,6 +26,7 @@ class CentralTable(QWidget):
         self.title = 'Central Table'
         self.machines = [[],[]]
         self.orderKey = ["Name", False]
+        self.logic = None
 
         self.create_table()
 
@@ -80,7 +81,7 @@ class CentralTable(QWidget):
         """ loads all machines out of the json into the class list """
         #path = os.path.dirname(os.path.abspath(__file__))
         #machinePath = path+"/machines"
-        machinePath = os.path.join(os.getcwd(),'machines')
+        machinePath = MACHINE_PATH
         os.chdir(machinePath)
         if os.path.isdir(machinePath):
             machineList = glob.glob("*.json")

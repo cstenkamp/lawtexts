@@ -8,9 +8,8 @@ from PyQt5.QtGui import *
 from customerDialog import *
 from PyQt5.QtWidgets import *
 import functools
-
 sys.path.insert(0,os.path.join(os.getcwd(),'logic'))
-from mainLogic import MainLogic 
+from mainLogic import MainLogic
 
 TEXT_GENERATE =  "generiere neue Komponente"
 
@@ -19,9 +18,9 @@ class CreatorView(QMainWindow):
     def __init__(self, parent=None, centralTable = None, jsonFile = None, path=None):
         super(CreatorView, self).__init__(parent)
 
-        self.path = path 
-        self.parent = None
-        self.centralTable = None
+        self.path = path
+        self.parent = parent
+        self.centralTable = centralTable
 
         # close previous edit windows
         if self.parent is not None:
@@ -57,8 +56,10 @@ class CreatorView(QMainWindow):
         check = QAction(QIcon(ICON_PATH+"law.png"), '', self)
         check.setIcon
         check.setToolTip("Richtlinien auf dieser Maschine überprüfen")
+        print("path: ", self.path)
         check.triggered.connect(functools.partial(CreatorView.start_check, \
-                self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget))
+                self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget, \
+                self.centralTable, self.path))
         toolbar.addAction(check)
         fileMenu.addAction(saveAs)
         menubar.setCornerWidget(toolbar)
@@ -71,12 +72,23 @@ class CreatorView(QMainWindow):
 
 
     @staticmethod
-    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, logic=None):
+    def start_check(jsonFile, finishCheckRequired=False, creatorWidget = None, centralTable = None, path = None, logic = None):
         # init file to save check results:
-        
         if finishCheckRequired and creatorWidget is not None:
             if not creatorWidget.finishCheck():
                 return
+        if centralTable is not None:
+            if path == None:
+                machinePath = os.path.join(MACHINE_PATH, jsonFile["Name"])
+            else:
+                machinePath = path
+            machineFile = jsonFile
+            resFileName = machineFile['Name']+'.html'
+            resPath = os.path.join(os.getcwd(),resFileName)
+            centralTable.logic = MainLogic(machineData=machineFile, filePath=resPath)
+            logic = centralTable.logic
+            print("hier")
+            print(type(logic))
         logic.start()
         #customerDialog = CustomerDialog()
         #result = customerDialog.exec_()
@@ -89,12 +101,12 @@ class CreatorView(QMainWindow):
         #    print("creatorView.py Methodenname: startCheck")
         #    print("this method is currently called when the user tries to save the file")
 
-
 class ItemCreatorWidget(QTreeWidget):
     """ The widget for creating new machines """
     def __init__(self, parent=None, centralTable = None, jsonFile = None):
         self.parent = parent
         self.centralTable = centralTable
+        print("init centralTable: ", centralTable)
         QTreeWidget.__init__(self)
         self.setHeaderLabels(["Feature", "Einheit", "Wert"])
         self.model = QStandardItemModel()
@@ -431,16 +443,21 @@ class ItemCreatorWidget(QTreeWidget):
                         value = nonTreeWidgets[valueAt].date().toString(Qt.ISODate)
                     json = self.jsonFile
                     while parentList != []:
+                        parentJson = json
                         json = json[parentList.pop()]
                     if unit is None:
                         json[key]=value
                     else:
+                        keyParent = item.parent().text(0)
                         super_parent = item.parent().parent()
-                        ind = [i for i in range(super_parent.childCount()) if super_parent.child(i) == item.parent()][0]
-                        json[ind][key] = {unit:value}
+                        OccOfSameType = [i for i in range(super_parent.childCount()) if super_parent.child(i).text(0) == item.parent().text(0)]
+                        indInTree = [i for i in range(super_parent.childCount()) if super_parent.child(i) == item.parent()][0]
+                        ind = OccOfSameType.index(indInTree)
+                        parentJson[keyParent][ind][key] = {unit:value}
                 except IndexError:
                     return # required for uninted indexError for fields which are not used
             else:
+                print("WE SHOULDNT EVEN BE HERE")
                 parent = item.parent()
                 if parent.parent() is None:
                     # change the edited comment in the jsonFile
