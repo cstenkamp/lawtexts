@@ -684,7 +684,7 @@ class ResultWindow(BaseWindow):
 			elif category == 'IV':
 				names = ['B_Baumuster.html','D.html']
 			elif category == 'Artikel 4, Absatz 3':
-				names = None
+				names = [None]
 			html = ''
 			for name in names:
 				if names is None:

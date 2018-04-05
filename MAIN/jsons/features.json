@@ -6,7 +6,7 @@
 		"Temperatur":["C","F"],
 		"Druck":["bar","psi"],
 		"Länge":["m"],
-		"Durchmesser":["m"]
+		"Nennweite":["DN"]
 	},
 	"_Features":[
 		{"_bewegliche_teile":["+MRL"]

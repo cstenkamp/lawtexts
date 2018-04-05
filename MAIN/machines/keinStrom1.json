@@ -1,0 +1,22 @@
+{
+    "Pr\u00fcfdatum": "2000-01-01",
+    "Kundennummer": "123456",
+    "Kommentare": [],
+    "Name": "keinStrom",
+    "Herstellungsdatum": "2000-01-01",
+    "Verwendungszwecke": [],
+    "Komponenten": {
+        "R\u00fchrwerk": [
+            {
+                "Leistung": {
+                    "KW/h": 10.0
+                },
+                "Spannung": {
+                    "Volt AC": 230.0
+                }
+            }
+        ]
+    },
+    "Ort": "osna",
+    "Verwendungsorte": []
+}

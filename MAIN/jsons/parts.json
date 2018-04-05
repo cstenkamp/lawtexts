@@ -7,6 +7,7 @@
 			"Temperatur"
 			],
 		"_Eigenschaften":[
+				"DGR_a"
 			]
 	},
 	"Rührwerk":{
@@ -37,6 +38,7 @@
 			"Inhalt"
 			],
 		"_Eigenschaften":[
+				"DGR_c"
 			]
 
 	}

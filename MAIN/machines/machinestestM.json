@@ -24,7 +24,10 @@
         "Druckbeh\u00e4lter": [
             {
                 "Inhalt": {
-                    "fest": "Jauche"
+                    "gasförmig": "organische Peroxide"
+                },
+                "Inhalt2": {
+                    "Eigenschaften": ["reizend"]
                 },
                 "Temperatur": {
                     "C": 30.0

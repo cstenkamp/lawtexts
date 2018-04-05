@@ -1,10 +1,10 @@
 {
 	"Inhalt":[
+		"Wasser",
 		"Jauche",
 		"Gülle",
 		"Silage",
-		"organische Peroxide",
-		""
+		"organische Peroxide"
 	],
 	"Aggregatszustand":[
 		"fest",
@@ -13,7 +13,7 @@
 		"verflüssigtes Gas",
 		"unter Druck gelöstes Gas"
 	],
-	"Eigenschaften":[
+	"Eigenschaften_Gruppe_1":[
 		"instabil",
 		"reizend",
 		"radioaktiv",
