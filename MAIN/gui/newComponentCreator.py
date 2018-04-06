@@ -138,6 +138,7 @@ class ComponentGenerator(QDialog):
         if feature in self.features:
             unit.addItems(self.features[feature])
             value = QDoubleSpinBox()
+            value.setMaximum(99999999.99)
         else: # if == "Inhalt"
             unit.addItems(self.contents["Aggregatszustand"])
             value = QComboBox()

@@ -376,7 +376,7 @@ class ItemCreatorWidget(QTreeWidget):
                     spinBox.setValue( 0 )
                 else:
                     spinBox.setValue(curValue[keyOfCurValue[0]])
-                spinBox.setMaximum(99999.99)
+                spinBox.setMaximum(99999999.99)
                 spinBox.setMinimumSize(25,10)
                 unitBox = QComboBox()
                 unitBox.addItems(cur_feature)
