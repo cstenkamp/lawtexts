@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import *
 from creatorView import *
 import functools
 
-
 class ComponentGenerator(QDialog):
 
     def __init__(self):
@@ -40,7 +39,7 @@ class ComponentGenerator(QDialog):
         self.setWindowTitle("Neue Komponente")
 
     def save(self, custom_parts=None):
-        if custom_parts == None:
+        if custom_parts == None or custom_parts == False:
             parts = self.parts
         else:
             parts = custom_parts
@@ -54,10 +53,10 @@ class ComponentGenerator(QDialog):
                      QMessageBox.Yes | QMessageBox.No)
                 if reply == QMessageBox.No:
                     return
-        saveDict = list(selfDict[name].keys())
+        saveDict = list(selfDict[name][0].keys())
         saveDict.sort()
         parts[name] = {"Eigenschaften": saveDict, "_Eigenschaften":[]}
-        if custom_parts == None:
+        if custom_parts == None or custom_parts == False:
             write_json_file(parts, JSON_PATH + "/parts.json")
 
     def newAccept(self):
@@ -66,16 +65,16 @@ class ComponentGenerator(QDialog):
 
     def writeResult(self):
         name = self.nameLineEdit.text()
-        self.dict[name] = {}
+        self.dict[name] = [{}]
         if name == "":
             QMessageBox.about(self, "","Bitte geben Sie einen Namen an")
             return None
         else:
             for entry in self.entries:
                 if type(entry[2]) == QDoubleSpinBox:
-                    self.dict[name][entry[0].text()] = {entry[1].currentText(): entry[2].value()}
+                    self.dict[name][0][entry[0].text()] = {entry[1].currentText(): entry[2].value()}
                 else:
-                    self.dict[name][entry[0].text()] = {entry[1].currentText(): entry[2].currentText()}
+                    self.dict[name][0][entry[0].text()] = {entry[1].currentText(): entry[2].currentText()}
         return self.dict
 
     def getDict(self):
@@ -139,6 +138,7 @@ class ComponentGenerator(QDialog):
         if feature in self.features:
             unit.addItems(self.features[feature])
             value = QDoubleSpinBox()
+            value.setMaximum(99999999.99)
         else: # if == "Inhalt"
             unit.addItems(self.contents["Aggregatszustand"])
             value = QComboBox()

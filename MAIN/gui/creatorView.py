@@ -56,7 +56,6 @@ class CreatorView(QMainWindow):
         check = QAction(QIcon(ICON_PATH+"law.png"), '', self)
         check.setIcon
         check.setToolTip("Richtlinien auf dieser Maschine überprüfen")
-        print("path: ", self.path)
         check.triggered.connect(functools.partial(CreatorView.start_check, \
                 self.ItemCreatorWidget.jsonFile, True, self.ItemCreatorWidget, \
                 self.centralTable, self.path))
@@ -87,8 +86,6 @@ class CreatorView(QMainWindow):
             resPath = os.path.join(os.getcwd(),resFileName)
             centralTable.logic = MainLogic(machineData=machineFile, filePath=resPath)
             logic = centralTable.logic
-            print("hier")
-            print(type(logic))
         logic.start()
         #customerDialog = CustomerDialog()
         #result = customerDialog.exec_()
@@ -106,7 +103,6 @@ class ItemCreatorWidget(QTreeWidget):
     def __init__(self, parent=None, centralTable = None, jsonFile = None):
         self.parent = parent
         self.centralTable = centralTable
-        print("init centralTable: ", centralTable)
         QTreeWidget.__init__(self)
         self.setHeaderLabels(["Feature", "Einheit", "Wert"])
         self.model = QStandardItemModel()
@@ -289,6 +285,7 @@ class ItemCreatorWidget(QTreeWidget):
                     return
                 else:
                     newDict = dialog.getDict() # get the created component dict
+                    self.jsonFile["Komponenten"][list(newDict.keys())[0]] = newDict[list(newDict.keys())[0]]
                     dialog.save(custom_parts=self.parts) # saves the dict to the current partsDict
                     component = list(newDict.keys())[0]
                     # set the corresponding entries in the custom boolean class
@@ -301,7 +298,7 @@ class ItemCreatorWidget(QTreeWidget):
                         parent.setExpanded(True)
                     parent = self.firstComponent.getParent()
                     # add the component the same way it is done in loadJson
-                    self.openComponentCreator(component, parent, valueDict=newDict[component] )
+                    self.openComponentCreator(component, parent, valueDict=newDict[component][0] )
                     # reload the itemList and set it to the same generiere neue Komponente entry
                     self.combo.clear()
                     self.combo.addItems(list(self.parts.keys())+[TEXT_GENERATE])
@@ -379,7 +376,7 @@ class ItemCreatorWidget(QTreeWidget):
                     spinBox.setValue( 0 )
                 else:
                     spinBox.setValue(curValue[keyOfCurValue[0]])
-                spinBox.setMaximum(99999.99)
+                spinBox.setMaximum(99999999.99)
                 spinBox.setMinimumSize(25,10)
                 unitBox = QComboBox()
                 unitBox.addItems(cur_feature)
@@ -457,7 +454,6 @@ class ItemCreatorWidget(QTreeWidget):
                 except IndexError:
                     return # required for uninted indexError for fields which are not used
             else:
-                print("WE SHOULDNT EVEN BE HERE")
                 parent = item.parent()
                 if parent.parent() is None:
                     # change the edited comment in the jsonFile
