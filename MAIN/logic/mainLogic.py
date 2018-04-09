@@ -31,7 +31,7 @@ from atexView import AtexView
 from dgrView import DgrView
 from mrlView import MrlView
 from nsrView import NsrView
-from basicView import QuestionInterface
+from basicView import QuestionInterface, ResultView
 
 class ResultBuffer():
     def __init__(self,str):
@@ -117,8 +117,9 @@ class MainLogic():
                                  buffer=self.result_buffer,
                                  parentLogic=self)
         '''
+        self.resultView = ResultView()
         self.atexView = AtexView(self.Product, self.atexLogic, 
-                                 childView = None,
+                                 childView = self.resultView,
                                  childLogic=self.baseLogic,
                                  buffer=self.result_buffer,
                                  parentLogic=self)
