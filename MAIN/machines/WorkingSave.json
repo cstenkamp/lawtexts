@@ -1,26 +1,15 @@
 {
-    "Name": "WorkingSave",
-    "Kundennummer": "12345",
-    "Ort": "Ravensburg",
+    "Verwendungsorte": [
+        "auf Eisenbahnen"
+    ],
+    "Verwendungszwecke": [
+        "Bearbeitung von Fleisch und von Werkstoffen mit \u00e4hnlichen physikalischen Eigenschaften"
+    ],
     "Herstellungsdatum": "2001-01-02",
+    "Name": "WorkingSave",
+    "Kommentare": [],
     "Pr\u00fcfdatum": "2000-01-01",
     "Komponenten": {
-        "Druckbeh\u00e4lter": [
-            {
-                "Druck": {
-                    "bar": 3.0
-                },
-                "Inhalt": {
-                    "fest": "Jauche"
-                },
-                "Temperatur": {
-                    "C": 3.0
-                },
-                "Volumen": {
-                    "m\u00b3": 3.0
-                }
-            }
-        ],
         "R\u00fchrwerk": [
             {
                 "Leistung": {
@@ -30,13 +19,31 @@
                     "Volt AC": 2.0
                 }
             }
+        ],
+        "Druckbeh\u00e4lter": [
+            {
+                "Volumen": {
+                    "m\u00b3": 3.0
+                },
+                "Druck": {
+                    "bar": 3.0
+                },
+                "Inhalt": {
+                    "fest": "Jauche"
+                },
+                "Temperatur": {
+                    "C": 3.0
+                }
+            }
+        ],
+        "test": [
+            {
+                "Spannung": {
+                    "Volt AC": 340.99
+                }
+            }
         ]
     },
-    "Verwendungszwecke": [
-        "Bearbeitung von Fleisch und von Werkstoffen mit \u00e4hnlichen physikalischen Eigenschaften"
-    ],
-    "Verwendungsorte": [
-        "auf Eisenbahnen"
-    ],
-    "Kommentare": []
+    "Kundennummer": "12345",
+    "Ort": "Ravensburg"
 }
