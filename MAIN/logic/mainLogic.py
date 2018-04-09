@@ -102,23 +102,24 @@ class MainLogic():
         self.baseLogic = BaseLogic(self.Product, self.dictParser, 'name', childLogics=childLogics)
 
         res = self.baseLogic.checkParts(overwrite=False)
-
         # MRL should be asked always:
         self.mrlLogic.state = True
         self.baseLogic.state = True
 
+
     def loadViews(self):
         self.result_buffer = ResultBuffer('')
 
-        self.dgrView = DgrView(self.Product, self.dgrLogic, 
+        '''
+        self.resultView = DgrView(self.Product, self.dgrLogic, 
                                  childView = None,
                                  childLogic=self.baseLogic,
                                  buffer=self.result_buffer,
                                  parentLogic=self)
-
+        '''
         self.atexView = AtexView(self.Product, self.atexLogic, 
-                                 childView = self.dgrView,
-                                 childLogic=self.dgrLogic,
+                                 childView = None,
+                                 childLogic=self.baseLogic,
                                  buffer=self.result_buffer,
                                  parentLogic=self)
 

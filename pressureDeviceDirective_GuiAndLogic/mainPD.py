@@ -673,6 +673,9 @@ class ResultWindow(BaseWindow):
 		if not result:
 			return '<h1>Trifft nicht zu</h1>'
 		else:
+			# result 100 case
+			# resul 90 case
+			print(result)
 			graph = pressureGraphs[result-1]
 			category = graph(volume_DN,pressure)
 			if category == 'I':

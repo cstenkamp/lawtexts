@@ -61,6 +61,15 @@ class BaseLogic():
 
     def checkParts(self,overwrite=True):
         results = {}
+        # for every site the machine should be used at:
+        for site in self.Product.json['Verwendungsorte']:
+            if site in self.sites:
+                info = list(self.sites[site]['aktiviert'].keys())
+                for dir in info:
+                    self.childLogics[dir].state = True
+                info = list(self.sites[site]['deaktiviert'].keys())
+                for dir in info:
+                    self.childLogics[dir].state = False
         # for every part in the machine
         for part in self.Product.json['Komponenten']:
             # see if you find information in your knowledge base
@@ -219,6 +228,7 @@ class BaseLogic():
                 if B:
                     results['NSR'] = B
             if 'Druck' in entry:
+                continue
                 B = self.checkPressure(entry,part)
                 if B:
                     results['DGR'] = B

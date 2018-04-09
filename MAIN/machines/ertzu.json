@@ -1,0 +1,24 @@
+{
+    "Verwendungszwecke": [],
+    "Herstellungsdatum": "2000-01-01",
+    "Ort": "dfghjkl",
+    "Komponenten": {
+        "Elektromotor": [
+            {
+                "Leistung": {
+                    "KW/h": 12.0
+                },
+                "Spannung": {
+                    "Volt AC": 1000.0
+                }
+            }
+        ]
+    },
+    "Verwendungsorte": [
+        "in einer explosionsf\u00e4higen Atmosph\u00e4re"
+    ],
+    "Name": "ertzu",
+    "Pr\u00fcfdatum": "2000-01-01",
+    "Kundennummer": "dfghjk",
+    "Kommentare": []
+}

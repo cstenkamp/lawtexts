@@ -1,28 +1,30 @@
 {
+    "Verwendungszwecke": [],
+    "Kommentare": [],
     "Kundennummer": "123456",
+    "Verwendungsorte": [
+        "in einer explosionsf\u00e4higen Atmosph\u00e4re"
+    ],
+    "Herstellungsdatum": "2000-01-01",
+    "Name": "keinStrom",
     "Komponenten": {
         "Druckbeh\u00e4lter": [
             {
                 "Inhalt": {
                     "fest": "Jauche"
                 },
+                "Volumen": {
+                    "m\u00b3": 10.0
+                },
                 "Temperatur": {
                     "C": 30.0
                 },
                 "Druck": {
                     "bar": 5.0
-                },
-                "Volumen": {
-                    "m\u00b3": 10.0
                 }
             }
         ]
     },
-    "Name": "keinStrom",
-    "Verwendungszwecke": [],
-    "Verwendungsorte": [],
-    "Kommentare": [],
-    "Pr\u00fcfdatum": "2000-01-01",
     "Ort": "osna",
-    "Herstellungsdatum": "2000-01-01"
+    "Pr\u00fcfdatum": "2000-01-01"
 }
