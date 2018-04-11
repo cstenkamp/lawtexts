@@ -137,7 +137,7 @@ class QuestionInterface(QWidget):
         html=self.logic.finalize()
         # append in buffer string
         self.buffer.append(html)
-        if not self.childView is None:
+        if not type(self.childView) is ResultView:
             # start questions
             self.childView.startYesNoQuestions(self.childLogic.QA)
         else:
@@ -147,8 +147,50 @@ class QuestionInterface(QWidget):
             self.buffer.append(html)
             self.parentLogic.fileHandle.writelines(self.buffer.str)
             self.parentLogic.fileHandle.close()
+            self.childView.showResult(self.buffer)
+
+
 
     
     def finalize(self):
         self.close()
         html = self.logic.finalize()
+
+
+class ResultView(QWidget):
+
+    def __init__(self):
+        super(ResultView,self).__init__()
+
+        self.setGeometry(100,100,850,300)
+        self.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
+
+
+        #
+        self.mainLayout = QVBoxLayout(self)
+        self.mainLayout.setAlignment(Qt.AlignCenter)
+        #
+        self.setLayout(self.mainLayout)
+        self.show()
+
+        self.topLayout = QHBoxLayout()
+        self.topLayout.setAlignment(Qt.AlignTop)
+        self.mainLayout.addLayout(self.topLayout)
+
+        self.bottomLayout = QHBoxLayout()
+        self.bottomLayout.setAlignment(Qt.AlignTop)
+        self.mainLayout.addLayout(self.bottomLayout)
+
+        self.htmlView = QWebEngineView()
+        self.topLayout.addWidget(self.htmlView)
+
+        self.hide()
+
+
+    def updateView(self,html):
+        self.htmlView.setHtml(html)
+        
+    def showResult(self,buffer):
+        self.buffer = buffer
+        self.show()
+        self.updateView(self.buffer.str)
