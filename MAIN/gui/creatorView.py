@@ -372,11 +372,11 @@ class ItemCreatorWidget(QTreeWidget):
             if component_features[i] in feature_keys:
                 cur_feature = self.features[component_features[i]]
                 spinBox = QDoubleSpinBox()
+                spinBox.setMaximum(99999999.99)
                 if valueDict is None:
                     spinBox.setValue( 0 )
                 else:
                     spinBox.setValue(curValue[keyOfCurValue[0]])
-                spinBox.setMaximum(99999999.99)
                 spinBox.setMinimumSize(25,10)
                 unitBox = QComboBox()
                 unitBox.addItems(cur_feature)
