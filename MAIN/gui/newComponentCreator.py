@@ -23,11 +23,11 @@ class ComponentGenerator(QDialog):
         buttonBox.accepted.connect(self.newAccept)
         cancel = QPushButton("abbrechen")
         cancel.setIcon(QIcon(ICON_PATH+"cancel.png"))
-        save = QPushButton("Komponententyp speichern")
-        save.setIcon(QIcon(ICON_PATH+"save.png"))
+        # save = QPushButton("Komponententyp speichern")
+        # save.setIcon(QIcon(ICON_PATH+"save.png"))
         buttonBox.addButton(cancel, QDialogButtonBox.RejectRole)
-        buttonBox.addButton(save, QDialogButtonBox.ActionRole)
-        save.clicked.connect(self.save)
+        # buttonBox.addButton(save, QDialogButtonBox.ActionRole)
+        # save.clicked.connect(self.save)
         buttonBox.rejected.connect(self.reject)
         self.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
 
@@ -60,6 +60,7 @@ class ComponentGenerator(QDialog):
             write_json_file(parts, JSON_PATH + "/parts.json")
 
     def newAccept(self):
+        self.save()
         self.writeResult()
         self.accept()
 
