@@ -1,0 +1,65 @@
+{
+    "Name": "ccc - showMaschine",
+    "Kundennummer": "33333",
+    "Ort": "Chemnitz",
+    "Herstellungsdatum": "1999-03-01",
+    "Pr\u00fcfdatum": "2013-02-11",
+    "Komponenten": {
+        "Rohrleitung": [
+            {
+                "L\u00e4nge": {
+                    "m": 0.5
+                },
+                "Temperatur": {
+                    "C": 27.0
+                },
+                "Nennweite": {
+                    "DN": 4.0
+                },
+                "Druck": {
+                    "bar": 25.0
+                }
+            }
+        ],
+        "R\u00fchrwerk": [
+            {
+                "Leistung": {
+                    "KW/h": 230.0
+                },
+                "Spannung": {
+                    "Volt AC": 99.0
+                }
+            }
+        ],
+        "Elektromotor": [
+            {
+                "Leistung": {
+                    "KW/h": 18.0
+                },
+                "Spannung": {
+                    "Volt AC": 230.0
+                },
+                "Kommentar": "Es k\u00f6nnen mehrere Komponenten des gleichen Typen in einer Maschine vorkommen"
+            },
+            {
+                "Leistung": {
+                    "KW/h": 25.0
+                },
+                "Spannung": {
+                    "Volt AC": 230.0
+                }
+            }
+        ]
+    },
+    "Verwendungszwecke": [
+        "F\u00f6rderung von G\u00fctern in Sch\u00e4chten"
+    ],
+    "Verwendungsorte": [
+        "auf Eisenbahnen",
+        "auf Flugzeugen"
+    ],
+    "Kommentare": [
+        "Maschine generiert zur Vorstellungspr\u00e4sentation",
+        "mehrere Kommentare sind nat\u00fcrlich m\u00f6glich"
+    ]
+}

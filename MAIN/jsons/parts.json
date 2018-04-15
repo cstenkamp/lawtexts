@@ -28,17 +28,10 @@
     },
     "Rohrleitung": {
         "Eigenschaften": [
-            "Durchmesser",
-            "L\u00e4nge",
-            "Temperatur",
             "Druck",
-            "Inhalt"
-        ],
-        "_Eigenschaften": []
-    },
-    "TestKomponenten": {
-        "Eigenschaften": [
-            "L\u00e4nge"
+            "L\u00e4nge",
+            "Nennweite",
+            "Temperatur"
         ],
         "_Eigenschaften": []
     }
